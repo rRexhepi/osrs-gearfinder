@@ -153,6 +153,14 @@ export default function App() {
         <main className="flex-1 p-4 overflow-y-auto space-y-6">
           {mode === 'training' && <TrainingSpots />}
           <Results />
+          <footer className="text-[11px] text-muted pt-4 border-t border-border/40">
+            DPS engine and item/monster data from the{' '}
+            <a className="underline hover:text-parchment" href="https://github.com/weirdgloop/osrs-dps-calc" target="_blank" rel="noreferrer">OSRS Wiki DPS calculator</a>
+            {' '}(GPL-3.0). GE prices from the{' '}
+            <a className="underline hover:text-parchment" href="https://prices.runescape.wiki" target="_blank" rel="noreferrer">wiki prices API</a>.
+            {' '}<a className="underline hover:text-parchment" href="https://github.com/rRexhepi/osrs-gearfinder" target="_blank" rel="noreferrer">Source</a>.
+            Bank imports never leave your browser.
+          </footer>
         </main>
       </div>
     </div>

@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# dormant proxies for the wiki APIs, in case direct cross-origin calls
+# ever get blocked (both are normally CORS-open)
+[[redirects]]
+  from = "/api/prices/*"
+  to = "https://prices.runescape.wiki/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/hiscores/*"
+  to = "https://oldschool.runescape.wiki/cors/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
