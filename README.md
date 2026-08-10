@@ -32,6 +32,30 @@ portable Node in `C:\Users\Admin\Projects\tools\node24`.
 4. **Find gear**: per style you get the optimised setup, runner-up weapons fully
    optimised, and a "next best per slot" table with DPS deltas.
 
+## Training mode
+
+Switch the header toggle to **Training** to rank by XP/hr instead of DPS:
+
+- Pick the skill to train; only stances that award XP in it are considered
+  (aggressive for str, accurate for atk, defensive/controlled/longrange for def...).
+  This matters: a whip cannot train strength except on controlled, so the solver
+  will prefer e.g. a rapier/scimitar for str.
+- XP per kill is capped by monster HP (overkill grants nothing) and kill rate uses
+  TTK plus a configurable downtime between kills.
+- **Rank training spots** compares ~25 common training monsters (crabs, slayer
+  staples, chinning spots) by XP/hr with your settings and items, with damage
+  taken/hr and food/hr per spot.
+- Setups show damage taken/hr, food/hr (sharks), and estimated consumable cost/hr
+  (darts+scales, arrows with ava's saving, chins, non-elemental runes, staff charges).
+- A slayer-task quick-select sets the target monster and the on-task flag.
+
+## Upgrade advisor
+
+With a bank imported, "only use items I own" on, and GE prices available (fetched
+hourly from prices.runescape.wiki), results include an upgrade advisor: unowned
+items ranked by how much DPS or XP/hr they add over your best owned setup, with GE
+price and gain per million gp. Sort by raw gain or by value.
+
 ## How the solver works
 
 Every weapon (and autocast spell / blowpipe dart variant) is scored, the top few per
