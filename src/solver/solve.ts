@@ -93,6 +93,8 @@ export class Solver {
   /** gauntlet-only items are allowed only against the Hunllef */
   private inGauntlet: boolean;
 
+  private loggedEvalError = false;
+
   evals = 0;
 
   constructor(request: SolveRequest) {
@@ -179,7 +181,12 @@ export class Solver {
       const calc = new PlayerVsNPCCalc(player, this.monster, { loadoutName: 'solver' });
       dps = calc.getDps();
       if (!Number.isFinite(dps)) dps = 0;
-    } catch {
+    } catch (err) {
+      if (!this.loggedEvalError) {
+        this.loggedEvalError = true;
+        // eslint-disable-next-line no-console
+        console.warn('[solver] loadout eval failed (first occurrence)', err);
+      }
       dps = 0;
     }
     this.evals += 1;
@@ -319,7 +326,8 @@ export class Solver {
         for (const cand of candidates) {
           if (cand.id === eq[slot]?.id) continue;
           const d = this.dps({ ...eq, [slot]: cand }, style, spell);
-          if (d > bestDps) { bestDps = d; bestItem = cand; }
+          // on a dps tie, prefer wearing something over an empty slot
+          if (d > bestDps || (d === bestDps && bestItem === null)) { bestDps = d; bestItem = cand; }
         }
         if ((bestItem?.id ?? null) !== (eq[slot]?.id ?? null)) {
           changed = true;
@@ -402,12 +410,12 @@ export class Solver {
     }).filter((s) => s.dps > 0);
     scored.sort((a, b) => b.dps - a.dps);
 
-    // best variant per weapon id, then top K weapons
-    const seen = new Set<number>();
+    // best variant per weapon (collapsing same-name versions), then top K weapons
+    const seen = new Set<string>();
     const shortlist: WeaponVariant[] = [];
     for (const s of scored) {
-      if (seen.has(s.v.weapon.id)) continue;
-      seen.add(s.v.weapon.id);
+      if (seen.has(s.v.weapon.name)) continue;
+      seen.add(s.v.weapon.name);
       shortlist.push(s.v);
       if (shortlist.length >= K) break;
     }
@@ -522,17 +530,26 @@ export class Solver {
       const pool = slot === 'ammo'
         ? this.ammoCandidates(bestVariant.weapon, bestStyle.type)
         : this.altPool(slot, bestStyle.type);
-      const alts: SlotAlternative[] = [];
+      const bySlotName = new Map<string, SlotAlternative>();
       for (const cand of pool) {
         const dps = this.dps({ ...bestEq, [slot]: cand }, bestStyle, bestVariant.spell);
         if (dps <= 0) continue;
-        alts.push({
+        const existing = bySlotName.get(cand.name);
+        if (existing && existing.dps >= dps) continue;
+        bySlotName.set(cand.name, {
           ...this.toResultItem(cand, slot),
           dps,
           deltaPct: ((dps - best.dps) / best.dps) * 100,
         });
       }
-      alts.sort((a, b) => b.dps - a.dps);
+      const alts = [...bySlotName.values()].sort((a, b) => b.dps - a.dps);
+      // make it explicit when leaving the slot empty is the best option
+      // (e.g. melee armour with ranged penalties in an owned-only search)
+      if (!bestEq[slot] && alts.length > 0 && alts[0].dps < best.dps) {
+        alts.unshift({
+          id: -1, name: 'Nothing (leave empty)', version: '', image: '', slot, owned: true, dps: best.dps, deltaPct: 0,
+        });
+      }
       alternatives[slot] = alts.slice(0, 40);
     }
 

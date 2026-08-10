@@ -5,6 +5,11 @@ import path from 'node:path';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // the vendored engine references process.env in a few places
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.NEXT_PUBLIC_HIT_DIST_SANITY_CHECK': 'undefined',
+  },
   resolve: {
     alias: {
       'next/image': path.resolve(__dirname, 'src/shims/next-image.ts'),
