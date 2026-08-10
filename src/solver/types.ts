@@ -64,6 +64,8 @@ export interface SolvedSetup {
   styleName: string;
   styleStance: string;
   spellName: string | null;
+  /** set when this setup is a locked full-set combo (e.g. Blood moon set) */
+  combo: { name: string; note: string } | null;
   items: Partial<Record<string, ResultItem>>;
   /** ranking metric: dps in boss mode, xp/hr in training mode */
   metric: number;
@@ -95,6 +97,8 @@ export interface StyleResult {
   best: SolvedSetup | null;
   /** runner-up full setups (different weapons), best first */
   setups: SolvedSetup[];
+  /** best setup per full-set combo template, best first (may rank below `best`) */
+  combos: SolvedSetup[];
   /** per-slot ranking of alternatives holding the rest of the best setup fixed */
   alternatives: Partial<Record<string, SlotAlternative[]>>;
 }

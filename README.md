@@ -49,12 +49,25 @@ Switch the header toggle to **Training** to rank by XP/hr instead of DPS:
   (darts+scales, arrows with ava's saving, chins, non-elemental runes, staff charges).
 - A slayer-task quick-select sets the target monster and the on-task flag.
 
+## Full-set combos
+
+Set effects only pay off once the whole set is worn, so a per-slot search can never
+walk into them. Each style's results include a **Full-set combos** table: known sets
+(Blood moon + Dual macuahuitl, full obsidian + Tzhaar weapons, void/elite void,
+Inquisitor's, crystal armour + crystal bows, Barrows sets with the Amulet of the
+damned) evaluated with their pieces locked and every other slot optimised, ranked
+honestly against the per-slot best. When a set actually wins, it *is* the best setup
+and gets labelled as such. Blue/Eclipse moon are omitted because the engine does not
+model their set effects yet; Dharok's because the solver evaluates at full HP.
+
 ## Upgrade advisor
 
 With a bank imported, "only use items I own" on, and GE prices available (fetched
 hourly from prices.runescape.wiki), results include an upgrade advisor: unowned
 items ranked by how much DPS or XP/hr they add over your best owned setup, with GE
-price and gain per million gp. Sort by raw gain or by value.
+price and gain per million gp. Sort by raw gain or by value. If you own most of a
+set, the advisor also prices the missing pieces as one bundle (e.g. "Blood moon
+set - Blood moon tassets") with the full-set gain.
 
 ## How the solver works
 

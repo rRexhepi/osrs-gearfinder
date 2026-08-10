@@ -29,6 +29,9 @@ import {
   PriceMap, TrainedSkill, consumableCostPerHour, xpPerDamage, xpPerHour,
 } from './xp';
 import {
+  COMBO_TEMPLATES, ComboTemplate, comboOf, pieceOptions, resolveByName,
+} from './combos';
+import {
   LoadoutConfig,
   blowpipeWithDart,
   bestStandardSpell,
@@ -274,53 +277,60 @@ export class Solver {
 
   /** enumerate (weapon, style, spell) variants for a style group */
   private weaponVariants(group: StyleGroup, unrestricted = false): WeaponVariant[] {
+    const pool = unrestricted ? this.baseAllowedForSlot('weapon') : this.allowedForSlot('weapon');
+    return pool.flatMap((w) => this.variantsForWeapon(w, group, { unrestricted }));
+  }
+
+  /** the eligible (style, spell) variants of a single weapon within a style group */
+  private variantsForWeapon(
+    weapon: EquipmentPiece,
+    group: StyleGroup,
+    opts: { unrestricted?: boolean; styleTypes?: CombatStyleType[] } = {},
+  ): WeaponVariant[] {
+    // novelty/unknown weapons carry speed -1 in the data, which the engine
+    // clamps to 1 tick and turns into nonsense DPS
+    if (weapon.speed <= 0) return [];
     const out: WeaponVariant[] = [];
     const magicLevel = this.cfg.skills.magic;
-    const pool = unrestricted ? this.baseAllowedForSlot('weapon') : this.allowedForSlot('weapon');
+    const styles = getCombatStylesForCategory(weapon.category);
+    const isSalamander = weapon.category === EquipmentCategory.SALAMANDER;
+    const seenStyles = new Set<string>();
 
-    for (const weapon of pool) {
-      // novelty/unknown weapons carry speed -1 in the data, which the engine
-      // clamps to 1 tick and turns into nonsense DPS
-      if (weapon.speed <= 0) continue;
-      const styles = getCombatStylesForCategory(weapon.category);
-      const isSalamander = weapon.category === EquipmentCategory.SALAMANDER;
-      const seenStyles = new Set<string>();
+    for (const style of styles) {
+      if (!this.stanceEligible(style, isSalamander)) continue;
+      if (styleGroupOf(style) !== group) continue;
+      if (opts.styleTypes && (!style.type || !opts.styleTypes.includes(style.type))) continue;
+      const styleKey = `${style.name}|${style.type}|${style.stance}`;
+      if (seenStyles.has(styleKey)) continue;
+      seenStyles.add(styleKey);
 
-      for (const style of styles) {
-        if (!this.stanceEligible(style, isSalamander)) continue;
-        if (styleGroupOf(style) !== group) continue;
-        const styleKey = `${style.name}|${style.type}|${style.stance}`;
-        if (seenStyles.has(styleKey)) continue;
-        seenStyles.add(styleKey);
-
-        if (this.isCastStance(style.stance)) {
-          // needs a spell; enumerate the sensible ones for this weapon
-          for (const spell of this.spellsFor(weapon, magicLevel)) {
-            out.push({
-              weapon, style, spell, group,
-            });
-          }
-          continue;
-        }
-
-        if (style.type === 'magic' && !POWERED_CATEGORIES.includes(weapon.category) && !isSalamander) {
-          // non-powered magic styles without autocast are useless
-          continue;
-        }
-
-        if (BLOWPIPE_IDS.includes(weapon.id)) {
-          const dart = this.bestOwnedDart() ?? (unrestricted ? dartByName(DART_NAMES[0]) : undefined);
-          if (!dart) continue;
+      if (this.isCastStance(style.stance)) {
+        // needs a spell; enumerate the sensible ones for this weapon
+        for (const spell of this.spellsFor(weapon, magicLevel)) {
           out.push({
-            weapon: blowpipeWithDart(weapon, dart), style, spell: null, group,
+            weapon, style, spell, group,
           });
-          continue;
         }
-
-        out.push({
-          weapon, style, spell: null, group,
-        });
+        continue;
       }
+
+      if (style.type === 'magic' && !POWERED_CATEGORIES.includes(weapon.category) && !isSalamander) {
+        // non-powered magic styles without autocast are useless
+        continue;
+      }
+
+      if (BLOWPIPE_IDS.includes(weapon.id)) {
+        const dart = this.bestOwnedDart() ?? (opts.unrestricted ? dartByName(DART_NAMES[0]) : undefined);
+        if (!dart) continue;
+        out.push({
+          weapon: blowpipeWithDart(weapon, dart), style, spell: null, group,
+        });
+        continue;
+      }
+
+      out.push({
+        weapon, style, spell: null, group,
+      });
     }
     return out;
   }
@@ -379,19 +389,23 @@ export class Solver {
     });
   }
 
-  /** coordinate-ascent the armour slots for a fixed weapon variant */
-  private optimiseArmour(variant: WeaponVariant): Partial<PlayerEquipment> {
+  /** coordinate-ascent the armour slots for a fixed weapon variant; locked slots are kept as-is */
+  private optimiseArmour(variant: WeaponVariant, lockedPieces?: Partial<PlayerEquipment>): Partial<PlayerEquipment> {
     const { weapon, style, spell } = variant;
     const t = style.type;
-    const eq: Partial<PlayerEquipment> = { weapon };
+    const eq: Partial<PlayerEquipment> = { weapon, ...lockedPieces };
+    const locked = new Set(Object.keys(lockedPieces ?? {}) as Slot[]);
 
-    const initialAmmo = this.quickAmmoFor(weapon);
-    if (initialAmmo) eq.ammo = initialAmmo;
-    if (this.weaponNeedsAmmo(weapon) && !initialAmmo) return eq; // unusable, will score 0
+    if (!locked.has('ammo')) {
+      const initialAmmo = this.quickAmmoFor(weapon);
+      if (initialAmmo) eq.ammo = initialAmmo;
+      if (this.weaponNeedsAmmo(weapon) && !initialAmmo) return eq; // unusable, will score 0
+    }
 
     for (let pass = 0; pass < 3; pass += 1) {
       let changed = false;
       for (const slot of ARMOUR_SLOTS) {
+        if (locked.has(slot)) continue;
         if (slot === 'shield' && weapon.isTwoHanded) continue;
         const candidates = slot === 'ammo'
           ? this.ammoCandidates(weapon, t)
@@ -421,10 +435,17 @@ export class Solver {
   }
 
   /** after armour has settled, re-check which of the weapon's styles is best */
-  private bestStyleFor(weapon: EquipmentPiece, group: StyleGroup, eq: Partial<PlayerEquipment>, spell: Spell | null): PlayerCombatStyle {
+  private bestStyleFor(
+    weapon: EquipmentPiece,
+    group: StyleGroup,
+    eq: Partial<PlayerEquipment>,
+    spell: Spell | null,
+    styleTypes?: CombatStyleType[],
+  ): PlayerCombatStyle {
     const isSalamander = weapon.category === EquipmentCategory.SALAMANDER;
     const styles = getCombatStylesForCategory(weapon.category).filter((s) => {
       if (!this.stanceEligible(s, isSalamander)) return false;
+      if (styleTypes && (!s.type || !styleTypes.includes(s.type))) return false;
       if (spell !== null) return this.isCastStance(s.stance);
       if (this.isCastStance(s.stance)) return false;
       return styleGroupOf(s) === group;
@@ -436,6 +457,77 @@ export class Solver {
       if (d > bestScore) { bestScore = d; best = s; }
     }
     return best;
+  }
+
+  /** a template's locked pieces from the allowed pool; null if any piece is unavailable */
+  private resolveComboPieces(tpl: ComboTemplate, base = false): Partial<PlayerEquipment> | null {
+    const allowed = (i: EquipmentPiece) => (base ? this.isAllowedBase(i) : this.isAllowed(i));
+    const pieces: Partial<PlayerEquipment> = {};
+    for (const [slot, piece] of Object.entries(tpl.pieces) as [Slot, string | string[]][]) {
+      const item = pieceOptions(piece).map((n) => resolveByName(n, allowed)).find((i) => i !== null) ?? null;
+      if (!item) return null;
+      pieces[slot] = item;
+    }
+    return pieces;
+  }
+
+  /** candidate weapons for a combo, best stance each, scored with the locked pieces worn */
+  private comboWeaponVariants(
+    tpl: ComboTemplate,
+    shortlist: WeaponVariant[],
+    pieces: Partial<PlayerEquipment>,
+    base = false,
+  ): WeaponVariant[] {
+    const allowed = (i: EquipmentPiece) => (base ? this.isAllowedBase(i) : this.isAllowed(i));
+    const weapons = new Map<number, EquipmentPiece>();
+    for (const name of tpl.weapons ?? []) {
+      const w = resolveByName(name, allowed);
+      if (w) weapons.set(w.id, w);
+    }
+    if (!tpl.weapons || tpl.alsoShortlist) {
+      for (const v of shortlist) weapons.set(v.weapon.id, v.weapon);
+    }
+
+    const perWeapon: { v: WeaponVariant; score: number }[] = [];
+    for (const w of weapons.values()) {
+      let best: { v: WeaponVariant; score: number } | null = null;
+      for (const v of this.variantsForWeapon(w, tpl.group, { styleTypes: tpl.styleTypes, unrestricted: base })) {
+        const eq: Partial<PlayerEquipment> = { ...pieces, weapon: v.weapon };
+        if (v.weapon.isTwoHanded) eq.shield = null;
+        const ammo = this.quickAmmoFor(v.weapon);
+        if (ammo) eq.ammo = ammo;
+        if (this.weaponNeedsAmmo(v.weapon) && !ammo) continue;
+        const score = this.score(eq, v.style, v.spell);
+        if (score > 0 && (!best || score > best.score)) best = { v, score };
+      }
+      if (best) perWeapon.push(best);
+    }
+    perWeapon.sort((a, b) => b.score - a.score);
+    return perWeapon.slice(0, 3).map((p) => p.v);
+  }
+
+  /**
+   * Full-set combo entries: each template's pieces locked, remaining slots
+   * optimised. This is what surfaces sets the per-slot search can't reach
+   * (no single piece improves the setup until the whole set is worn).
+   */
+  private comboEntries(group: StyleGroup, shortlist: WeaponVariant[]): OptimisedEntry[] {
+    const out: OptimisedEntry[] = [];
+    for (const tpl of COMBO_TEMPLATES) {
+      if (tpl.group !== group) continue;
+      const pieces = this.resolveComboPieces(tpl);
+      if (!pieces) continue;
+      for (const v of this.comboWeaponVariants(tpl, shortlist, pieces)) {
+        const eq = this.optimiseArmour(v, pieces);
+        const style = this.bestStyleFor(v.weapon, group, eq, v.spell, tpl.styleTypes);
+        const setup = this.finalise(eq, style, v.spell, group);
+        if (setup.dps <= 0.0001 || setup.metric <= 0.0001) continue;
+        out.push({
+          v, eq, style, setup,
+        });
+      }
+    }
+    return out;
   }
 
   private toResultItem(item: EquipmentPiece, slot: string): ResultItem {
@@ -451,6 +543,7 @@ export class Solver {
   }
 
   private finalise(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null, group: StyleGroup): SolvedSetup {
+    const combo = comboOf(group, eq.weapon?.name, style.type, (slot) => eq[slot]?.name);
     const player = buildPlayer(this.cfg, this.monster, eq, style, spell);
     const calc = new PlayerVsNPCCalc(player, this.monster, { loadoutName: 'solver' });
     const items: SolvedSetup['items'] = {};
@@ -501,6 +594,7 @@ export class Solver {
       styleName: style.name,
       styleStance: style.stance ?? '',
       spellName: spell?.name ?? null,
+      combo,
       items,
       metric,
       xpHr: this.mode === 'training' ? metric : null,
@@ -539,7 +633,7 @@ export class Solver {
 
     if (shortlist.length === 0) {
       return {
-        styleGroup: group, immune: true, best: null, setups: [], alternatives: {},
+        styleGroup: group, immune: true, best: null, setups: [], combos: [], alternatives: {},
       };
     }
 
@@ -553,23 +647,34 @@ export class Solver {
       };
     };
     shortlist.forEach((v, ix) => {
-      report(0.1 + 0.55 * (ix / shortlist.length), `${group}: optimising ${v.weapon.name}`);
+      report(0.1 + 0.5 * (ix / shortlist.length), `${group}: optimising ${v.weapon.name}`);
       entries.push(optimiseVariant(v));
     });
 
-    // light mode (training-spot ranking): best setup only, no alternatives
+    // light mode (training-spot ranking): best setup only, no alternatives or combos
     if (light) {
       entries.sort((a, b) => b.setup.metric - a.setup.metric);
       const lightBest = entries[0].setup;
       if (lightBest.dps <= 0.0001 || lightBest.metric <= 0.0001) {
         return {
-          styleGroup: group, immune: true, best: null, setups: [], alternatives: {},
+          styleGroup: group, immune: true, best: null, setups: [], combos: [], alternatives: {},
         };
       }
       return {
-        styleGroup: group, immune: false, best: lightBest, setups: [lightBest], alternatives: {},
+        styleGroup: group, immune: false, best: lightBest, setups: [lightBest], combos: [], alternatives: {},
       };
     }
+
+    // full-set combos compete alongside the per-weapon entries
+    report(0.62, `${group}: full-set combos`);
+    entries.push(...this.comboEntries(group, shortlist));
+    const comboBest = new Map<string, SolvedSetup>();
+    for (const e of entries) {
+      if (!e.setup.combo) continue; // the per-slot ascent can also land on a full set
+      const cur = comboBest.get(e.setup.combo.name);
+      if (!cur || e.setup.metric > cur.metric) comboBest.set(e.setup.combo.name, e.setup);
+    }
+    const combos = [...comboBest.values()].sort((a, b) => b.metric - a.metric);
 
     // Phase C: per-slot alternatives against the winning setup. If the weapon
     // ranking (now computed against real armour) surfaces a weapon that beats
@@ -581,7 +686,7 @@ export class Solver {
       best = entries[0].setup;
       if (best.dps <= 0.0001 || best.metric <= 0.0001) {
         return {
-          styleGroup: group, immune: true, best: null, setups: [], alternatives: {},
+          styleGroup: group, immune: true, best: null, setups: [], combos: [], alternatives: {},
         };
       }
       report(0.7 + round * 0.1, `${group}: ranking alternatives`);
@@ -595,7 +700,16 @@ export class Solver {
         entries.push(optimiseVariant(v));
       }
     }
-    const sortedSetups = entries.map((e) => e.setup);
+    // the combo path and the per-slot ascent can converge on the same loadout
+    const seenLoadouts = new Set<string>();
+    const sortedSetups = entries
+      .filter((e) => {
+        const key = this.loadoutKey(e.eq, e.style, e.v.spell);
+        if (seenLoadouts.has(key)) return false;
+        seenLoadouts.add(key);
+        return true;
+      })
+      .map((e) => e.setup);
     [this.bestEntries[group]] = entries;
 
     report(1, `${group}: done`);
@@ -604,6 +718,7 @@ export class Solver {
       immune: false,
       best,
       setups: sortedSetups.slice(0, 5),
+      combos,
       alternatives,
     };
   }
@@ -683,6 +798,50 @@ export class Solver {
           if (dps <= 0) continue;
           const metric = this.metricOf(dps, speed, bestStyle, bestVariant.spell);
           push(cand, slot, metric, bestMetric, group);
+        }
+      }
+    }
+
+    // full-set bundles: price the missing pieces of each combo against the owned best
+    for (const group of Object.keys(this.bestEntries) as StyleGroup[]) {
+      const entry = this.bestEntries[group];
+      if (!entry || entry.setup.metric <= 0) continue;
+      const bestMetric = entry.setup.metric;
+      for (const tpl of COMBO_TEMPLATES) {
+        if (tpl.group !== group) continue;
+        const pieces = this.resolveComboPieces(tpl, true);
+        if (!pieces) continue;
+        for (const v of this.comboWeaponVariants(tpl, [entry.v], pieces, true).slice(0, 1)) {
+          const lockedItems = [v.weapon, ...Object.values(pieces)] as EquipmentPiece[];
+          const missing = lockedItems.filter((i) => !this.owned!.has(canonicalIdOf(i.id)));
+          if (missing.length === 0) continue; // fully owned: already in the main results
+          const missingPrices = missing.map((m) => prices[m.id]);
+          if (missingPrices.some((p) => typeof p !== 'number' || p <= 0)) continue;
+          const price = (missingPrices as number[]).reduce((a, b) => a + b, 0);
+
+          const eq = this.optimiseArmour(v, pieces);
+          const style = this.bestStyleFor(v.weapon, group, eq, v.spell, tpl.styleTypes);
+          const { dps, speed } = this.evalLite(eq, style, v.spell);
+          if (dps <= 0) continue;
+          const metric = this.metricOf(dps, speed, style, v.spell);
+          const gainPct = ((metric - bestMetric) / bestMetric) * 100;
+          if (gainPct < 0.3) continue;
+          const existing = byName.get(tpl.name);
+          if (existing && existing.gainPct >= gainPct) continue;
+          byName.set(tpl.name, {
+            id: missing[0].id,
+            name: tpl.name,
+            version: '',
+            image: missing[0].image,
+            slot: 'set',
+            owned: false,
+            detail: missing.map((m) => m.name).join(' + '),
+            styleGroup: group,
+            metric,
+            gainPct,
+            price,
+            gainPerM: gainPct / (price / 1_000_000),
+          });
         }
       }
     }

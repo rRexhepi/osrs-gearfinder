@@ -36,6 +36,13 @@ function StatChip({ label, value, title }: { label: string; value: string; title
 function SetupCard({ setup, training }: { setup: SolvedSetup; training: boolean }) {
   return (
     <div className="bg-panel border border-border rounded-lg p-3 space-y-3">
+      {setup.combo && (
+        <div className="flex items-center gap-2 text-sm text-gold" title={setup.combo.note}>
+          <span className="bg-gold/10 border border-gold/40 rounded px-2 py-0.5 font-semibold">Full set</span>
+          <span className="font-semibold">{setup.combo.name}</span>
+          <span className="text-muted text-xs truncate hidden sm:inline">{setup.combo.note}</span>
+        </div>
+      )}
       <div className="flex flex-wrap gap-2">
         {training && setup.xpHr !== null && <StatChip label="XP/hr" value={fmtNum(setup.xpHr)} title="Capped by monster HP, includes downtime between kills" />}
         <StatChip label="DPS" value={setup.dps.toFixed(3)} />
@@ -115,6 +122,48 @@ function AltTable({ slot, alts, training }: { slot: string; alts: SlotAlternativ
   );
 }
 
+function CombosCard({ combos, best, training }: { combos: SolvedSetup[]; best: SolvedSetup; training: boolean }) {
+  const [openName, setOpenName] = useState<string | null>(null);
+  return (
+    <div className="bg-panel border border-border rounded-lg overflow-hidden">
+      <div className="px-3 py-2 text-sm font-semibold text-gold border-b border-border">Full-set combos</div>
+      <div>
+        {combos.map((c) => {
+          const deltaPct = ((c.metric - best.metric) / best.metric) * 100;
+          const isBest = deltaPct >= -0.05;
+          const open = openName === c.combo!.name;
+          return (
+            <div key={c.combo!.name} className="border-b border-border/40 last:border-0">
+              <button
+                type="button"
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left hover:bg-panel-2/50"
+                title={c.combo!.note}
+                onClick={() => setOpenName(open ? null : c.combo!.name)}
+              >
+                {c.items.weapon && <img src={iconUrl(c.items.weapon.image)} alt="" className="w-5 h-5 object-contain shrink-0" loading="lazy" />}
+                <span className="font-semibold truncate">{c.combo!.name}</span>
+                <span className="text-muted text-xs truncate flex-1">
+                  {c.items.weapon?.name}
+                  {c.spellName ? ` (${c.spellName})` : c.items.weapon?.detail ? ` (${c.items.weapon.detail})` : ''}
+                </span>
+                <span className="tabular-nums">{fmtMetric(c.metric, training)}</span>
+                <span className={clsx('tabular-nums text-xs w-14 text-right', isBest ? 'text-emerald-400' : deltaPct > -10 ? 'text-amber-400' : 'text-red-400')}>
+                  {isBest ? 'best' : `${deltaPct.toFixed(1)}%`}
+                </span>
+                <span className="text-muted text-xs w-3">{open ? '▾' : '▸'}</span>
+              </button>
+              {open && <div className="px-3 pb-3"><SetupCard setup={c} training={training} /></div>}
+            </div>
+          );
+        })}
+      </div>
+      <div className="px-3 py-1 text-[10px] text-muted border-t border-border/40">
+        Set effects evaluated as locked bundles with the remaining slots optimised - the per-slot tables can't discover these.
+      </div>
+    </div>
+  );
+}
+
 function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; training: boolean }) {
   const [byValue, setByValue] = useState(false);
   const sorted = useMemo(
@@ -175,11 +224,12 @@ function StyleSection({ style, training }: { style: StyleResult; training: boole
           <div className="text-sm font-semibold text-gold mb-1.5">Other optimised setups</div>
           <div className="space-y-1">
             {style.setups.slice(1).map((s) => (
-              <div key={`${s.items.weapon?.id}-${s.spellName ?? ''}-${s.styleStance}`} className="flex items-center gap-2 text-sm">
+              <div key={`${s.items.weapon?.id}-${s.spellName ?? ''}-${s.styleStance}-${s.combo?.name ?? ''}`} className="flex items-center gap-2 text-sm">
                 {s.items.weapon && <img src={iconUrl(s.items.weapon.image)} alt="" className="w-5 h-5 object-contain" loading="lazy" />}
                 <span className="flex-1 truncate">
                   {s.items.weapon?.name}
                   {s.spellName ? ` (${s.spellName})` : s.items.weapon?.detail ? ` (${s.items.weapon.detail})` : ''}
+                  {s.combo && <span className="text-gold text-xs"> - {s.combo.name}</span>}
                 </span>
                 <span className="tabular-nums text-muted">
                   {fmtMetric(s.metric, training)} {training ? 'xp/hr' : 'dps'}
@@ -189,6 +239,7 @@ function StyleSection({ style, training }: { style: StyleResult; training: boole
           </div>
         </div>
       )}
+      {style.combos.length > 0 && <CombosCard combos={style.combos} best={style.best} training={training} />}
       <div>
         <div className="text-sm font-semibold text-gold mb-2">Next best per slot</div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
