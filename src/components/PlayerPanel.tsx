@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { fetchPlayerSkills } from '@/utils';
 import { useStore } from '@/store';
 import { PotionPreset } from '@/solver/types';
+import { TRAINED_SKILL_LABELS, TrainedSkill } from '@/solver/xp';
 
 const SKILL_FIELDS: { key: 'atk' | 'str' | 'def' | 'ranged' | 'magic' | 'prayer'; label: string }[] = [
   { key: 'atk', label: 'Attack' },
@@ -21,7 +22,7 @@ const POTION_PRESETS: { value: PotionPreset; label: string }[] = [
 
 export default function PlayerPanel() {
   const {
-    skills, potionPreset, usePrayers, onSlayerTask, set,
+    skills, potionPreset, usePrayers, onSlayerTask, mode, trainedSkill, downtimeSeconds, set,
   } = useStore();
   const [username, setUsername] = useState('');
   const [lookupState, setLookupState] = useState<'idle' | 'loading' | 'error'>('idle');
@@ -106,6 +107,39 @@ export default function PlayerPanel() {
         />
         On slayer task
       </label>
+
+      {mode === 'training' && (
+        <div className="border border-gold/30 bg-gold/5 rounded p-2 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-gold">Training</div>
+          <label className="block text-xs text-muted">
+            Skill to train
+            <select
+              className="mt-0.5 w-full bg-panel-2 border border-border rounded px-2 py-1.5 text-sm text-parchment"
+              value={trainedSkill}
+              onChange={(e) => set({ trainedSkill: e.target.value as TrainedSkill, result: null, spots: null })}
+            >
+              {(Object.keys(TRAINED_SKILL_LABELS) as TrainedSkill[]).map((k) => (
+                <option key={k} value={k}>{TRAINED_SKILL_LABELS[k]}</option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-xs text-muted">
+            Downtime between kills (seconds)
+            <input
+              type="number"
+              min={0}
+              max={120}
+              className="mt-0.5 w-full bg-panel-2 border border-border rounded px-2 py-1 text-sm text-parchment"
+              value={downtimeSeconds}
+              onChange={(e) => set({ downtimeSeconds: Math.max(0, Number(e.target.value)) })}
+            />
+          </label>
+          <div className="text-[10px] text-muted">
+            Ranks gear by XP/hr in the chosen skill. XP is capped by monster HP
+            (no overkill), stances are limited to ones that train it.
+          </div>
+        </div>
+      )}
     </div>
   );
 }

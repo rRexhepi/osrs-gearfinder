@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { getMonsters } from '@/lib/Monsters';
 import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
 import { getWikiImage } from '@/utils';
+import { SLAYER_TASKS, findTargetMonster } from '@/solver/targets';
 import { useStore } from '@/store';
 
 const allMonsters = getMonsters().filter((m) => m.skills.hp > 0);
@@ -64,6 +65,30 @@ export default function MonsterPicker() {
           </div>
         )}
       </div>
+
+      <label className="block text-xs text-muted">
+        Or pick a slayer task
+        <select
+          className="mt-0.5 w-full bg-panel-2 border border-border rounded px-2 py-1.5 text-sm text-parchment"
+          value=""
+          onChange={(e) => {
+            const task = SLAYER_TASKS.find((t) => t.task === e.target.value);
+            if (!task) return;
+            const m = findTargetMonster(task.name, task.version);
+            if (!m) return;
+            set({
+              monster: {
+                id: m.id, name: m.name, version: m.version ?? '', image: m.image ?? '',
+              },
+              onSlayerTask: true,
+              result: null,
+            });
+          }}
+        >
+          <option value="">Slayer task...</option>
+          {SLAYER_TASKS.map((t) => <option key={t.task} value={t.task}>{t.task}</option>)}
+        </select>
+      </label>
 
       {monster && (
         <div className="flex items-center gap-3 bg-panel-2 border border-border rounded p-2">

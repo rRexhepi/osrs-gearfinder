@@ -24,6 +24,10 @@ import {
   isSpecialItem,
 } from './data';
 import { CORRUPTED_GAUNTLET_MONSTER_IDS, GAUNTLET_MONSTER_IDS } from '@/lib/constants';
+import NPCVsPlayerCalc from '@/lib/NPCVsPlayerCalc';
+import {
+  PriceMap, TrainedSkill, consumableCostPerHour, xpPerDamage, xpPerHour,
+} from './xp';
 import {
   LoadoutConfig,
   blowpipeWithDart,
@@ -40,6 +44,7 @@ import {
   SolvedSetup,
   StyleGroup,
   StyleResult,
+  UpgradeSuggestion,
 } from './types';
 
 const ARMOUR_SLOTS: Slot[] = ['head', 'body', 'legs', 'neck', 'cape', 'hands', 'feet', 'ring', 'shield', 'ammo'];
@@ -86,7 +91,7 @@ export class Solver {
 
   private excluded: Set<number>;
 
-  private memo = new Map<string, number>();
+  private memo = new Map<string, { dps: number; speed: number }>();
 
   private candidateCache = new Map<string, EquipmentPiece[]>();
 
@@ -94,6 +99,17 @@ export class Solver {
   private inGauntlet: boolean;
 
   private loggedEvalError = false;
+
+  /** winning optimised entry per style group, kept for the upgrade advisor */
+  private bestEntries: Partial<Record<StyleGroup, OptimisedEntry>> = {};
+
+  private mode: 'boss' | 'training';
+
+  private trainedSkill: TrainedSkill;
+
+  private downtime: number;
+
+  private prices: PriceMap | null;
 
   evals = 0;
 
@@ -108,15 +124,25 @@ export class Solver {
     this.monster = buildMonster(request.monsterId, request.monsterVersion, request.monsterInputs);
     this.inGauntlet = GAUNTLET_MONSTER_IDS.includes(this.monster.id)
       || CORRUPTED_GAUNTLET_MONSTER_IDS.includes(this.monster.id);
+    this.mode = request.mode ?? 'boss';
+    this.trainedSkill = request.trainedSkill ?? 'str';
+    this.downtime = request.downtimeSeconds ?? (this.mode === 'training' ? 5 : 0);
+    this.prices = request.prices ?? null;
     this.owned = request.ownedIds === null ? null : new Set(request.ownedIds.map(canonicalIdOf));
     this.restrictToOwned = request.restrictToOwned && this.owned !== null;
     this.excluded = new Set(request.excludedIds.map(canonicalIdOf));
   }
 
-  private isAllowed(item: EquipmentPiece): boolean {
+  /** allowed ignoring ownership (mode/gauntlet/exclusion filters only) */
+  private isAllowedBase(item: EquipmentPiece): boolean {
     if (this.excluded.has(item.id)) return false;
     if (isModeRestricted(item)) return false;
     if (isGauntletItem(item) && !this.inGauntlet) return false;
+    return true;
+  }
+
+  private isAllowed(item: EquipmentPiece): boolean {
+    if (!this.isAllowedBase(item)) return false;
     if (!this.restrictToOwned) return true;
     return this.owned!.has(item.id);
   }
@@ -127,6 +153,17 @@ export class Solver {
     let list = this.candidateCache.get(key);
     if (!list) {
       list = equipmentBySlot(slot).filter((i) => this.isAllowed(i));
+      this.candidateCache.set(key, list);
+    }
+    return list;
+  }
+
+  /** all base-allowed items for a slot, ignoring ownership (for the upgrade advisor) */
+  private baseAllowedForSlot(slot: Slot): EquipmentPiece[] {
+    const key = `base|${slot}`;
+    let list = this.candidateCache.get(key);
+    if (!list) {
+      list = equipmentBySlot(slot).filter((i) => this.isAllowedBase(i));
       this.candidateCache.set(key, list);
     }
     return list;
@@ -171,48 +208,92 @@ export class Solver {
     return `${ids}|${dart}|${style.name}|${style.stance}|${spell?.name ?? ''}`;
   }
 
-  private dps(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null): number {
+  private evalLite(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null): { dps: number; speed: number } {
     const key = this.loadoutKey(eq, style, spell);
     const cached = this.memo.get(key);
     if (cached !== undefined) return cached;
-    let dps = 0;
+    let result = { dps: 0, speed: 4 };
     try {
       const player = buildPlayer(this.cfg, this.monster, eq, style, spell);
       const calc = new PlayerVsNPCCalc(player, this.monster, { loadoutName: 'solver' });
-      dps = calc.getDps();
-      if (!Number.isFinite(dps)) dps = 0;
+      const dps = calc.getDps();
+      result = { dps: Number.isFinite(dps) ? dps : 0, speed: player.attackSpeed };
     } catch (err) {
       if (!this.loggedEvalError) {
         this.loggedEvalError = true;
         // eslint-disable-next-line no-console
         console.warn('[solver] loadout eval failed (first occurrence)', err);
       }
-      dps = 0;
     }
     this.evals += 1;
-    this.memo.set(key, dps);
-    return dps;
+    this.memo.set(key, result);
+    return result;
+  }
+
+  private dps(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null): number {
+    return this.evalLite(eq, style, spell).dps;
+  }
+
+  /** the ranking metric: dps in boss mode, xp/hr in the trained skill otherwise */
+  private score(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null): number {
+    const { dps, speed } = this.evalLite(eq, style, spell);
+    return this.metricOf(dps, speed, style, spell);
+  }
+
+  private metricOf(dps: number, speed: number, style: PlayerCombatStyle, spell: Spell | null): number {
+    if (this.mode !== 'training') return dps;
+    return xpPerHour({
+      skill: this.trainedSkill,
+      style,
+      spell,
+      dps,
+      attackSpeedTicks: speed,
+      monsterHp: this.monster.skills.hp,
+      downtimeSeconds: this.downtime,
+    });
+  }
+
+  /**
+   * Whether a stance is worth considering. Boss mode skips defensive stances;
+   * training mode instead requires the style to award XP in the trained skill
+   * (which brings Defensive/Controlled/Longrange stances into play).
+   */
+  private stanceEligible(style: PlayerCombatStyle, isSalamander: boolean): boolean {
+    if (!style.type || !style.stance) return false;
+    if (style.stance === 'Manual Cast') return false;
+    if (this.mode === 'training') {
+      return xpPerDamage(style, this.trainedSkill) > 0;
+    }
+    if (isSalamander) return true;
+    return style.stance !== 'Defensive' && style.stance !== 'Longrange' && style.stance !== 'Defensive Autocast';
+  }
+
+  private isCastStance(stance: string | null): boolean {
+    return stance === 'Autocast' || stance === 'Defensive Autocast';
   }
 
   /** enumerate (weapon, style, spell) variants for a style group */
-  private weaponVariants(group: StyleGroup): WeaponVariant[] {
+  private weaponVariants(group: StyleGroup, unrestricted = false): WeaponVariant[] {
     const out: WeaponVariant[] = [];
     const magicLevel = this.cfg.skills.magic;
+    const pool = unrestricted ? this.baseAllowedForSlot('weapon') : this.allowedForSlot('weapon');
 
-    for (const weapon of this.allowedForSlot('weapon')) {
+    for (const weapon of pool) {
       // novelty/unknown weapons carry speed -1 in the data, which the engine
       // clamps to 1 tick and turns into nonsense DPS
       if (weapon.speed <= 0) continue;
       const styles = getCombatStylesForCategory(weapon.category);
       const isSalamander = weapon.category === EquipmentCategory.SALAMANDER;
+      const seenStyles = new Set<string>();
 
       for (const style of styles) {
-        if (!style.type || !style.stance) continue;
-        if (style.stance === 'Manual Cast') continue;
-        if (!isSalamander && (style.stance === 'Defensive' || style.stance === 'Longrange' || style.stance === 'Defensive Autocast')) continue;
+        if (!this.stanceEligible(style, isSalamander)) continue;
         if (styleGroupOf(style) !== group) continue;
+        const styleKey = `${style.name}|${style.type}|${style.stance}`;
+        if (seenStyles.has(styleKey)) continue;
+        seenStyles.add(styleKey);
 
-        if (style.stance === 'Autocast') {
+        if (this.isCastStance(style.stance)) {
           // needs a spell; enumerate the sensible ones for this weapon
           for (const spell of this.spellsFor(weapon, magicLevel)) {
             out.push({
@@ -222,13 +303,13 @@ export class Solver {
           continue;
         }
 
-        if (group === 'magic' && !POWERED_CATEGORIES.includes(weapon.category) && !isSalamander) {
-          // non-powered "magic" styles without autocast (e.g. staff bash Focus) are useless
+        if (style.type === 'magic' && !POWERED_CATEGORIES.includes(weapon.category) && !isSalamander) {
+          // non-powered magic styles without autocast are useless
           continue;
         }
 
         if (BLOWPIPE_IDS.includes(weapon.id)) {
-          const dart = this.bestOwnedDart();
+          const dart = this.bestOwnedDart() ?? (unrestricted ? dartByName(DART_NAMES[0]) : undefined);
           if (!dart) continue;
           out.push({
             weapon: blowpipeWithDart(weapon, dart), style, spell: null, group,
@@ -343,18 +424,16 @@ export class Solver {
   private bestStyleFor(weapon: EquipmentPiece, group: StyleGroup, eq: Partial<PlayerEquipment>, spell: Spell | null): PlayerCombatStyle {
     const isSalamander = weapon.category === EquipmentCategory.SALAMANDER;
     const styles = getCombatStylesForCategory(weapon.category).filter((s) => {
-      if (!s.type || !s.stance) return false;
-      if (s.stance === 'Manual Cast') return false;
-      if (spell !== null) return s.stance === 'Autocast';
-      if (s.stance === 'Autocast' || s.stance === 'Defensive Autocast') return false;
-      if (!isSalamander && (s.stance === 'Defensive' || s.stance === 'Longrange')) return false;
+      if (!this.stanceEligible(s, isSalamander)) return false;
+      if (spell !== null) return this.isCastStance(s.stance);
+      if (this.isCastStance(s.stance)) return false;
       return styleGroupOf(s) === group;
     });
     let best = styles[0];
-    let bestDps = -1;
+    let bestScore = -1;
     for (const s of styles) {
-      const d = this.dps(eq, s, spell);
-      if (d > bestDps) { bestDps = d; best = s; }
+      const d = this.score(eq, s, spell);
+      if (d > bestScore) { bestScore = d; best = s; }
     }
     return best;
   }
@@ -380,9 +459,41 @@ export class Solver {
       if (item) items[slot] = this.toResultItem(item, slot);
     }
     if (spell && items.weapon) items.weapon.detail = spell.name;
+
+    const dps = calc.getDps();
+    const metric = this.metricOf(dps, player.attackSpeed, style, spell);
+
+    let dmgTakenHr: number | null = null;
+    try {
+      const npcDps = new NPCVsPlayerCalc(player, this.monster, { loadoutName: 'solver' }).getDps();
+      if (Number.isFinite(npcDps)) dmgTakenHr = npcDps * 3600;
+    } catch {
+      dmgTakenHr = null;
+    }
+
+    let costHr: number | null = null;
+    let costParts: string[] = [];
+    if (this.prices && eq.weapon) {
+      const ttkApprox = dps > 0 ? this.monster.skills.hp / dps : 0;
+      const uptime = this.downtime > 0 && ttkApprox > 0 ? ttkApprox / (ttkApprox + this.downtime) : 1;
+      const cost = consumableCostPerHour({
+        prices: this.prices,
+        weapon: eq.weapon,
+        ammo: eq.ammo,
+        cape: eq.cape,
+        spell,
+        attackSpeedTicks: player.attackSpeed,
+        uptime,
+      });
+      if (cost) {
+        costHr = cost.gpPerHour;
+        costParts = cost.parts;
+      }
+    }
+
     return {
       styleGroup: group,
-      dps: calc.getDps(),
+      dps,
       maxHit: calc.getMax(),
       accuracy: calc.getHitChance(),
       ttk: calc.getTtk(),
@@ -391,10 +502,16 @@ export class Solver {
       styleStance: style.stance ?? '',
       spellName: spell?.name ?? null,
       items,
+      metric,
+      xpHr: this.mode === 'training' ? metric : null,
+      dmgTakenHr,
+      foodHr: dmgTakenHr !== null ? dmgTakenHr / 20 : null,
+      costHr,
+      costParts,
     };
   }
 
-  solveStyle(group: StyleGroup, progress?: ProgressFn, progressBase = 0, progressSpan = 1): StyleResult {
+  solveStyle(group: StyleGroup, progress?: ProgressFn, progressBase = 0, progressSpan = 1, light = false): StyleResult {
     const report = (frac: number, label: string) => progress?.(progressBase + frac * progressSpan, label);
     const K = this.request.weaponsPerStyle ?? 8;
 
@@ -405,10 +522,10 @@ export class Solver {
       const eq: Partial<PlayerEquipment> = { weapon: v.weapon };
       const ammo = this.quickAmmoFor(v.weapon);
       if (ammo) eq.ammo = ammo;
-      if (this.weaponNeedsAmmo(v.weapon) && !ammo) return { v, dps: 0 };
-      return { v, dps: this.dps(eq, v.style, v.spell) };
-    }).filter((s) => s.dps > 0);
-    scored.sort((a, b) => b.dps - a.dps);
+      if (this.weaponNeedsAmmo(v.weapon) && !ammo) return { v, score: 0 };
+      return { v, score: this.score(eq, v.style, v.spell) };
+    }).filter((s) => s.score > 0);
+    scored.sort((a, b) => b.score - a.score);
 
     // best variant per weapon (collapsing same-name versions), then top K weapons
     const seen = new Set<string>();
@@ -440,15 +557,29 @@ export class Solver {
       entries.push(optimiseVariant(v));
     });
 
+    // light mode (training-spot ranking): best setup only, no alternatives
+    if (light) {
+      entries.sort((a, b) => b.setup.metric - a.setup.metric);
+      const lightBest = entries[0].setup;
+      if (lightBest.dps <= 0.0001 || lightBest.metric <= 0.0001) {
+        return {
+          styleGroup: group, immune: true, best: null, setups: [], alternatives: {},
+        };
+      }
+      return {
+        styleGroup: group, immune: false, best: lightBest, setups: [lightBest], alternatives: {},
+      };
+    }
+
     // Phase C: per-slot alternatives against the winning setup. If the weapon
     // ranking (now computed against real armour) surfaces a weapon that beats
     // the chosen best, promote it through a full optimisation pass and redo.
     let alternatives: StyleResult['alternatives'] = {};
     let best: SolvedSetup;
     for (let round = 0; ; round += 1) {
-      entries.sort((a, b) => b.setup.dps - a.setup.dps);
+      entries.sort((a, b) => b.setup.metric - a.setup.metric);
       best = entries[0].setup;
-      if (best.dps <= 0.0001) {
+      if (best.dps <= 0.0001 || best.metric <= 0.0001) {
         return {
           styleGroup: group, immune: true, best: null, setups: [], alternatives: {},
         };
@@ -457,7 +588,7 @@ export class Solver {
       alternatives = this.buildAlternatives(entries[0], variants, best);
       const topAlt = alternatives.weapon?.[0];
       const shouldPromote = round < 2 && topAlt
-        && topAlt.dps > best.dps * 1.002
+        && topAlt.metric > best.metric * 1.002
         && !entries.some((e) => e.v.weapon.id === topAlt.id);
       if (!shouldPromote) break;
       for (const v of variants.filter((vv) => vv.weapon.id === topAlt.id)) {
@@ -465,6 +596,7 @@ export class Solver {
       }
     }
     const sortedSetups = entries.map((e) => e.setup);
+    [this.bestEntries[group]] = entries;
 
     report(1, `${group}: done`);
     return {
@@ -474,6 +606,88 @@ export class Solver {
       setups: sortedSetups.slice(0, 5),
       alternatives,
     };
+  }
+
+  /**
+   * Ranks unowned items by how much they would improve the owned best setup,
+   * with GE price and gain-per-gp. Only meaningful after an owned-restricted solve.
+   */
+  private buildUpgrades(): UpgradeSuggestion[] | null {
+    if (!this.restrictToOwned || !this.owned || !this.prices) return null;
+    const prices = this.prices;
+    const byName = new Map<string, UpgradeSuggestion>();
+
+    const push = (item: EquipmentPiece, slot: string, metric: number, bestMetric: number, group: StyleGroup, detail?: string) => {
+      const gainPct = ((metric - bestMetric) / bestMetric) * 100;
+      if (gainPct < 0.3) return;
+      const price = prices[item.id];
+      if (typeof price !== 'number' || price <= 0) return;
+      const existing = byName.get(item.name);
+      if (existing && existing.gainPct >= gainPct) return;
+      byName.set(item.name, {
+        ...this.toResultItem(item, slot),
+        detail,
+        owned: false,
+        styleGroup: group,
+        metric,
+        gainPct,
+        price,
+        gainPerM: gainPct / (price / 1_000_000),
+      });
+    };
+
+    for (const group of Object.keys(this.bestEntries) as StyleGroup[]) {
+      const entry = this.bestEntries[group];
+      if (!entry) continue;
+      const { eq: bestEq, style: bestStyle, v: bestVariant } = entry;
+      const bestMetric = entry.setup.metric;
+      if (bestMetric <= 0) continue;
+
+      // weapons: every unowned variant against the owned best armour
+      for (const v of this.weaponVariants(group, true)) {
+        if (this.owned.has(v.weapon.id)) continue;
+        const eq: Partial<PlayerEquipment> = { ...bestEq, weapon: v.weapon };
+        if (v.weapon.isTwoHanded) eq.shield = null;
+        if (this.weaponNeedsAmmo(v.weapon)) {
+          const currentOk = eq.ammo && ammoApplicability(v.weapon.id, eq.ammo.id) === AmmoApplicability.INCLUDED;
+          if (!currentOk) {
+            const ammo = this.quickAmmoFor(v.weapon);
+            if (!ammo) continue;
+            eq.ammo = ammo;
+          }
+        }
+        const { dps, speed } = this.evalLite(eq, v.style, v.spell);
+        if (dps <= 0) continue;
+        const metric = this.metricOf(dps, speed, v.style, v.spell);
+        push(v.weapon, 'weapon', metric, bestMetric, group, v.spell?.name ?? v.weapon.itemVars?.blowpipeDartName);
+      }
+
+      // armour: top unowned candidates per slot by raw stats, plus specials
+      const t = bestStyle.type;
+      for (const slot of ARMOUR_SLOTS) {
+        if (slot === 'shield' && bestVariant.weapon.isTwoHanded) continue;
+        let pool = this.baseAllowedForSlot(slot).filter((i) => !this.owned!.has(i.id));
+        if (slot === 'ammo') {
+          const needsAmmo = this.weaponNeedsAmmo(bestVariant.weapon);
+          pool = pool.filter((a) => {
+            const ap = ammoApplicability(bestVariant.weapon.id, a.id);
+            return needsAmmo ? ap === AmmoApplicability.INCLUDED : ap !== AmmoApplicability.INVALID;
+          });
+        }
+        const ranked = pool
+          .filter((i) => isSpecialItem(i) || offensiveDim(i, t) > 0 || strengthDim(i, t) > 0 || i.bonuses.prayer > 0)
+          .sort((a, b) => (offensiveDim(b, t) + strengthDim(b, t) * 2) - (offensiveDim(a, t) + strengthDim(a, t) * 2))
+          .slice(0, 30);
+        for (const cand of ranked) {
+          const { dps, speed } = this.evalLite({ ...bestEq, [slot]: cand }, bestStyle, bestVariant.spell);
+          if (dps <= 0) continue;
+          const metric = this.metricOf(dps, speed, bestStyle, bestVariant.spell);
+          push(cand, slot, metric, bestMetric, group);
+        }
+      }
+    }
+
+    return [...byName.values()].sort((a, b) => b.gainPct - a.gainPct).slice(0, 30);
   }
 
   /** per-slot alternative rankings holding the rest of the best setup fixed */
@@ -507,20 +721,22 @@ export class Solver {
           eq.ammo = ammo;
         }
       }
-      const dps = this.dps(eq, v.style, v.spell);
+      const { dps, speed } = this.evalLite(eq, v.style, v.spell);
       if (dps <= 0) continue;
+      const metric = this.metricOf(dps, speed, v.style, v.spell);
+      if (metric <= 0) continue;
       // collapse charged/uncharged and cosmetic versions that share a display name
       const altKey = v.weapon.name;
       const existing = weaponAlts.get(altKey);
-      if (!existing || dps > existing.dps) {
+      if (!existing || metric > existing.metric) {
         const item = this.toResultItem(v.weapon, 'weapon');
         if (v.spell) item.detail = v.spell.name;
         weaponAlts.set(altKey, {
-          ...item, dps, deltaPct: ((dps - best.dps) / best.dps) * 100,
+          ...item, dps, metric, deltaPct: ((metric - best.metric) / best.metric) * 100,
         });
       }
     }
-    alternatives.weapon = [...weaponAlts.values()].sort((a, b) => b.dps - a.dps).slice(0, 40);
+    alternatives.weapon = [...weaponAlts.values()].sort((a, b) => b.metric - a.metric).slice(0, 40);
 
     for (const slot of ARMOUR_SLOTS) {
       if (slot === 'shield' && bestVariant.weapon.isTwoHanded) {
@@ -532,22 +748,24 @@ export class Solver {
         : this.altPool(slot, bestStyle.type);
       const bySlotName = new Map<string, SlotAlternative>();
       for (const cand of pool) {
-        const dps = this.dps({ ...bestEq, [slot]: cand }, bestStyle, bestVariant.spell);
+        const { dps, speed } = this.evalLite({ ...bestEq, [slot]: cand }, bestStyle, bestVariant.spell);
         if (dps <= 0) continue;
+        const metric = this.metricOf(dps, speed, bestStyle, bestVariant.spell);
         const existing = bySlotName.get(cand.name);
-        if (existing && existing.dps >= dps) continue;
+        if (existing && existing.metric >= metric) continue;
         bySlotName.set(cand.name, {
           ...this.toResultItem(cand, slot),
           dps,
-          deltaPct: ((dps - best.dps) / best.dps) * 100,
+          metric,
+          deltaPct: ((metric - best.metric) / best.metric) * 100,
         });
       }
-      const alts = [...bySlotName.values()].sort((a, b) => b.dps - a.dps);
+      const alts = [...bySlotName.values()].sort((a, b) => b.metric - a.metric);
       // make it explicit when leaving the slot empty is the best option
       // (e.g. melee armour with ranged penalties in an owned-only search)
-      if (!bestEq[slot] && alts.length > 0 && alts[0].dps < best.dps) {
+      if (!bestEq[slot] && alts.length > 0 && alts[0].metric < best.metric) {
         alts.unshift({
-          id: -1, name: 'Nothing (leave empty)', version: '', image: '', slot, owned: true, dps: best.dps, deltaPct: 0,
+          id: -1, name: 'Nothing (leave empty)', version: '', image: '', slot, owned: true, dps: best.dps, metric: best.metric, deltaPct: 0,
         });
       }
       alternatives[slot] = alts.slice(0, 40);
@@ -586,12 +804,16 @@ export class Solver {
     const groups: StyleGroup[] = ['melee', 'ranged', 'magic'];
     const styles = groups.map((g, ix) => this.solveStyle(g, progress, ix / 3, 1 / 3));
     const withBest = styles.filter((s) => s.best !== null);
-    withBest.sort((a, b) => (b.best?.dps ?? 0) - (a.best?.dps ?? 0));
+    withBest.sort((a, b) => (b.best?.metric ?? 0) - (a.best?.metric ?? 0));
+    const upgrades = this.request.includeUpgrades ? this.buildUpgrades() : null;
     return {
       monsterId: this.request.monsterId,
       monsterVersion: this.request.monsterVersion,
       styles,
       bestStyle: withBest[0]?.styleGroup ?? null,
+      mode: this.mode,
+      trainedSkill: this.mode === 'training' ? this.trainedSkill : null,
+      upgrades,
       elapsedMs: Date.now() - started,
       evals: this.evals,
     };

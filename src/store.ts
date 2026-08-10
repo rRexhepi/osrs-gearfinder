@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { PlayerSkills } from '@/types/Player';
-import { PotionPreset, SolveResult } from '@/solver/types';
+import {
+  PotionPreset, RankTargetsResult, SolveMode, SolveResult,
+} from '@/solver/types';
+import { TrainedSkill } from '@/solver/xp';
 
 export interface MonsterChoice {
   id: number;
@@ -24,11 +27,18 @@ interface GearFinderState {
   hasImportedBank: boolean;
   restrictToOwned: boolean;
 
+  mode: SolveMode;
+  trainedSkill: TrainedSkill;
+  downtimeSeconds: number;
+
   // transient (not persisted)
   result: SolveResult | null;
   solving: boolean;
   progress: number;
   progressLabel: string;
+  spots: RankTargetsResult | null;
+  rankingSpots: boolean;
+  havePrices: boolean;
 
   set: (partial: Partial<GearFinderState>) => void;
   addOwned: (ids: number[]) => void;
@@ -56,10 +66,17 @@ export const useStore = create<GearFinderState>()(
       hasImportedBank: false,
       restrictToOwned: false,
 
+      mode: 'boss',
+      trainedSkill: 'str',
+      downtimeSeconds: 5,
+
       result: null,
       solving: false,
       progress: 0,
       progressLabel: '',
+      spots: null,
+      rankingSpots: false,
+      havePrices: false,
 
       set: (partial) => set(partial),
       addOwned: (ids) => set((s) => ({
@@ -82,6 +99,9 @@ export const useStore = create<GearFinderState>()(
         ownedIds: s.ownedIds,
         hasImportedBank: s.hasImportedBank,
         restrictToOwned: s.restrictToOwned,
+        mode: s.mode,
+        trainedSkill: s.trainedSkill,
+        downtimeSeconds: s.downtimeSeconds,
       }),
     },
   ),

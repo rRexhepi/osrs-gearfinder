@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import {
-  SlotAlternative, SolvedSetup, StyleGroup, StyleResult,
+  SlotAlternative, SolvedSetup, StyleGroup, StyleResult, UpgradeSuggestion,
 } from '@/solver/types';
+import { fmtGp, fmtMetric, fmtNum } from '@/format';
 import { useStore } from '@/store';
 
 const iconUrl = (image: string) => `/cdn/equipment/${image}`;
@@ -23,24 +24,28 @@ function OwnedDot({ owned }: { owned: boolean }) {
   );
 }
 
-function StatChip({ label, value }: { label: string; value: string }) {
+function StatChip({ label, value, title }: { label: string; value: string; title?: string }) {
   return (
-    <div className="bg-panel-2 border border-border rounded px-2 py-1 text-center">
+    <div className="bg-panel-2 border border-border rounded px-2 py-1 text-center" title={title}>
       <div className="text-[10px] uppercase text-muted">{label}</div>
       <div className="text-sm font-semibold">{value}</div>
     </div>
   );
 }
 
-function SetupCard({ setup }: { setup: SolvedSetup }) {
+function SetupCard({ setup, training }: { setup: SolvedSetup; training: boolean }) {
   return (
     <div className="bg-panel border border-border rounded-lg p-3 space-y-3">
       <div className="flex flex-wrap gap-2">
+        {training && setup.xpHr !== null && <StatChip label="XP/hr" value={fmtNum(setup.xpHr)} title="Capped by monster HP, includes downtime between kills" />}
         <StatChip label="DPS" value={setup.dps.toFixed(3)} />
         <StatChip label="Max hit" value={String(setup.maxHit)} />
         <StatChip label="Accuracy" value={`${(setup.accuracy * 100).toFixed(1)}%`} />
         <StatChip label="TTK" value={`${setup.ttk.toFixed(1)}s`} />
         <StatChip label="Speed" value={`${setup.attackSpeed}t`} />
+        {setup.dmgTakenHr !== null && <StatChip label="Dmg taken/hr" value={fmtNum(setup.dmgTakenHr)} title="Expected damage taken while in combat, no protection prayers" />}
+        {setup.foodHr !== null && setup.foodHr > 1 && <StatChip label="Food/hr" value={setup.foodHr.toFixed(0)} title="Sharks (20 hp) needed per hour in constant combat" />}
+        {setup.costHr !== null && <StatChip label="Cost/hr" value={fmtGp(setup.costHr)} title={`Estimated consumables: ${setup.costParts.join(', ')}`} />}
       </div>
       <div className="text-xs text-muted">
         {setup.styleName} ({setup.styleStance})
@@ -69,7 +74,7 @@ function SetupCard({ setup }: { setup: SolvedSetup }) {
   );
 }
 
-function AltTable({ slot, alts }: { slot: string; alts: SlotAlternative[] }) {
+function AltTable({ slot, alts, training }: { slot: string; alts: SlotAlternative[]; training: boolean }) {
   const [expanded, setExpanded] = useState(false);
   if (alts.length === 0) return null;
   const shown = expanded ? alts : alts.slice(0, 8);
@@ -89,7 +94,7 @@ function AltTable({ slot, alts }: { slot: string; alts: SlotAlternative[] }) {
                 {a.detail ? <span className="text-muted text-xs"> ({a.detail})</span> : null}
               </td>
               <td className="py-1 pr-2 w-5"><OwnedDot owned={a.owned} /></td>
-              <td className="py-1 pr-2 text-right tabular-nums w-16">{a.dps.toFixed(2)}</td>
+              <td className="py-1 pr-2 text-right tabular-nums w-16">{fmtMetric(a.metric, training)}</td>
               <td className={clsx('py-1 pr-3 text-right tabular-nums w-16 text-xs', a.deltaPct >= -0.05 ? 'text-emerald-400' : a.deltaPct > -10 ? 'text-amber-400' : 'text-red-400')}>
                 {a.deltaPct >= -0.05 ? 'best' : `${a.deltaPct.toFixed(1)}%`}
               </td>
@@ -110,30 +115,75 @@ function AltTable({ slot, alts }: { slot: string; alts: SlotAlternative[] }) {
   );
 }
 
-function StyleSection({ style }: { style: StyleResult }) {
+function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; training: boolean }) {
+  const [byValue, setByValue] = useState(false);
+  const sorted = useMemo(
+    () => [...upgrades].sort((a, b) => (byValue ? b.gainPerM - a.gainPerM : b.gainPct - a.gainPct)),
+    [upgrades, byValue],
+  );
+  if (upgrades.length === 0) return null;
+  return (
+    <div className="bg-panel border border-gold/40 rounded-lg overflow-hidden">
+      <div className="px-3 py-2 flex items-center justify-between border-b border-border">
+        <span className="text-sm font-semibold text-gold">Upgrade advisor - biggest gains over your bank</span>
+        <button
+          type="button"
+          className="text-xs text-muted hover:text-parchment"
+          onClick={() => setByValue(!byValue)}
+        >
+          sort: {byValue ? 'value (gain per gp)' : 'raw gain'}
+        </button>
+      </div>
+      <table className="w-full text-sm">
+        <tbody>
+          {sorted.slice(0, 12).map((u) => (
+            <tr key={`${u.name}-${u.styleGroup}`} className="border-b border-border/40 last:border-0">
+              <td className="pl-3 py-1 w-8"><img src={iconUrl(u.image)} alt="" className="w-5 h-5 object-contain" loading="lazy" /></td>
+              <td className="py-1 pr-2">
+                {u.name}
+                {u.detail ? <span className="text-muted text-xs"> ({u.detail})</span> : null}
+                <span className="text-muted text-xs"> - {SLOT_LABELS[u.slot] ?? u.slot}, {u.styleGroup}</span>
+              </td>
+              <td className="py-1 pr-2 text-right tabular-nums text-emerald-400 w-20">+{u.gainPct.toFixed(1)}%</td>
+              <td className="py-1 pr-2 text-right tabular-nums w-24">{fmtGp(u.price)}</td>
+              <td className="py-1 pr-3 text-right tabular-nums text-muted text-xs w-28">{u.gainPerM.toFixed(2)}%/m gp</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="px-3 py-1 text-[10px] text-muted border-t border-border/40">
+        {training ? 'Gain in XP/hr' : 'Gain in DPS'} if swapped into your best owned setup. GE mid prices.
+      </div>
+    </div>
+  );
+}
+
+function StyleSection({ style, training }: { style: StyleResult; training: boolean }) {
   if (style.immune || !style.best) {
     return (
       <div className="text-muted text-sm bg-panel border border-border rounded-lg p-4">
-        This monster can&apos;t reasonably be damaged with {style.styleGroup} (immune, or no usable weapon found).
+        No usable {style.styleGroup} setup {training ? 'trains this skill here' : 'can damage this monster'} (immunity, or no eligible weapon).
       </div>
     );
   }
   const altSlots = SLOT_ORDER.filter((s) => (style.alternatives[s]?.length ?? 0) > 0);
   return (
     <div className="space-y-4">
-      <SetupCard setup={style.best} />
+      <SetupCard setup={style.best} training={training} />
       {style.setups.length > 1 && (
         <div className="bg-panel border border-border rounded-lg p-3">
           <div className="text-sm font-semibold text-gold mb-1.5">Other optimised setups</div>
           <div className="space-y-1">
             {style.setups.slice(1).map((s) => (
-              <div key={`${s.items.weapon?.id}-${s.spellName ?? ''}`} className="flex items-center gap-2 text-sm">
+              <div key={`${s.items.weapon?.id}-${s.spellName ?? ''}-${s.styleStance}`} className="flex items-center gap-2 text-sm">
                 {s.items.weapon && <img src={iconUrl(s.items.weapon.image)} alt="" className="w-5 h-5 object-contain" loading="lazy" />}
                 <span className="flex-1 truncate">
                   {s.items.weapon?.name}
                   {s.spellName ? ` (${s.spellName})` : s.items.weapon?.detail ? ` (${s.items.weapon.detail})` : ''}
                 </span>
-                <span className="tabular-nums text-muted">{s.dps.toFixed(3)} dps</span>
+                <span className="tabular-nums text-muted">
+                  {fmtMetric(s.metric, training)} {training ? 'xp/hr' : 'dps'}
+                </span>
               </div>
             ))}
           </div>
@@ -142,7 +192,7 @@ function StyleSection({ style }: { style: StyleResult }) {
       <div>
         <div className="text-sm font-semibold text-gold mb-2">Next best per slot</div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {altSlots.map((slot) => <AltTable key={slot} slot={slot} alts={style.alternatives[slot]!} />)}
+          {altSlots.map((slot) => <AltTable key={slot} slot={slot} alts={style.alternatives[slot]!} training={training} />)}
         </div>
       </div>
     </div>
@@ -167,10 +217,12 @@ export default function Results() {
     );
   }
 
+  const training = result.mode === 'training';
   const activeStyle = result.styles.find((s) => s.styleGroup === active);
 
   return (
     <div className="space-y-4">
+      {result.upgrades && result.upgrades.length > 0 && <Upgrades upgrades={result.upgrades} training={training} />}
       <div className="flex gap-1">
         {result.styles.map((s) => (
           <button
@@ -183,12 +235,12 @@ export default function Results() {
             onClick={() => setTab(s.styleGroup)}
           >
             {s.styleGroup}
-            {s.best ? <span className="ml-1.5 tabular-nums text-xs">{s.best.dps.toFixed(2)}</span> : <span className="ml-1.5 text-xs">-</span>}
+            {s.best ? <span className="ml-1.5 tabular-nums text-xs">{fmtMetric(s.best.metric, training)}</span> : <span className="ml-1.5 text-xs">-</span>}
             {result.bestStyle === s.styleGroup && <span className="ml-1 text-gold">★</span>}
           </button>
         ))}
       </div>
-      {activeStyle && <StyleSection style={activeStyle} />}
+      {activeStyle && <StyleSection style={activeStyle} training={training} />}
     </div>
   );
 }

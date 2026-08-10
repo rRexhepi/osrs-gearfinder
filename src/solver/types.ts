@@ -1,9 +1,12 @@
 import { PlayerSkills } from '@/types/Player';
 import { Monster } from '@/types/Monster';
+import { PriceMap, TrainedSkill } from './xp';
 
 export type StyleGroup = 'melee' | 'ranged' | 'magic';
 
 export type PotionPreset = 'none' | 'standard' | 'overload' | 'salts';
+
+export type SolveMode = 'boss' | 'training';
 
 export interface SolveRequest {
   monsterId: number;
@@ -21,6 +24,15 @@ export interface SolveRequest {
   excludedIds: number[];
   /** how many weapons per style get a full armour optimisation pass */
   weaponsPerStyle?: number;
+  /** 'boss' ranks by DPS, 'training' ranks by XP/hr in trainedSkill */
+  mode?: SolveMode;
+  trainedSkill?: TrainedSkill;
+  /** seconds lost between kills (respawn, walking, looting) */
+  downtimeSeconds?: number;
+  /** GE prices by item id, enables cost/hr and the upgrade advisor */
+  prices?: PriceMap;
+  /** with restrictToOwned + prices: also rank unowned upgrades by gain per gp */
+  includeUpgrades?: boolean;
 }
 
 export interface ResultItem {
@@ -36,7 +48,9 @@ export interface ResultItem {
 
 export interface SlotAlternative extends ResultItem {
   dps: number;
-  /** % DPS lost vs the best setup, e.g. -3.2 */
+  /** ranking metric: dps in boss mode, xp/hr in training mode */
+  metric: number;
+  /** % of the ranking metric lost vs the best setup, e.g. -3.2 */
   deltaPct: number;
 }
 
@@ -51,6 +65,28 @@ export interface SolvedSetup {
   styleStance: string;
   spellName: string | null;
   items: Partial<Record<string, ResultItem>>;
+  /** ranking metric: dps in boss mode, xp/hr in training mode */
+  metric: number;
+  /** xp/hr in the trained skill (training mode only) */
+  xpHr: number | null;
+  /** expected damage taken per hour while in combat (no overheads/food) */
+  dmgTakenHr: number | null;
+  /** dmgTakenHr / 20 (sharks) */
+  foodHr: number | null;
+  /** estimated consumable cost (ammo/darts/runes/charges), null if unknown */
+  costHr: number | null;
+  costParts: string[];
+}
+
+export interface UpgradeSuggestion extends ResultItem {
+  styleGroup: StyleGroup;
+  /** metric with this item swapped into the owned best setup */
+  metric: number;
+  /** % metric gained over the owned best setup */
+  gainPct: number;
+  price: number;
+  /** gainPct per million gp */
+  gainPerM: number;
 }
 
 export interface StyleResult {
@@ -67,15 +103,42 @@ export interface SolveResult {
   monsterId: number;
   monsterVersion: string;
   styles: StyleResult[];
-  /** overall best across styles, by dps */
+  /** overall best across styles, by the ranking metric */
   bestStyle: StyleGroup | null;
+  mode: SolveMode;
+  trainedSkill: TrainedSkill | null;
+  upgrades: UpgradeSuggestion[] | null;
   elapsedMs: number;
   evals: number;
 }
 
-export type WorkerRequest = { type: 'solve'; id: number; request: SolveRequest };
+export interface TargetRow {
+  monsterId: number;
+  monsterName: string;
+  monsterVersion: string;
+  monsterImage: string;
+  note: string;
+  xpHr: number;
+  dps: number;
+  ttk: number;
+  dmgTakenHr: number | null;
+  foodHr: number | null;
+  weaponName: string;
+  styleStance: string;
+}
+
+export interface RankTargetsResult {
+  trainedSkill: TrainedSkill;
+  rows: TargetRow[];
+  elapsedMs: number;
+}
+
+export type WorkerRequest =
+  | { type: 'solve'; id: number; request: SolveRequest }
+  | { type: 'rankTargets'; id: number; request: SolveRequest };
 
 export type WorkerResponse =
   | { type: 'progress'; id: number; pct: number; label: string }
   | { type: 'result'; id: number; result: SolveResult }
+  | { type: 'targetsResult'; id: number; result: RankTargetsResult }
   | { type: 'error'; id: number; message: string };
