@@ -93,6 +93,8 @@ export interface LoadoutConfig {
   potionPreset: PotionPreset;
   usePrayers: boolean;
   onSlayerTask: boolean;
+  /** assumed current hitpoints during the fight; below max it feeds Dharok's effect */
+  playerHpCurrent?: number;
 }
 
 export function buildPlayer(
@@ -114,6 +116,11 @@ export function buildPlayer(
   player.prayers = cfg.usePrayers ? bestPrayers(group) : [];
   const boosts = potionBoosts(cfg.potionPreset, group, player.skills);
   player.boosts = { ...player.boosts, ...boosts };
+  if (cfg.playerHpCurrent !== undefined) {
+    // the engine reads current hp as skills.hp + boosts.hp (Dharok's, ruby bolts)
+    const current = Math.min(Math.max(cfg.playerHpCurrent, 1), player.skills.hp);
+    player.boosts.hp = current - player.skills.hp;
+  }
 
   const computed = calculateEquipmentBonusesFromGear(player, monster);
   player.bonuses = computed.bonuses;

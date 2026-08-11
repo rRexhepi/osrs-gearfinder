@@ -42,9 +42,16 @@ Switch the header toggle to **Training** to rank by XP/hr instead of DPS:
   will prefer e.g. a rapier/scimitar for str.
 - XP per kill is capped by monster HP (overkill grants nothing) and kill rate uses
   TTK plus a configurable downtime between kills.
-- **Rank training spots** compares ~25 common training monsters (crabs, slayer
-  staples, chinning spots) by XP/hr with your settings and items, with damage
-  taken/hr and food/hr per spot.
+- **Rank training spots** compares common training monsters by XP/hr with your
+  settings and items, with damage taken/hr and food/hr per spot, in three tabs:
+  - **Spots**: ~25 overworld staples (crabs, slayer monsters, chinning spots).
+  - **Gemstone crab**: never dies, so XP/hr is pure damage uptime with no kill
+    downtime and no TTK.
+  - **Nightmare Zone**: hard-mode rumble bosses with constant spawns, solved at
+    1 HP to model the absorption method - Dharok's set is evaluated as a full-set
+    combo and credited honestly (it wins with high Strength and overloads, and
+    loses to fast accurate weapons below that). Picking an NMZ boss as the main
+    target applies the same 1 HP assumption to the full solve.
 - Setups show damage taken/hr, food/hr (sharks), and estimated consumable cost/hr
   (darts+scales, arrows with ava's saving, chins, non-elemental runes, staff charges).
 - A slayer-task quick-select sets the target monster and the on-task flag.

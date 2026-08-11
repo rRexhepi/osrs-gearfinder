@@ -1,9 +1,12 @@
 import { getMonsters } from '@/lib/Monsters';
+import { INFINITE_HEALTH_MONSTERS } from '@/lib/constants';
 import { Solver } from './solve';
-import { RankTargetsResult, SolveRequest, TargetRow } from './types';
+import {
+  RankTargetsResult, SolveRequest, SpotGroup, TargetRow,
+} from './types';
 
 /** well-known combat training spots, matched by monster name in monsters.json */
-export const TRAINING_SPOTS: { name: string; version?: string; note: string }[] = [
+export const TRAINING_SPOTS: { name: string; version?: string; note: string; group?: SpotGroup }[] = [
   { name: 'Ammonite Crab', note: 'AFK, aggro, near-zero def' },
   { name: 'Sand Crab', note: 'AFK, aggro, near-zero def' },
   { name: 'Rock Crab', note: 'AFK, aggro, low def' },
@@ -29,8 +32,43 @@ export const TRAINING_SPOTS: { name: string; version?: string; note: string }[] 
   { name: 'Smoke devil', note: 'slayer, bursting spot' },
   { name: 'Suqah', note: 'lunar isle, AFK' },
   { name: 'Maniacal monkey', note: 'chinning spot (MM2)' },
-  { name: 'Skeleton (mm2)', note: 'chinning spot (MM2 caves)' },
   { name: 'Brutal black dragon', note: 'ranged gp/xp' },
+
+  {
+    name: 'Gemstone Crab', group: 'crab', note: 'never dies, pure AFK, drops gems',
+  },
+
+  // hard-mode rumble bosses commonly kept enabled for AFK melee
+  {
+    name: 'Dad (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'big HP, low def',
+  },
+  {
+    name: 'Arrg (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'big HP, low def',
+  },
+  {
+    name: 'Count Draynor (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'low def',
+  },
+  {
+    name: 'Culinaromancer (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'lowest def in NMZ',
+  },
+  {
+    name: 'King Roald (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'low def',
+  },
+  {
+    name: 'Sand Snake (Nightmare Zone)', version: 'Hard', group: 'nmz', note: 'low def',
+  },
+  {
+    name: 'Corrupt Lizardman (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'low def',
+  },
+  {
+    name: 'The Kendal (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'moderate def',
+  },
+  {
+    name: 'Ice Troll King (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'big HP',
+  },
+  {
+    name: 'Tree spirit (Nightmare Zone)', version: 'Hard Mode', group: 'nmz', note: 'moderate def',
+  },
 ];
 
 /** common slayer tasks -> representative monster */
@@ -88,6 +126,7 @@ export function rankTrainingTargets(
   spots.forEach(({ spot, monster }, ix) => {
     onProgress?.(ix / spots.length, `${monster!.name}`);
     try {
+      const group = spot.group ?? 'spots';
       const req: SolveRequest = {
         ...baseRequest,
         mode: 'training',
@@ -96,6 +135,10 @@ export function rankTrainingTargets(
         monsterInputs: {},
         weaponsPerStyle: 2,
         includeUpgrades: false,
+        // NMZ: constant spawns, absorption method at 1 hp (Dharok's counts).
+        // Gemstone crab: never dies, so there is no between-kill downtime.
+        ...(group === 'nmz' ? { downtimeSeconds: 0, playerHpCurrent: 1 } : {}),
+        ...(group === 'crab' ? { downtimeSeconds: 0 } : {}),
       };
       const solver = new Solver(req);
       const groups = skill === 'ranged' ? ['ranged' as const]
@@ -113,10 +156,11 @@ export function rankTrainingTargets(
         monsterName: monster!.name,
         monsterVersion: monster!.version ?? '',
         monsterImage: monster!.image ?? '',
+        group,
         note: spot.note,
         xpHr: best.metric,
         dps: best.dps,
-        ttk: best.ttk,
+        ttk: INFINITE_HEALTH_MONSTERS.includes(monster!.id) ? Infinity : best.ttk,
         dmgTakenHr: best.dmgTakenHr,
         foodHr: best.foodHr,
         weaponName: best.items.weapon?.name ?? '?',

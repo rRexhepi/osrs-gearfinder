@@ -127,6 +127,7 @@ export class Solver {
       potionPreset: request.potionPreset,
       usePrayers: request.usePrayers,
       onSlayerTask: request.onSlayerTask,
+      playerHpCurrent: request.playerHpCurrent,
     };
     this.monster = buildMonster(request.monsterId, request.monsterVersion, request.monsterInputs);
     this.inGauntlet = GAUNTLET_MONSTER_IDS.includes(this.monster.id)
@@ -518,10 +519,17 @@ export class Solver {
    * optimised. This is what surfaces sets the per-slot search can't reach
    * (no single piece improves the setup until the whole set is worn).
    */
-  private comboEntries(group: StyleGroup, shortlist: WeaponVariant[]): OptimisedEntry[] {
+  /** whether the solve assumes reduced current hp (NMZ absorption method) */
+  private isLowHp(): boolean {
+    return this.cfg.playerHpCurrent !== undefined && this.cfg.playerHpCurrent < this.cfg.skills.hp;
+  }
+
+  private comboEntries(group: StyleGroup, shortlist: WeaponVariant[], lowHpOnly = false): OptimisedEntry[] {
     const out: OptimisedEntry[] = [];
     for (const tpl of COMBO_TEMPLATES) {
       if (tpl.group !== group) continue;
+      if (tpl.requiresLowHp && !this.isLowHp()) continue;
+      if (lowHpOnly && !tpl.requiresLowHp) continue;
       const pieces = this.resolveComboPieces(tpl);
       if (!pieces) continue;
       for (const v of this.comboWeaponVariants(tpl, shortlist, pieces)) {
@@ -658,8 +666,11 @@ export class Solver {
       entries.push(optimiseVariant(v));
     });
 
-    // light mode (training-spot ranking): best setup only, no alternatives or combos
+    // light mode (training-spot ranking): best setup only, no alternatives. Combos
+    // are skipped for speed, except low-hp sets (Dharok's) on low-hp solves - the
+    // per-slot ascent can never assemble them and they decide the NMZ rows.
     if (light) {
+      if (this.isLowHp()) entries.push(...this.comboEntries(group, shortlist, true));
       entries.sort((a, b) => b.setup.metric - a.setup.metric);
       const lightBest = entries[0].setup;
       if (lightBest.dps <= 0.0001 || lightBest.metric <= 0.0001) {
@@ -816,6 +827,7 @@ export class Solver {
       const bestMetric = entry.setup.metric;
       for (const tpl of COMBO_TEMPLATES) {
         if (tpl.group !== group) continue;
+        if (tpl.requiresLowHp && !this.isLowHp()) continue;
         const pieces = this.resolveComboPieces(tpl, true);
         if (!pieces) continue;
         for (const v of this.comboWeaponVariants(tpl, [entry.v], pieces, true).slice(0, 1)) {

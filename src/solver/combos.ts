@@ -22,14 +22,16 @@ export interface ComboTemplate {
   alsoShortlist?: boolean;
   /** only these attack types benefit (e.g. Inquisitor's is crush-only) */
   styleTypes?: CombatStyleType[];
+  /** only evaluated when the solve assumes reduced current hp (NMZ absorptions) */
+  requiresLowHp?: boolean;
 }
 
 /**
  * Engine-modelled offensive set effects only. Deliberately absent: Blue moon
  * and Eclipse moon (the vendored calc flags their set effects as unsupported),
- * Dharok's (scales with missing HP, which the solver evaluates at full HP),
  * Justiciar (purely defensive), and per-piece bonuses like Virtus or crystal
- * armour pieces that the per-slot search already finds on its own.
+ * armour pieces that the per-slot search already finds on its own. Dharok's is
+ * gated behind low-HP solves (NMZ absorptions), where its effect is real.
  */
 export const COMBO_TEMPLATES: ComboTemplate[] = [
   {
@@ -38,6 +40,14 @@ export const COMBO_TEMPLATES: ComboTemplate[] = [
     note: 'Full set with the Dual macuahuitl: hits can make the next attack 1 tick faster, and the double hit gains a minimum-damage special.',
     pieces: { head: 'Blood moon helm', body: 'Blood moon chestplate', legs: 'Blood moon tassets' },
     weapons: ['Dual macuahuitl'],
+  },
+  {
+    name: "Dharok's set",
+    group: 'melee',
+    note: "Damage scales with missing hitpoints - at 1 HP with absorptions (NMZ) it nearly doubles. Only evaluated when the solve assumes low HP.",
+    pieces: { head: "Dharok's helm", body: "Dharok's platebody", legs: "Dharok's platelegs" },
+    weapons: ["Dharok's greataxe"],
+    requiresLowHp: true,
   },
   {
     name: 'Obsidian set',

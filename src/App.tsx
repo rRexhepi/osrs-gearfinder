@@ -46,6 +46,8 @@ export default function App() {
       restrictToOwned: store.restrictToOwned,
       excludedIds: [],
       weaponsPerStyle: 8,
+      // fighting in NMZ implies the absorption method (1 hp), so Dharok's counts
+      ...(monster.name.includes('(Nightmare Zone)') ? { playerHpCurrent: 1 } : {}),
       mode,
       trainedSkill: store.trainedSkill,
       downtimeSeconds: mode === 'training' ? store.downtimeSeconds : 0,

@@ -24,6 +24,11 @@ export interface SolveRequest {
   excludedIds: number[];
   /** base Slayer level for slayer-gated gear (leaf-bladed etc.); defaults to 99 */
   slayerLevel?: number;
+  /**
+   * Assumed current hitpoints during the fight (defaults to full). 1 models the
+   * NMZ absorption method and lets Dharok's set effect count for real.
+   */
+  playerHpCurrent?: number;
   /** how many weapons per style get a full armour optimisation pass */
   weaponsPerStyle?: number;
   /** 'boss' ranks by DPS, 'training' ranks by XP/hr in trainedSkill */
@@ -118,11 +123,15 @@ export interface SolveResult {
   evals: number;
 }
 
+/** which training-spot tab a ranked row belongs to */
+export type SpotGroup = 'spots' | 'crab' | 'nmz';
+
 export interface TargetRow {
   monsterId: number;
   monsterName: string;
   monsterVersion: string;
   monsterImage: string;
+  group: SpotGroup;
   note: string;
   xpHr: number;
   dps: number;
