@@ -1,13 +1,18 @@
 /**
- * Builds cdn/json/requirements.json: equipment level requirements per item name.
+ * Builds two wiki-derived datasets over every equipment name:
  *
- * The wiki has no structured requirements data (not in the infobox, SMW, or
- * bucket tables), but the lead sentence of every equipment page states them in
- * a small set of phrasings ("requires 85 Magic to wield", "requires an Attack
- * level of 70", "42 Attack, Strength, ... and 22 Prayer to wear"). This script
- * pulls the rendered intro extract for every equipment name, parses those
- * clauses, applies hand overrides, and validates known anchors so a bad wiki
- * edit or parser regression fails loudly instead of silently dropping reqs.
+ * - cdn/json/requirements.json: equip level requirements. The wiki has no
+ *   structured requirements data (not in the infobox, SMW, or bucket tables),
+ *   but the lead sentence states them in a small set of phrasings ("requires
+ *   85 Magic to wield", "requires an Attack level of 70", "42 Attack, ... and
+ *   22 Prayer to wear"), parsed from the rendered intro extract.
+ * - cdn/json/unobtainable.json: items main-game players cannot get, detected
+ *   from wiki categories (league rewards, Deadman seasonal gear, discontinued
+ *   content). These carry no name suffix in the data, so categories are the
+ *   only reliable signal.
+ *
+ * Hand overrides apply on top, and known anchors fail the sync loudly if a
+ * wiki edit or parser regression would ship bad data.
  *
  * Run: node scripts/sync-reqs.mjs
  */
@@ -71,13 +76,22 @@ function parseIntro(text) {
   return reqs;
 }
 
+/**
+ * Categories marking gear that main-game players cannot obtain: seasonal-mode
+ * rewards (every league, Deadman servers, LMS-locked gear, Fresh Start Worlds)
+ * and discontinued content. Deliberately NOT matched: Bounty Hunter, Soul Wars,
+ * Emir's Arena and similar minigames whose rewards are main-game obtainable.
+ */
+const UNOBTAINABLE_CATEGORY_RE = /(League$|^Deadman|^Last Man Standing$|^Fresh Start World|^Discontinued)/;
+
 async function fetchExtracts(titles) {
   const params = new URLSearchParams({
     action: 'query',
-    prop: 'extracts',
+    prop: 'extracts|categories',
     exintro: '1',
     explaintext: '1',
     exlimit: 'max',
+    cllimit: 'max',
     redirects: '1',
     format: 'json',
     titles: titles.join('|'),
@@ -92,8 +106,11 @@ async function fetchExtracts(titles) {
   }
   const out = new Map();
   for (const page of Object.values(data.query?.pages ?? {})) {
-    if (page.missing !== undefined || !page.extract) continue;
-    out.set(back.get(page.title) ?? page.title, page.extract);
+    if (page.missing !== undefined) continue;
+    out.set(back.get(page.title) ?? page.title, {
+      extract: page.extract ?? '',
+      categories: (page.categories ?? []).map((c) => c.title.replace('Category:', '')),
+    });
   }
   return out;
 }
@@ -112,10 +129,11 @@ const probe = process.argv.slice(2);
 if (probe.length > 0) {
   const extracts = await fetchExtracts(probe);
   for (const name of probe) {
-    const text = extracts.get(name);
+    const page = extracts.get(name);
     console.log(`\n== ${name}`);
-    console.log(text ? text.split('\n')[0].slice(0, 300) : '(no page)');
-    console.log('->', JSON.stringify(text ? parseIntro(text) : null));
+    console.log(page ? page.extract.split('\n')[0].slice(0, 300) : '(no page)');
+    console.log('->', JSON.stringify(page ? parseIntro(page.extract) : null),
+      page && page.categories.some((c) => UNOBTAINABLE_CATEGORY_RE.test(c)) ? 'UNOBTAINABLE' : '');
   }
   process.exit(0);
 }
@@ -124,13 +142,15 @@ const names = [...new Set(equipment.map((e) => e.name))].sort();
 console.log(`${names.length} unique equipment names`);
 
 const result = {};
+const unobtainable = new Set();
 let fetched = 0;
 for (let i = 0; i < names.length; i += BATCH) {
   const batch = names.slice(i, i + BATCH);
   const extracts = await fetchExtracts(batch);
-  for (const [name, text] of extracts) {
-    const reqs = parseIntro(text);
+  for (const [name, page] of extracts) {
+    const reqs = parseIntro(page.extract);
     if (Object.keys(reqs).length > 0) result[name] = reqs;
+    if (page.categories.some((c) => UNOBTAINABLE_CATEGORY_RE.test(c))) unobtainable.add(name);
   }
   fetched += batch.length;
   if (fetched % 400 < BATCH) console.log(`  ${fetched}/${names.length}`);
@@ -139,15 +159,23 @@ for (let i = 0; i < names.length; i += BATCH) {
 
 // cosmetic/clan variants ("Abyssal whip (or)", "Bow of faerdhinen (c) (Ithell)")
 // have their own pages without requirement sentences; inherit from the base name
-for (const name of names) {
-  if (result[name]) continue;
+const baseOf = (name, has) => {
   let base = name;
-  while (!result[base]) {
+  while (!has(base)) {
     const stripped = base.replace(/\s*\([^)]*\)$/, '');
-    if (stripped === base) break;
+    if (stripped === base) return null;
     base = stripped;
   }
-  if (result[base]) result[name] = result[base];
+  return base;
+};
+for (const name of names) {
+  if (!result[name]) {
+    const base = baseOf(name, (n) => result[n] !== undefined);
+    if (base) result[name] = result[base];
+  }
+  if (!unobtainable.has(name) && baseOf(name, (n) => unobtainable.has(n))) {
+    unobtainable.add(name);
+  }
 }
 
 for (const [name, reqs] of Object.entries(overrides)) {
@@ -155,12 +183,34 @@ for (const [name, reqs] of Object.entries(overrides)) {
   else result[name] = reqs;
 }
 
+/** seasonal/discontinued detection regressions must fail the sync too */
+const UNOBTAINABLE_ANCHORS = {
+  'Starter cape': true,
+  "V's helm": true,
+  "Devil's element": true,
+  'Crystal blessing': true, // league item despite the main-game-sounding name
+  'Echo venator bow': true,
+  'Infernal tecpatl': true,
+  "Nature's recurve": true,
+  'Abyssal whip': false,
+  'Zombie helmet': false,
+  'Antler guard': false,
+  'Soul cape': false,
+  "Vesta's blighted longsword": false,
+  'Crystal bow (perfected)': false, // gauntlet-only, but usable there
+};
+
 const failures = [];
 for (const [name, expected] of Object.entries(ANCHORS)) {
   for (const [skill, level] of Object.entries(expected)) {
     if (result[name]?.[skill] !== level) {
       failures.push(`${name}: expected ${skill} ${level}, got ${JSON.stringify(result[name])}`);
     }
+  }
+}
+for (const [name, expected] of Object.entries(UNOBTAINABLE_ANCHORS)) {
+  if (unobtainable.has(name) !== expected) {
+    failures.push(`${name}: expected unobtainable=${expected}`);
   }
 }
 if (failures.length > 0) {
@@ -183,3 +233,8 @@ for (const n of suspicious.slice(0, 40)) console.log(`  ${n}`);
 const sorted = Object.fromEntries(Object.entries(result).sort(([a], [b]) => a.localeCompare(b)));
 writeFileSync(join(root, 'cdn/json/requirements.json'), `${JSON.stringify(sorted, null, 1)}\n`);
 console.log(`\nwrote requirements for ${Object.keys(sorted).length} items`);
+
+const unobtainableSorted = [...unobtainable].sort((a, b) => a.localeCompare(b));
+writeFileSync(join(root, 'cdn/json/unobtainable.json'), `${JSON.stringify(unobtainableSorted, null, 1)}\n`);
+console.log(`flagged ${unobtainableSorted.length} unobtainable items:`);
+for (const n of unobtainableSorted) console.log(`  ${n}`);

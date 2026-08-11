@@ -70,6 +70,15 @@ requirement sentence from each item page's lead section, applies the overrides
 in `scripts/reqs-overrides.json`, and hard-fails on known anchor items if the
 parse ever regresses. Quest requirements are out of scope.
 
+## Only gear you can actually get
+
+The upstream dataset includes seasonal and discontinued gear that carries no
+name suffix - league uniques (V's helm, Devil's element, Crystal blessing, the
+echo weapons), Deadman starter/seasonal items, discontinued content. The same
+sync detects these from wiki categories into `cdn/json/unobtainable.json`, and
+the solver hides them unless they're in your imported bank (whoever has one can
+still wear it). Anchored the same way: a category regression fails the sync.
+
 ## Full-set combos
 
 Set effects only pay off once the whole set is worn, so a per-slot search can never

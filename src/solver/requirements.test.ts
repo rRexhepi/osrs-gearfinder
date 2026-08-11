@@ -4,6 +4,7 @@ import { PlayerSkills } from '@/types/Player';
 import { Solver } from './solve';
 import { SolveRequest, SolveResult, StyleResult } from './types';
 import { meetsRequirements, requirementsOf } from './requirements';
+import { isUnobtainable } from './data';
 import { findEquipment } from '@/tests/utils/TestUtils';
 
 const monsters = getMonsters();
@@ -54,6 +55,34 @@ describe('requirements data', () => {
     expect(meetsRequirements(leafBladed, skillsOf({}), 54)).toBe(false);
     expect(meetsRequirements(leafBladed, skillsOf({}), 55)).toBe(true);
   });
+});
+
+describe('unobtainable gear', () => {
+  test('seasonal and discontinued items are flagged, main-game gear is not', () => {
+    for (const name of ['Starter cape', "V's helm", "Devil's element", 'Crystal blessing', 'Echo venator bow']) {
+      expect(isUnobtainable(findEquipment(name)), name).toBe(true);
+    }
+    for (const name of ['Abyssal whip', 'Zombie helmet', 'Antler guard', 'Soul cape', "Vesta's blighted longsword"]) {
+      expect(isUnobtainable(findEquipment(name)), name).toBe(false);
+    }
+  });
+
+  test('never suggested unless the player owns it', () => {
+    const skills = skillsOf({});
+    const res = new Solver(baseRequest('General Graardor', skills)).solveStyle('magic');
+    const names = namesIn(res);
+    expect(names.length).toBeGreaterThan(20);
+    for (const gone of ["Devil's element", 'Crystal blessing', 'Starter cape', "V's helm"]) {
+      expect(names).not.toContain(gone);
+    }
+
+    // whoever has one can still wear it
+    const ownedIds = ['Starter cape', 'Kodai wand', 'Occult necklace', 'Mystic robe top', 'Mystic robe bottom']
+      .map((n) => findEquipment(n).id);
+    const owned = new Solver({ ...baseRequest('General Graardor', skills), ownedIds, restrictToOwned: true }).solveStyle('magic');
+    expect(owned.best).not.toBeNull();
+    expect(owned.best!.items.cape?.name).toBe('Starter cape');
+  }, 240000);
 });
 
 describe('solver respects requirements', () => {

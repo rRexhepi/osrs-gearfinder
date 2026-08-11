@@ -1,6 +1,7 @@
 import { availableEquipment, equipmentAliases } from '@/lib/Equipment';
 import { EquipmentPiece, PlayerEquipment } from '@/types/Player';
 import { EquipmentCategory } from '@/enums/EquipmentCategory';
+import unobtainableJson from '../../cdn/json/unobtainable.json';
 
 export type Slot = keyof PlayerEquipment;
 
@@ -73,14 +74,21 @@ export const isSpecialItem = (item: EquipmentPiece): boolean => SPECIAL_NAME_PRE
  * Deadman/Bounty Hunter variants).
  */
 const MODE_VARIANT_RE = /\((Deadman Mode|bh|Last Man Standing|historical|beta|Wilderness Wars|Emir's Arena|Soul Wars|Trailblazer|Shattered Relics|League|wrapped)\)$/i;
-/** Demonic Pacts league echo gear carries no "(League)" suffix in the data */
-const LEAGUE_ECHO_RE = /^(Echo (ahrim's|virtus|venator) |Infernal tecpatl$|Fang of the hound$|King's barrage$|Nature's recurve$)/i;
 const BLOCKED_NAMES_RE = /(Fine mesh net|Wilderness champion amulet|^Crystal .* \(i\)$|^(Koriff|Maoma|Saika)'s |calamity (breeches|chest))/i;
+
+/**
+ * Gear main-game players cannot obtain (league rewards, Deadman seasonal
+ * items, discontinued content), detected from wiki categories by
+ * scripts/sync-reqs.mjs. Unlike isModeRestricted these are only excluded when
+ * the player doesn't own them - whoever has one can still wear it.
+ */
+const unobtainableNames = new Set(unobtainableJson as string[]);
+
+export const isUnobtainable = (item: EquipmentPiece): boolean => unobtainableNames.has(item.name);
 /** Barbarian Assault attacker arrows (125 ranged str, unusable outside BA) */
 const BLOCKED_IDS = new Set([22227, 22228, 22229, 22230]);
 
 export const isModeRestricted = (item: EquipmentPiece): boolean => MODE_VARIANT_RE.test(item.name)
-  || LEAGUE_ECHO_RE.test(item.name)
   || BLOCKED_NAMES_RE.test(item.name)
   || BLOCKED_IDS.has(item.id)
   || /^(Broken|Inactive|Locked)$/.test(item.version);

@@ -22,6 +22,7 @@ import {
   isGauntletItem,
   isModeRestricted,
   isSpecialItem,
+  isUnobtainable,
 } from './data';
 import { CORRUPTED_GAUNTLET_MONSTER_IDS, GAUNTLET_MONSTER_IDS } from '@/lib/constants';
 import NPCVsPlayerCalc from '@/lib/NPCVsPlayerCalc';
@@ -147,6 +148,8 @@ export class Solver {
     if (this.excluded.has(item.id)) return false;
     if (isModeRestricted(item)) return false;
     if (isGauntletItem(item) && !this.inGauntlet) return false;
+    // seasonal/discontinued gear is only suggested to players who have it
+    if (isUnobtainable(item) && !this.owned?.has(item.id)) return false;
     // gauntlet gear has no requirements inside the gauntlet
     if (!this.inGauntlet && !meetsRequirements(item, this.cfg.skills, this.slayerLevel)) return false;
     return true;
