@@ -31,6 +31,7 @@ export const TRAINING_SPOTS: { name: string; version?: string; note: string; gro
   { name: 'Kurask', note: 'slayer, leaf-bladed only' },
   { name: 'Smoke devil', note: 'slayer, bursting spot' },
   { name: 'Suqah', note: 'lunar isle, AFK' },
+  { name: 'Sulphur Nagua', note: 'Neypotzli, AFK with Blood moon sustain' },
   { name: 'Maniacal monkey', note: 'chinning spot (MM2)' },
   { name: 'Brutal black dragon', note: 'ranged gp/xp' },
 
