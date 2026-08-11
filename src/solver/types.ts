@@ -22,6 +22,8 @@ export interface SolveRequest {
   restrictToOwned: boolean;
   /** item ids the user never wants suggested */
   excludedIds: number[];
+  /** base Slayer level for slayer-gated gear (leaf-bladed etc.); defaults to 99 */
+  slayerLevel?: number;
   /** how many weapons per style get a full armour optimisation pass */
   weaponsPerStyle?: number;
   /** 'boss' ranks by DPS, 'training' ranks by XP/hr in trainedSkill */

@@ -31,8 +31,8 @@ export default function PlayerPanel() {
     if (!username.trim()) return;
     setLookupState('loading');
     try {
-      const fetched = await fetchPlayerSkills(username.trim());
-      set({ skills: { ...skills, ...fetched } });
+      const { slayer, ...fetched } = await fetchPlayerSkills(username.trim());
+      set({ skills: { ...skills, ...fetched }, slayerLevel: slayer });
       setLookupState('idle');
     } catch {
       setLookupState('error');

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "sync-upstream": "node scripts/sync-upstream.mjs"
+    "sync-upstream": "node scripts/sync-upstream.mjs",
+    "sync-reqs": "node scripts/sync-reqs.mjs"
   },
   "dependencies": {
     "axios": "^1.7.4",

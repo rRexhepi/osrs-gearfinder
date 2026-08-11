@@ -19,6 +19,8 @@ interface GearFinderState {
   partySize: number;
 
   skills: PlayerSkills;
+  /** base Slayer level (fetched with the RSN lookup; manual entry keeps 99) */
+  slayerLevel: number;
   potionPreset: PotionPreset;
   usePrayers: boolean;
   onSlayerTask: boolean;
@@ -58,6 +60,7 @@ export const useStore = create<GearFinderState>()(
       partySize: 1,
 
       skills: DEFAULT_SKILLS,
+      slayerLevel: 99,
       potionPreset: 'standard',
       usePrayers: true,
       onSlayerTask: false,
@@ -93,6 +96,7 @@ export const useStore = create<GearFinderState>()(
         toaInvocationLevel: s.toaInvocationLevel,
         partySize: s.partySize,
         skills: s.skills,
+        slayerLevel: s.slayerLevel,
         potionPreset: s.potionPreset,
         usePrayers: s.usePrayers,
         onSlayerTask: s.onSlayerTask,

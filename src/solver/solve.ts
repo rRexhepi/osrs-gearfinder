@@ -31,6 +31,7 @@ import {
 import {
   COMBO_TEMPLATES, ComboTemplate, comboOf, pieceOptions, resolveByName,
 } from './combos';
+import { meetsRequirements } from './requirements';
 import {
   LoadoutConfig,
   blowpipeWithDart,
@@ -101,6 +102,9 @@ export class Solver {
   /** gauntlet-only items are allowed only against the Hunllef */
   private inGauntlet: boolean;
 
+  /** base slayer level for slayer-gated gear (not part of PlayerSkills) */
+  private slayerLevel: number;
+
   private loggedEvalError = false;
 
   /** winning optimised entry per style group, kept for the upgrade advisor */
@@ -134,13 +138,16 @@ export class Solver {
     this.owned = request.ownedIds === null ? null : new Set(request.ownedIds.map(canonicalIdOf));
     this.restrictToOwned = request.restrictToOwned && this.owned !== null;
     this.excluded = new Set(request.excludedIds.map(canonicalIdOf));
+    this.slayerLevel = request.slayerLevel ?? 99;
   }
 
-  /** allowed ignoring ownership (mode/gauntlet/exclusion filters only) */
+  /** allowed ignoring ownership (mode/gauntlet/exclusion/level filters only) */
   private isAllowedBase(item: EquipmentPiece): boolean {
     if (this.excluded.has(item.id)) return false;
     if (isModeRestricted(item)) return false;
     if (isGauntletItem(item) && !this.inGauntlet) return false;
+    // gauntlet gear has no requirements inside the gauntlet
+    if (!this.inGauntlet && !meetsRequirements(item, this.cfg.skills, this.slayerLevel)) return false;
     return true;
   }
 

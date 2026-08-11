@@ -49,6 +49,20 @@ Switch the header toggle to **Training** to rank by XP/hr instead of DPS:
   (darts+scales, arrows with ava's saving, chins, non-elemental runes, staff charges).
 - A slayer-task quick-select sets the target monster and the on-task flag.
 
+## Only gear you can actually equip
+
+Every suggestion is filtered by your base levels against real equip requirements
+(85 Magic for Tumeken's shadow, 90 Strength for the scythe, 42s + 22 Prayer for
+void, and so on) - across best setups, alternatives, combos, and the upgrade
+advisor. Owning an item doesn't make it wearable. The RSN lookup also fetches
+your Slayer level for slayer-gated gear (leaf-bladed weapons); manual stat entry
+assumes 99 Slayer. Requirements live in `cdn/json/requirements.json`, generated
+by `npm run sync-reqs`: the wiki has no structured requirements data anywhere
+(not the infoboxes, not SMW, not the bucket tables), so the script parses the
+requirement sentence from each item page's lead section, applies the overrides
+in `scripts/reqs-overrides.json`, and hard-fails on known anchor items if the
+parse ever regresses. Quest requirements are out of scope.
+
 ## Full-set combos
 
 Set effects only pay off once the whole set is worn, so a per-slot search can never
@@ -81,6 +95,7 @@ better than the chosen setup, it gets promoted through a full optimisation pass 
 
 - `npm test` - runs the vendored upstream engine suite (~290 tests) + solver tests
 - `npm run sync-upstream` - refresh item/monster JSONs and icons from upstream main
+- `npm run sync-reqs` - regenerate equip requirements from the wiki (run after sync-upstream adds items)
 - `npm run typecheck`
 
 Licensed GPL-3.0 (required by the vendored engine).

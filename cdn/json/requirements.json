@@ -1,0 +1,4696 @@
+{
+ "3rd age amulet": {
+  "magic": 65,
+  "def": 30
+ },
+ "3rd age axe": {
+  "atk": 65
+ },
+ "3rd age bow": {
+  "ranged": 65
+ },
+ "3rd age cloak": {
+  "prayer": 65
+ },
+ "3rd age druidic cloak": {
+  "prayer": 65
+ },
+ "3rd age druidic robe bottoms": {
+  "prayer": 65
+ },
+ "3rd age druidic robe top": {
+  "prayer": 65
+ },
+ "3rd age druidic staff": {
+  "prayer": 65,
+  "atk": 65
+ },
+ "3rd age felling axe": {
+  "atk": 65
+ },
+ "3rd age full helmet": {
+  "def": 65
+ },
+ "3rd age kiteshield": {
+  "def": 65
+ },
+ "3rd age longsword": {
+  "atk": 65
+ },
+ "3rd age mage hat": {
+  "magic": 65,
+  "def": 30
+ },
+ "3rd age pickaxe": {
+  "atk": 65
+ },
+ "3rd age platebody": {
+  "def": 65
+ },
+ "3rd age platelegs": {
+  "def": 65
+ },
+ "3rd age plateskirt": {
+  "def": 65
+ },
+ "3rd age range coif": {
+  "ranged": 65,
+  "def": 45
+ },
+ "3rd age range legs": {
+  "ranged": 65,
+  "def": 45
+ },
+ "3rd age range top": {
+  "ranged": 65,
+  "def": 45
+ },
+ "3rd age robe": {
+  "magic": 65,
+  "def": 30
+ },
+ "3rd age robe top": {
+  "magic": 65,
+  "def": 30
+ },
+ "3rd age vambraces": {
+  "ranged": 65,
+  "def": 45,
+  "prayer": 1
+ },
+ "3rd age wand": {
+  "magic": 65
+ },
+ "Abyssal bludgeon": {
+  "atk": 70,
+  "str": 70
+ },
+ "Abyssal dagger": {
+  "atk": 70
+ },
+ "Abyssal dagger (bh)": {
+  "atk": 70
+ },
+ "Abyssal tentacle": {
+  "atk": 75
+ },
+ "Abyssal tentacle (or)": {
+  "atk": 75
+ },
+ "Abyssal whip": {
+  "atk": 70
+ },
+ "Abyssal whip (or)": {
+  "atk": 70
+ },
+ "Accursed sceptre": {
+  "magic": 70
+ },
+ "Accursed sceptre (a)": {
+  "magic": 70
+ },
+ "Adamant 2h sword": {
+  "atk": 30
+ },
+ "Adamant axe": {
+  "atk": 30
+ },
+ "Adamant battleaxe": {
+  "atk": 30
+ },
+ "Adamant bolts": {
+  "ranged": 46
+ },
+ "Adamant boots": {
+  "def": 30
+ },
+ "Adamant cane": {
+  "atk": 30
+ },
+ "Adamant chainbody": {
+  "def": 30
+ },
+ "Adamant crossbow": {
+  "ranged": 46
+ },
+ "Adamant dart": {
+  "ranged": 30
+ },
+ "Adamant defender": {
+  "atk": 30,
+  "def": 30
+ },
+ "Adamant felling axe": {
+  "atk": 30
+ },
+ "Adamant full helm": {
+  "def": 30
+ },
+ "Adamant full helm (g)": {
+  "def": 30
+ },
+ "Adamant full helm (t)": {
+  "def": 30
+ },
+ "Adamant gloves": {
+  "def": 13
+ },
+ "Adamant halberd": {
+  "atk": 30,
+  "str": 15
+ },
+ "Adamant hasta": {
+  "atk": 30
+ },
+ "Adamant helm (h1)": {
+  "def": 30
+ },
+ "Adamant helm (h2)": {
+  "def": 30
+ },
+ "Adamant helm (h3)": {
+  "def": 30
+ },
+ "Adamant helm (h4)": {
+  "def": 30
+ },
+ "Adamant helm (h5)": {
+  "def": 30
+ },
+ "Adamant kiteshield": {
+  "def": 30
+ },
+ "Adamant kiteshield (Arrav)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Asgarnia)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Dorgeshuun)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Dragon)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Fairy)": {
+  "def": 30
+ },
+ "Adamant kiteshield (g)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Guthix)": {
+  "def": 30
+ },
+ "Adamant kiteshield (HAM)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Horse)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Jogre)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Kandarin)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Misthalin)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Money)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Saradomin)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Skull)": {
+  "def": 30
+ },
+ "Adamant kiteshield (t)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Varrock)": {
+  "def": 30
+ },
+ "Adamant kiteshield (Zamorak)": {
+  "def": 30
+ },
+ "Adamant knife": {
+  "ranged": 30
+ },
+ "Adamant longsword": {
+  "atk": 30
+ },
+ "Adamant mace": {
+  "atk": 30
+ },
+ "Adamant med helm": {
+  "def": 30
+ },
+ "Adamant pickaxe": {
+  "atk": 30
+ },
+ "Adamant platebody": {
+  "def": 30
+ },
+ "Adamant platebody (g)": {
+  "def": 30
+ },
+ "Adamant platebody (h1)": {
+  "def": 30
+ },
+ "Adamant platebody (h2)": {
+  "def": 30
+ },
+ "Adamant platebody (h3)": {
+  "def": 30
+ },
+ "Adamant platebody (h4)": {
+  "def": 30
+ },
+ "Adamant platebody (h5)": {
+  "def": 30
+ },
+ "Adamant platebody (t)": {
+  "def": 30
+ },
+ "Adamant platelegs": {
+  "def": 30
+ },
+ "Adamant platelegs (g)": {
+  "def": 30
+ },
+ "Adamant platelegs (t)": {
+  "def": 30
+ },
+ "Adamant plateskirt": {
+  "def": 30
+ },
+ "Adamant plateskirt (g)": {
+  "def": 30
+ },
+ "Adamant plateskirt (t)": {
+  "def": 30
+ },
+ "Adamant scimitar": {
+  "atk": 30
+ },
+ "Adamant shield (h1)": {
+  "def": 30
+ },
+ "Adamant shield (h2)": {
+  "def": 30
+ },
+ "Adamant shield (h3)": {
+  "def": 30
+ },
+ "Adamant shield (h4)": {
+  "def": 30
+ },
+ "Adamant shield (h5)": {
+  "def": 30
+ },
+ "Adamant spear": {
+  "atk": 30
+ },
+ "Adamant sq shield": {
+  "def": 30
+ },
+ "Adamant sword": {
+  "atk": 30
+ },
+ "Adamant thrownaxe": {
+  "ranged": 30
+ },
+ "Adamant warhammer": {
+  "str": 30
+ },
+ "Ahrim's hood": {
+  "def": 70,
+  "magic": 70
+ },
+ "Ahrim's robeskirt": {
+  "def": 70,
+  "magic": 70
+ },
+ "Ahrim's robetop": {
+  "def": 70,
+  "magic": 70
+ },
+ "Ahrim's staff": {
+  "magic": 70,
+  "atk": 70
+ },
+ "Air battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Amethyst broad bolts": {
+  "slayer": 65,
+  "ranged": 61
+ },
+ "Amethyst dart": {
+  "ranged": 50
+ },
+ "Amulet of rancour": {
+  "hp": 90
+ },
+ "Amulet of rancour (s)": {
+  "hp": 90
+ },
+ "Amulet of torture": {
+  "hp": 75
+ },
+ "Amulet of torture (or)": {
+  "hp": 75
+ },
+ "Ancestral hat": {
+  "magic": 75,
+  "def": 65
+ },
+ "Ancestral robe bottom": {
+  "magic": 75,
+  "def": 65
+ },
+ "Ancestral robe top": {
+  "magic": 75,
+  "def": 65
+ },
+ "Ancient bracers": {
+  "ranged": 70
+ },
+ "Ancient chaps": {
+  "ranged": 70
+ },
+ "Ancient cloak": {
+  "prayer": 40
+ },
+ "Ancient coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Ancient crozier": {
+  "prayer": 60
+ },
+ "Ancient d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Ancient d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Ancient d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Ancient full helm": {
+  "def": 40
+ },
+ "Ancient godsword": {
+  "atk": 75
+ },
+ "Ancient kiteshield": {
+  "def": 40
+ },
+ "Ancient mace": {
+  "atk": 15,
+  "prayer": 25
+ },
+ "Ancient mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Ancient platebody": {
+  "def": 40
+ },
+ "Ancient platelegs": {
+  "def": 40
+ },
+ "Ancient plateskirt": {
+  "def": 40
+ },
+ "Ancient robe legs": {
+  "prayer": 20
+ },
+ "Ancient robe top": {
+  "prayer": 20
+ },
+ "Ancient sceptre": {
+  "magic": 70,
+  "str": 60,
+  "atk": 50
+ },
+ "Ancient staff": {
+  "atk": 50,
+  "magic": 50,
+  "str": 50
+ },
+ "Ancient stole": {
+  "prayer": 60
+ },
+ "Ancient wyvern shield": {
+  "magic": 70,
+  "def": 75
+ },
+ "Antler guard": {
+  "prayer": 50
+ },
+ "Apprentice wand": {
+  "magic": 50
+ },
+ "Aquanite hopper": {
+  "ranged": 60
+ },
+ "Arcane spirit shield": {
+  "def": 75,
+  "magic": 65,
+  "prayer": 70
+ },
+ "Archer helm": {
+  "def": 45
+ },
+ "Arclight": {
+  "atk": 75
+ },
+ "Arkan blade": {
+  "atk": 60
+ },
+ "Armadyl bracers": {
+  "ranged": 70
+ },
+ "Armadyl chainskirt": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Armadyl chaps": {
+  "ranged": 70
+ },
+ "Armadyl chestplate": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Armadyl cloak": {
+  "prayer": 40
+ },
+ "Armadyl coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Armadyl crossbow": {
+  "ranged": 70
+ },
+ "Armadyl crozier": {
+  "prayer": 60
+ },
+ "Armadyl d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Armadyl d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Armadyl d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Armadyl full helm": {
+  "def": 40
+ },
+ "Armadyl godsword": {
+  "atk": 75
+ },
+ "Armadyl godsword (deadman)": {
+  "atk": 75
+ },
+ "Armadyl godsword (or)": {
+  "atk": 75
+ },
+ "Armadyl helmet": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Armadyl kiteshield": {
+  "def": 40
+ },
+ "Armadyl mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Armadyl platebody": {
+  "def": 40
+ },
+ "Armadyl robe legs": {
+  "prayer": 20
+ },
+ "Armadyl robe top": {
+  "prayer": 20
+ },
+ "Armadyl stole": {
+  "prayer": 60
+ },
+ "Ava's assembler": {
+  "ranged": 70
+ },
+ "Avernic defender": {
+  "atk": 70,
+  "def": 70
+ },
+ "Avernic treads": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (et)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (max)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (pe)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (pe)(et)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (pr)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (pr)(et)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Avernic treads (pr)(pe)": {
+  "def": 80,
+  "str": 80,
+  "ranged": 80,
+  "magic": 80
+ },
+ "Bandos boots": {
+  "def": 65
+ },
+ "Bandos boots (or)": {
+  "def": 65
+ },
+ "Bandos bracers": {
+  "ranged": 70
+ },
+ "Bandos chaps": {
+  "ranged": 70
+ },
+ "Bandos chestplate": {
+  "def": 65
+ },
+ "Bandos cloak": {
+  "prayer": 40
+ },
+ "Bandos coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Bandos crozier": {
+  "prayer": 60
+ },
+ "Bandos d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Bandos d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Bandos d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Bandos full helm": {
+  "def": 40
+ },
+ "Bandos godsword": {
+  "atk": 75
+ },
+ "Bandos godsword (or)": {
+  "atk": 75
+ },
+ "Bandos kiteshield": {
+  "def": 40
+ },
+ "Bandos mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Bandos platebody": {
+  "def": 40
+ },
+ "Bandos platelegs": {
+  "def": 40
+ },
+ "Bandos plateskirt": {
+  "def": 40
+ },
+ "Bandos robe legs": {
+  "prayer": 20
+ },
+ "Bandos robe top": {
+  "prayer": 20
+ },
+ "Bandos stole": {
+  "prayer": 60
+ },
+ "Bandos tassets": {
+  "def": 65
+ },
+ "Bandos tassets (or)": {
+  "def": 65
+ },
+ "Barrelchest anchor": {
+  "atk": 60,
+  "str": 40
+ },
+ "Barrelchest anchor (bh)": {
+  "atk": 50,
+  "str": 40
+ },
+ "Barronite mace": {
+  "atk": 40
+ },
+ "Battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Beginner wand": {
+  "magic": 45
+ },
+ "Belle's folly": {
+  "atk": 65
+ },
+ "Berserker helm": {
+  "def": 45
+ },
+ "Black 2h sword": {
+  "atk": 10
+ },
+ "Black axe": {
+  "atk": 10
+ },
+ "Black battleaxe": {
+  "atk": 10
+ },
+ "Black boots": {
+  "def": 10
+ },
+ "Black cane": {
+  "atk": 10
+ },
+ "Black chainbody": {
+  "def": 10
+ },
+ "Black chinchompa": {
+  "ranged": 65
+ },
+ "Black claws": {
+  "atk": 10
+ },
+ "Black d'hide body": {
+  "ranged": 70,
+  "def": 40
+ },
+ "Black d'hide body (g)": {
+  "ranged": 70,
+  "def": 40
+ },
+ "Black d'hide body (t)": {
+  "ranged": 70,
+  "def": 40
+ },
+ "Black d'hide chaps": {
+  "ranged": 70
+ },
+ "Black d'hide chaps (beta)": {
+  "ranged": 70
+ },
+ "Black d'hide chaps (g)": {
+  "ranged": 70
+ },
+ "Black d'hide chaps (t)": {
+  "ranged": 70
+ },
+ "Black d'hide shield": {
+  "ranged": 70,
+  "def": 40
+ },
+ "Black d'hide vambraces": {
+  "ranged": 70
+ },
+ "Black d'hide vambraces (beta)": {
+  "ranged": 70
+ },
+ "Black dagger": {
+  "atk": 10
+ },
+ "Black dart": {
+  "ranged": 10
+ },
+ "Black defender": {
+  "atk": 10,
+  "def": 10
+ },
+ "Black felling axe": {
+  "atk": 10
+ },
+ "Black full helm": {
+  "def": 10
+ },
+ "Black full helm (g)": {
+  "def": 10
+ },
+ "Black full helm (t)": {
+  "def": 10
+ },
+ "Black halberd": {
+  "atk": 10,
+  "str": 5
+ },
+ "Black helm (h1)": {
+  "def": 10
+ },
+ "Black helm (h2)": {
+  "def": 10
+ },
+ "Black helm (h3)": {
+  "def": 10
+ },
+ "Black helm (h4)": {
+  "def": 10
+ },
+ "Black helm (h5)": {
+  "def": 10
+ },
+ "Black kiteshield": {
+  "def": 10
+ },
+ "Black kiteshield (g)": {
+  "def": 10
+ },
+ "Black kiteshield (t)": {
+  "def": 10
+ },
+ "Black knife": {
+  "ranged": 10
+ },
+ "Black longsword": {
+  "atk": 10
+ },
+ "Black mace": {
+  "atk": 10
+ },
+ "Black mask": {
+  "str": 20,
+  "def": 10
+ },
+ "Black mask (i)": {
+  "str": 20,
+  "def": 10
+ },
+ "Black med helm": {
+  "def": 10
+ },
+ "Black pickaxe": {
+  "atk": 10
+ },
+ "Black platebody": {
+  "def": 10
+ },
+ "Black platebody (g)": {
+  "def": 10
+ },
+ "Black platebody (h1)": {
+  "def": 10
+ },
+ "Black platebody (h2)": {
+  "def": 10
+ },
+ "Black platebody (h3)": {
+  "def": 10
+ },
+ "Black platebody (h4)": {
+  "def": 10
+ },
+ "Black platebody (h5)": {
+  "def": 10
+ },
+ "Black platebody (t)": {
+  "def": 10
+ },
+ "Black platelegs": {
+  "def": 10
+ },
+ "Black platelegs (g)": {
+  "def": 10
+ },
+ "Black platelegs (t)": {
+  "def": 10
+ },
+ "Black plateskirt": {
+  "def": 10
+ },
+ "Black plateskirt (g)": {
+  "def": 10
+ },
+ "Black plateskirt (t)": {
+  "def": 10
+ },
+ "Black salamander": {
+  "atk": 70,
+  "magic": 70,
+  "ranged": 70
+ },
+ "Black scimitar": {
+  "atk": 10
+ },
+ "Black shield (h1)": {
+  "def": 10
+ },
+ "Black shield (h2)": {
+  "def": 10
+ },
+ "Black shield (h3)": {
+  "def": 10
+ },
+ "Black shield (h4)": {
+  "def": 10
+ },
+ "Black shield (h5)": {
+  "def": 10
+ },
+ "Black spear": {
+  "atk": 10
+ },
+ "Black spiky vambraces": {
+  "ranged": 70
+ },
+ "Black sq shield": {
+  "def": 10
+ },
+ "Black sword": {
+  "atk": 10
+ },
+ "Black warhammer": {
+  "str": 10
+ },
+ "Blade of saeldor": {
+  "atk": 80
+ },
+ "Blade of saeldor (c)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Amlodd)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Cadarn)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Crwys)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Iorwerth)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Ithell)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Meilyr)": {
+  "atk": 80
+ },
+ "Blade of saeldor (c) (Trahaearn)": {
+  "atk": 80
+ },
+ "Blessed dizana's quiver": {
+  "ranged": 75
+ },
+ "Blessed spirit shield": {
+  "def": 70,
+  "prayer": 60
+ },
+ "Blisterwood flail": {
+  "atk": 50
+ },
+ "Blisterwood sickle": {
+  "atk": 50
+ },
+ "Blisterwood sickle (e)": {
+  "atk": 50
+ },
+ "Blood ancient sceptre": {
+  "magic": 75,
+  "str": 60,
+  "atk": 50
+ },
+ "Blood moon chestplate": {
+  "str": 75,
+  "def": 50
+ },
+ "Blood moon helm": {
+  "str": 75,
+  "def": 50
+ },
+ "Blood moon tassets": {
+  "str": 75,
+  "def": 50
+ },
+ "Bloodbark body": {
+  "magic": 60,
+  "def": 60
+ },
+ "Bloodbark boots": {
+  "magic": 60,
+  "def": 60
+ },
+ "Bloodbark gauntlets": {
+  "magic": 60,
+  "def": 60
+ },
+ "Bloodbark helm": {
+  "magic": 60,
+  "def": 60
+ },
+ "Bloodbark legs": {
+  "magic": 60,
+  "def": 60
+ },
+ "Blue d'hide body": {
+  "ranged": 50,
+  "def": 40
+ },
+ "Blue d'hide body (g)": {
+  "ranged": 50,
+  "def": 40
+ },
+ "Blue d'hide body (t)": {
+  "ranged": 50,
+  "def": 40
+ },
+ "Blue d'hide chaps": {
+  "ranged": 50
+ },
+ "Blue d'hide chaps (g)": {
+  "ranged": 50
+ },
+ "Blue d'hide chaps (t)": {
+  "ranged": 50
+ },
+ "Blue d'hide shield": {
+  "ranged": 50,
+  "def": 40
+ },
+ "Blue d'hide vambraces": {
+  "ranged": 50
+ },
+ "Blue moon chestplate": {
+  "magic": 75,
+  "def": 50
+ },
+ "Blue moon helm": {
+  "magic": 75,
+  "def": 50
+ },
+ "Blue moon spear": {
+  "atk": 70,
+  "magic": 75
+ },
+ "Blue moon tassets": {
+  "magic": 75,
+  "def": 50
+ },
+ "Blue spiky vambraces": {
+  "ranged": 50
+ },
+ "Blurite crossbow": {
+  "ranged": 16
+ },
+ "Blurite sword": {
+  "atk": 1
+ },
+ "Bone bolts": {
+  "ranged": 28
+ },
+ "Bone mace": {
+  "atk": 50
+ },
+ "Bone shortbow": {
+  "ranged": 50
+ },
+ "Bone staff": {
+  "magic": 50
+ },
+ "Bonecrusher necklace": {
+  "prayer": 70
+ },
+ "Boots of brimstone": {
+  "def": 70,
+  "magic": 70,
+  "ranged": 70,
+  "slayer": 44
+ },
+ "Boots of darkness": {
+  "magic": 40,
+  "def": 20
+ },
+ "Boots of stone": {
+  "slayer": 44
+ },
+ "Bow of faerdhinen": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Amlodd)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Cadarn)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Crwys)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (deadman)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Iorwerth)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Ithell)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Meilyr)": {
+  "ranged": 80
+ },
+ "Bow of faerdhinen (c) (Trahaearn)": {
+  "ranged": 80
+ },
+ "Brine sabre": {
+  "atk": 40
+ },
+ "Broad arrows": {
+  "slayer": 55,
+  "ranged": 50
+ },
+ "Broad bolts": {
+  "slayer": 55,
+  "ranged": 61
+ },
+ "Bronze axe": {
+  "atk": 1
+ },
+ "Bronze battleaxe": {
+  "atk": 1
+ },
+ "Bronze chainbody": {
+  "def": 1
+ },
+ "Bronze crossbow": {
+  "ranged": 1
+ },
+ "Bronze dart": {
+  "ranged": 1
+ },
+ "Bronze felling axe": {
+  "atk": 1
+ },
+ "Bronze kiteshield": {
+  "def": 1
+ },
+ "Bronze kiteshield (g)": {
+  "def": 1
+ },
+ "Bronze kiteshield (t)": {
+  "def": 1
+ },
+ "Bronze platelegs": {
+  "def": 1
+ },
+ "Bronze platelegs (g)": {
+  "def": 1
+ },
+ "Bronze platelegs (t)": {
+  "def": 1
+ },
+ "Bronze scimitar": {
+  "atk": 1
+ },
+ "Broodoo shield (combat)": {
+  "def": 25,
+  "magic": 25
+ },
+ "Broodoo shield (disease)": {
+  "def": 25,
+  "magic": 25
+ },
+ "Broodoo shield (poison)": {
+  "def": 25,
+  "magic": 25
+ },
+ "Bryophyta's staff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Bug lantern": {
+  "slayer": 33
+ },
+ "Burning claws": {
+  "atk": 60
+ },
+ "Cabbage round shield": {
+  "def": 30
+ },
+ "Calamity breeches": {
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Calamity chest": {
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Camphor blowpipe": {
+  "ranged": 45
+ },
+ "Carnillean armour": {
+  "def": 1
+ },
+ "Chinchompa": {
+  "ranged": 45
+ },
+ "Chompy bird hat (bowman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (bowmaster)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (dragon archer)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (expert dragon archer)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (expert ogre dragon archer)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (expert)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (forester)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (marksman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre bowman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre bowmaster)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre dragon archer)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre expert)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre forester)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre marksman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre woodsman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (ogre yeoman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (woodsman)": {
+  "ranged": 30
+ },
+ "Chompy bird hat (yeoman)": {
+  "ranged": 30
+ },
+ "Cleaver": {
+  "atk": 40
+ },
+ "Coif": {
+  "ranged": 20
+ },
+ "Colossal blade": {
+  "atk": 60
+ },
+ "Comp ogre bow": {
+  "ranged": 30
+ },
+ "Confliction gauntlets": {
+  "hp": 90
+ },
+ "Corrupted morrigan's coif (bh)": {
+  "def": 20
+ },
+ "Corrupted morrigan's leather body (bh)": {
+  "def": 20
+ },
+ "Corrupted morrigan's leather chaps (bh)": {
+  "def": 20
+ },
+ "Corrupted statius's full helm (bh)": {
+  "def": 20
+ },
+ "Corrupted statius's platebody (bh)": {
+  "def": 20
+ },
+ "Corrupted statius's platelegs (bh)": {
+  "def": 20
+ },
+ "Corrupted vesta's chainbody (bh)": {
+  "def": 20
+ },
+ "Corrupted vesta's plateskirt (bh)": {
+  "def": 20
+ },
+ "Corrupted zuriel's hood (bh)": {
+  "def": 20
+ },
+ "Corrupted zuriel's robe bottom (bh)": {
+  "def": 20
+ },
+ "Corrupted zuriel's robe top (bh)": {
+  "def": 20
+ },
+ "Craw's bow": {
+  "ranged": 60
+ },
+ "Crimson kisten": {
+  "atk": 60,
+  "str": 85
+ },
+ "Crossbow": {
+  "ranged": 1
+ },
+ "Crystal axe": {
+  "atk": 70
+ },
+ "Crystal axe (The Gauntlet)": {
+  "atk": 70
+ },
+ "Crystal body": {
+  "def": 70
+ },
+ "Crystal body (Amlodd)": {
+  "def": 70
+ },
+ "Crystal body (attuned)": {
+  "def": 70
+ },
+ "Crystal body (basic)": {
+  "def": 70
+ },
+ "Crystal body (beta)": {
+  "def": 70
+ },
+ "Crystal body (Cadarn)": {
+  "def": 70
+ },
+ "Crystal body (Crwys)": {
+  "def": 70
+ },
+ "Crystal body (deadman)": {
+  "def": 70
+ },
+ "Crystal body (Hefin)": {
+  "def": 70
+ },
+ "Crystal body (Iorwerth)": {
+  "def": 70
+ },
+ "Crystal body (Ithell)": {
+  "def": 70
+ },
+ "Crystal body (perfected)": {
+  "def": 70
+ },
+ "Crystal body (Trahaearn)": {
+  "def": 70
+ },
+ "Crystal bow": {
+  "ranged": 70
+ },
+ "Crystal bow (attuned)": {
+  "ranged": 70
+ },
+ "Crystal bow (basic)": {
+  "ranged": 70
+ },
+ "Crystal bow (historical)": {
+  "ranged": 70
+ },
+ "Crystal bow (i)": {
+  "ranged": 70
+ },
+ "Crystal bow (perfected)": {
+  "ranged": 70
+ },
+ "Crystal felling axe": {
+  "atk": 70
+ },
+ "Crystal halberd": {
+  "atk": 70,
+  "str": 35
+ },
+ "Crystal halberd (attuned)": {
+  "atk": 70,
+  "str": 35
+ },
+ "Crystal halberd (basic)": {
+  "atk": 70,
+  "str": 35
+ },
+ "Crystal halberd (perfected)": {
+  "atk": 70,
+  "str": 35
+ },
+ "Crystal harpoon": {
+  "atk": 70
+ },
+ "Crystal harpoon (The Gauntlet)": {
+  "atk": 70
+ },
+ "Crystal helm": {
+  "def": 70
+ },
+ "Crystal helm (Amlodd)": {
+  "def": 70
+ },
+ "Crystal helm (attuned)": {
+  "def": 70
+ },
+ "Crystal helm (basic)": {
+  "def": 70
+ },
+ "Crystal helm (beta)": {
+  "def": 70
+ },
+ "Crystal helm (Cadarn)": {
+  "def": 70
+ },
+ "Crystal helm (Crwys)": {
+  "def": 70
+ },
+ "Crystal helm (deadman)": {
+  "def": 70
+ },
+ "Crystal helm (Hefin)": {
+  "def": 70
+ },
+ "Crystal helm (Iorwerth)": {
+  "def": 70
+ },
+ "Crystal helm (Ithell)": {
+  "def": 70
+ },
+ "Crystal helm (perfected)": {
+  "def": 70
+ },
+ "Crystal helm (Trahaearn)": {
+  "def": 70
+ },
+ "Crystal legs": {
+  "def": 70
+ },
+ "Crystal legs (Amlodd)": {
+  "def": 70
+ },
+ "Crystal legs (attuned)": {
+  "def": 70
+ },
+ "Crystal legs (basic)": {
+  "def": 70
+ },
+ "Crystal legs (beta)": {
+  "def": 70
+ },
+ "Crystal legs (Cadarn)": {
+  "def": 70
+ },
+ "Crystal legs (Crwys)": {
+  "def": 70
+ },
+ "Crystal legs (deadman)": {
+  "def": 70
+ },
+ "Crystal legs (Hefin)": {
+  "def": 70
+ },
+ "Crystal legs (Iorwerth)": {
+  "def": 70
+ },
+ "Crystal legs (Ithell)": {
+  "def": 70
+ },
+ "Crystal legs (perfected)": {
+  "def": 70
+ },
+ "Crystal legs (Trahaearn)": {
+  "def": 70
+ },
+ "Crystal pickaxe": {
+  "atk": 70
+ },
+ "Crystal pickaxe (The Gauntlet)": {
+  "atk": 70
+ },
+ "Crystal shield": {
+  "def": 70
+ },
+ "Crystal shield (historical)": {
+  "def": 70
+ },
+ "Crystal shield (i)": {
+  "def": 70
+ },
+ "Dagon'hai hat": {
+  "magic": 70,
+  "def": 40
+ },
+ "Dagon'hai robe bottom": {
+  "magic": 70,
+  "def": 40
+ },
+ "Dagon'hai robe top": {
+  "magic": 70,
+  "def": 40
+ },
+ "Dark bow": {
+  "ranged": 60
+ },
+ "Dark bow (bh)": {
+  "ranged": 60
+ },
+ "Dark bow (deadman)": {
+  "ranged": 60
+ },
+ "Decorative armour (gold platebody)": {
+  "def": 30
+ },
+ "Decorative armour (gold platelegs)": {
+  "def": 30
+ },
+ "Decorative armour (gold plateskirt)": {
+  "def": 30
+ },
+ "Decorative armour (magic hat)": {
+  "magic": 20
+ },
+ "Decorative armour (magic legs)": {
+  "magic": 20
+ },
+ "Decorative armour (magic top)": {
+  "magic": 20
+ },
+ "Decorative armour (quiver)": {
+  "ranged": 30
+ },
+ "Decorative armour (ranged legs)": {
+  "ranged": 30
+ },
+ "Decorative armour (ranged top)": {
+  "ranged": 30
+ },
+ "Decorative armour (red platebody)": {
+  "def": 5
+ },
+ "Decorative armour (red platelegs)": {
+  "def": 5
+ },
+ "Decorative armour (red plateskirt)": {
+  "def": 5
+ },
+ "Decorative armour (white platebody)": {
+  "def": 20
+ },
+ "Decorative armour (white platelegs)": {
+  "def": 20
+ },
+ "Decorative armour (white plateskirt)": {
+  "def": 20
+ },
+ "Decorative boots (gold)": {
+  "def": 30
+ },
+ "Decorative boots (red)": {
+  "def": 5
+ },
+ "Decorative boots (white)": {
+  "def": 20
+ },
+ "Decorative full helm (gold)": {
+  "def": 30
+ },
+ "Decorative full helm (red)": {
+  "def": 5
+ },
+ "Decorative full helm (white)": {
+  "def": 20
+ },
+ "Decorative helm (gold)": {
+  "def": 30
+ },
+ "Decorative helm (red)": {
+  "def": 5
+ },
+ "Decorative helm (white)": {
+  "def": 20
+ },
+ "Decorative shield (gold)": {
+  "def": 30
+ },
+ "Decorative shield (red)": {
+  "def": 5
+ },
+ "Decorative shield (white)": {
+  "def": 20
+ },
+ "Decorative sword (gold)": {
+  "atk": 30
+ },
+ "Decorative sword (red)": {
+  "atk": 5
+ },
+ "Decorative sword (white)": {
+  "atk": 20
+ },
+ "Devout boots": {
+  "prayer": 60
+ },
+ "Dharok's greataxe": {
+  "atk": 70,
+  "str": 70
+ },
+ "Dharok's helm": {
+  "def": 70
+ },
+ "Dharok's platebody": {
+  "def": 70
+ },
+ "Dharok's platelegs": {
+  "def": 70
+ },
+ "Diamond dragon bolts": {
+  "ranged": 64
+ },
+ "Diamond dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Dinh's bulwark": {
+  "atk": 75,
+  "def": 75
+ },
+ "Dizana's quiver": {
+  "ranged": 75
+ },
+ "Dorgeshuun crossbow": {
+  "ranged": 28
+ },
+ "Dragon 2h sword": {
+  "atk": 60
+ },
+ "Dragon 2h sword (cr)": {
+  "atk": 60
+ },
+ "Dragon axe": {
+  "atk": 60
+ },
+ "Dragon axe (or)": {
+  "atk": 60
+ },
+ "Dragon battleaxe": {
+  "atk": 60
+ },
+ "Dragon battleaxe (cr)": {
+  "atk": 60
+ },
+ "Dragon bolts": {
+  "ranged": 64
+ },
+ "Dragon boots": {
+  "def": 60
+ },
+ "Dragon boots (cr)": {
+  "def": 60
+ },
+ "Dragon boots (g)": {
+  "def": 60
+ },
+ "Dragon cane": {
+  "atk": 60,
+  "prayer": 5
+ },
+ "Dragon chainbody": {
+  "def": 60
+ },
+ "Dragon chainbody (cr)": {
+  "def": 60
+ },
+ "Dragon chainbody (g)": {
+  "def": 60
+ },
+ "Dragon claws": {
+  "atk": 60
+ },
+ "Dragon claws (cr)": {
+  "atk": 60
+ },
+ "Dragon claws (or)": {
+  "atk": 60
+ },
+ "Dragon crossbow": {
+  "ranged": 64
+ },
+ "Dragon crossbow (cr)": {
+  "ranged": 64
+ },
+ "Dragon dagger": {
+  "atk": 60
+ },
+ "Dragon dagger (cr)": {
+  "atk": 60
+ },
+ "Dragon dart": {
+  "ranged": 60
+ },
+ "Dragon defender": {
+  "def": 60
+ },
+ "Dragon defender (t)": {
+  "def": 60
+ },
+ "Dragon felling axe": {
+  "atk": 60
+ },
+ "Dragon full helm": {
+  "def": 60
+ },
+ "Dragon full helm (g)": {
+  "def": 60
+ },
+ "Dragon halberd": {
+  "atk": 60,
+  "str": 30
+ },
+ "Dragon halberd (cr)": {
+  "atk": 60,
+  "str": 30
+ },
+ "Dragon harpoon": {
+  "atk": 60
+ },
+ "Dragon harpoon (or)": {
+  "atk": 60
+ },
+ "Dragon hasta": {
+  "atk": 60
+ },
+ "Dragon hunter crossbow": {
+  "ranged": 70
+ },
+ "Dragon hunter crossbow (b)": {
+  "ranged": 70
+ },
+ "Dragon hunter crossbow (t)": {
+  "ranged": 70
+ },
+ "Dragon hunter lance": {
+  "atk": 78
+ },
+ "Dragon hunter wand": {
+  "magic": 65
+ },
+ "Dragon kiteshield": {
+  "def": 60
+ },
+ "Dragon kiteshield (g)": {
+  "def": 60
+ },
+ "Dragon knife": {
+  "ranged": 60
+ },
+ "Dragon longsword": {
+  "atk": 60
+ },
+ "Dragon longsword (bh)": {
+  "atk": 60
+ },
+ "Dragon longsword (cr)": {
+  "atk": 60
+ },
+ "Dragon mace": {
+  "atk": 60
+ },
+ "Dragon mace (bh)": {
+  "atk": 60
+ },
+ "Dragon mace (cr)": {
+  "atk": 60
+ },
+ "Dragon med helm": {
+  "def": 60
+ },
+ "Dragon med helm (cr)": {
+  "def": 60
+ },
+ "Dragon pickaxe": {
+  "atk": 60
+ },
+ "Dragon pickaxe (or)": {
+  "atk": 60
+ },
+ "Dragon pickaxe (or) (Trailblazer)": {
+  "atk": 60
+ },
+ "Dragon pickaxe (upgraded)": {
+  "atk": 60
+ },
+ "Dragon platebody": {
+  "def": 60
+ },
+ "Dragon platebody (g)": {
+  "def": 60
+ },
+ "Dragon platelegs": {
+  "def": 60
+ },
+ "Dragon platelegs (cr)": {
+  "def": 60
+ },
+ "Dragon platelegs (g)": {
+  "def": 60
+ },
+ "Dragon plateskirt": {
+  "def": 60
+ },
+ "Dragon plateskirt (cr)": {
+  "def": 60
+ },
+ "Dragon plateskirt (g)": {
+  "def": 60
+ },
+ "Dragon scimitar": {
+  "atk": 60
+ },
+ "Dragon scimitar (cr)": {
+  "atk": 60
+ },
+ "Dragon scimitar (or)": {
+  "atk": 60
+ },
+ "Dragon spear": {
+  "atk": 60
+ },
+ "Dragon spear (cr)": {
+  "atk": 60
+ },
+ "Dragon sq shield": {
+  "def": 60
+ },
+ "Dragon sq shield (cr)": {
+  "def": 60
+ },
+ "Dragon sq shield (g)": {
+  "def": 60
+ },
+ "Dragon sword": {
+  "atk": 60
+ },
+ "Dragon sword (cr)": {
+  "atk": 60
+ },
+ "Dragon thrownaxe": {
+  "ranged": 61
+ },
+ "Dragon warhammer": {
+  "str": 60
+ },
+ "Dragon warhammer (cr)": {
+  "str": 60
+ },
+ "Dragonbone necklace": {
+  "prayer": 70
+ },
+ "Dragonfire shield": {
+  "def": 75
+ },
+ "Dragonfire ward": {
+  "ranged": 70,
+  "def": 75
+ },
+ "Dragonstone bolts (e)": {
+  "ranged": 61
+ },
+ "Dragonstone boots": {
+  "def": 40
+ },
+ "Dragonstone dragon bolts": {
+  "ranged": 64
+ },
+ "Dragonstone dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Dragonstone full helm": {
+  "def": 40
+ },
+ "Dragonstone gauntlets": {
+  "def": 40
+ },
+ "Dragonstone platebody": {
+  "def": 40
+ },
+ "Dragonstone platelegs": {
+  "def": 40
+ },
+ "Dual macuahuitl": {
+  "atk": 70,
+  "str": 75
+ },
+ "Dust battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Dwarven helmet": {
+  "def": 50
+ },
+ "Earmuffs": {
+  "slayer": 15
+ },
+ "Earth battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Earthbound tecpatl": {
+  "atk": 55
+ },
+ "Echo boots": {
+  "def": 75
+ },
+ "Eclipse atlatl": {
+  "ranged": 75,
+  "atk": 50,
+  "str": 50
+ },
+ "Eclipse moon chestplate": {
+  "ranged": 75,
+  "def": 50
+ },
+ "Eclipse moon helm": {
+  "ranged": 75,
+  "def": 50
+ },
+ "Eclipse moon tassets": {
+  "ranged": 75,
+  "def": 50
+ },
+ "Elder chaos hood": {
+  "magic": 40
+ },
+ "Elder chaos hood (or)": {
+  "magic": 40
+ },
+ "Elder chaos robe": {
+  "magic": 40
+ },
+ "Elder chaos robe (or)": {
+  "magic": 40
+ },
+ "Elder chaos top": {
+  "magic": 40
+ },
+ "Elder chaos top (or)": {
+  "magic": 40
+ },
+ "Elder maul": {
+  "str": 75
+ },
+ "Elder maul (or)": {
+  "str": 75
+ },
+ "Eldritch nightmare staff": {
+  "magic": 82,
+  "hp": 50
+ },
+ "Elidinis' ward": {
+  "magic": 80,
+  "def": 80,
+  "prayer": 80
+ },
+ "Elidinis' ward (f)": {
+  "magic": 80,
+  "def": 80,
+  "prayer": 80
+ },
+ "Elidinis' ward (or)": {
+  "magic": 80,
+  "def": 80,
+  "prayer": 80
+ },
+ "Elite black full helm": {
+  "def": 40
+ },
+ "Elite black platebody": {
+  "def": 40
+ },
+ "Elite black platelegs": {
+  "def": 40
+ },
+ "Elite calamity breeches": {
+  "def": 70,
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Elite calamity chest": {
+  "def": 70,
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Elite void robe": {
+  "prayer": 3
+ },
+ "Elite void robe (or)": {
+  "prayer": 3
+ },
+ "Elite void top": {
+  "prayer": 3
+ },
+ "Elite void top (or)": {
+  "prayer": 3
+ },
+ "Elysian spirit shield": {
+  "def": 75,
+  "prayer": 75
+ },
+ "Emberlight": {
+  "atk": 77
+ },
+ "Emerald bolts": {
+  "ranged": 36
+ },
+ "Emerald bolts (e)": {
+  "ranged": 36
+ },
+ "Emerald dragon bolts": {
+  "ranged": 64
+ },
+ "Emerald dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Enchanted hat": {
+  "def": 20,
+  "magic": 40
+ },
+ "Enchanted robe": {
+  "def": 20,
+  "magic": 40
+ },
+ "Enchanted top": {
+  "def": 20,
+  "magic": 40
+ },
+ "Eternal boots": {
+  "magic": 75,
+  "def": 75
+ },
+ "Excalibur": {
+  "atk": 20
+ },
+ "Eye of ayak": {
+  "magic": 83
+ },
+ "Facemask": {
+  "slayer": 10
+ },
+ "Farseer helm": {
+  "def": 45
+ },
+ "Ferocious gloves": {
+  "atk": 80,
+  "def": 80
+ },
+ "Fighter hat": {
+  "def": 45
+ },
+ "Fighter torso": {
+  "def": 40
+ },
+ "Fighter torso (or)": {
+  "def": 40
+ },
+ "Fire battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Fixed device": {
+  "ranged": 60
+ },
+ "Fremennik blade": {
+  "atk": 30
+ },
+ "Fremennik helm": {
+  "def": 30
+ },
+ "Fremennik shield": {
+  "def": 30
+ },
+ "Frog-leather body": {
+  "def": 25,
+  "ranged": 25
+ },
+ "Frog-leather boots": {
+  "def": 25,
+  "ranged": 25
+ },
+ "Frog-leather chaps": {
+  "def": 25,
+  "ranged": 25
+ },
+ "Frying pan": {
+  "atk": 20
+ },
+ "Ghrazi rapier": {
+  "atk": 80
+ },
+ "Gilded 2h sword": {
+  "atk": 40
+ },
+ "Gilded axe": {
+  "atk": 40
+ },
+ "Gilded boots": {
+  "def": 40
+ },
+ "Gilded chainbody": {
+  "def": 40
+ },
+ "Gilded coif": {
+  "ranged": 40
+ },
+ "Gilded d'hide body": {
+  "def": 40,
+  "ranged": 40
+ },
+ "Gilded d'hide vambraces": {
+  "ranged": 40
+ },
+ "Gilded full helm": {
+  "def": 40
+ },
+ "Gilded hasta": {
+  "atk": 40
+ },
+ "Gilded med helm": {
+  "def": 40
+ },
+ "Gilded platebody": {
+  "def": 40
+ },
+ "Gilded scimitar": {
+  "atk": 40
+ },
+ "Gilded spear": {
+  "atk": 40
+ },
+ "Gilded sq shield": {
+  "def": 40
+ },
+ "Glacial temotli": {
+  "atk": 55
+ },
+ "Gloves of darkness": {
+  "magic": 40,
+  "def": 20
+ },
+ "Gold helmet": {
+  "def": 30
+ },
+ "Granite body": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite boots": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite gloves": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite hammer": {
+  "atk": 50,
+  "str": 50
+ },
+ "Granite helm": {
+  "str": 50,
+  "def": 50
+ },
+ "Granite legs": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite longsword": {
+  "atk": 50,
+  "str": 50
+ },
+ "Granite maul": {
+  "str": 50,
+  "atk": 50
+ },
+ "Granite maul (ornate handle)": {
+  "str": 50,
+  "atk": 50
+ },
+ "Granite ring": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite ring (i)": {
+  "def": 50,
+  "str": 50
+ },
+ "Granite shield": {
+  "def": 50,
+  "str": 50
+ },
+ "Green d'hide body (g)": {
+  "ranged": 40,
+  "def": 40
+ },
+ "Green d'hide body (t)": {
+  "ranged": 40,
+  "def": 40
+ },
+ "Green d'hide chaps (g)": {
+  "ranged": 40
+ },
+ "Green d'hide chaps (t)": {
+  "ranged": 40
+ },
+ "Green d'hide shield": {
+  "ranged": 40,
+  "def": 40
+ },
+ "Green d'hide vambraces": {
+  "ranged": 40
+ },
+ "Green spiky vambraces": {
+  "ranged": 40
+ },
+ "Guardian boots": {
+  "def": 75
+ },
+ "Guthan's chainskirt": {
+  "def": 70
+ },
+ "Guthan's helm": {
+  "def": 70
+ },
+ "Guthan's platebody": {
+  "def": 70
+ },
+ "Guthan's warspear": {
+  "atk": 70
+ },
+ "Guthix bracers": {
+  "ranged": 70
+ },
+ "Guthix chaps": {
+  "ranged": 70
+ },
+ "Guthix cloak": {
+  "prayer": 40
+ },
+ "Guthix coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Guthix crozier": {
+  "prayer": 60
+ },
+ "Guthix d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Guthix d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Guthix d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Guthix full helm": {
+  "def": 40
+ },
+ "Guthix kiteshield": {
+  "def": 40
+ },
+ "Guthix mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Guthix platebody": {
+  "def": 40
+ },
+ "Guthix platelegs": {
+  "def": 40
+ },
+ "Guthix plateskirt": {
+  "def": 40
+ },
+ "Guthix robe legs": {
+  "prayer": 20
+ },
+ "Guthix robe top": {
+  "prayer": 20
+ },
+ "Guthix staff": {
+  "magic": 60
+ },
+ "Guthix stole": {
+  "prayer": 60
+ },
+ "Hallowed flail": {
+  "atk": 50
+ },
+ "Hallowfell": {
+  "atk": 75
+ },
+ "Hard leather shield": {
+  "ranged": 20,
+  "def": 10
+ },
+ "Hardleather body": {
+  "ranged": 1,
+  "def": 10
+ },
+ "Harmonised nightmare staff": {
+  "magic": 82,
+  "hp": 50
+ },
+ "Harry's cutlass": {
+  "atk": 20
+ },
+ "Healer hat": {
+  "def": 45
+ },
+ "Heavy ballista": {
+  "ranged": 75
+ },
+ "Heavy ballista (or)": {
+  "ranged": 75
+ },
+ "Helm of neitiznot": {
+  "def": 55
+ },
+ "Helm of neitiznot (or)": {
+  "def": 55
+ },
+ "Hill giant club": {
+  "atk": 40
+ },
+ "Holy moleys": {
+  "prayer": 31
+ },
+ "Holy sandals": {
+  "prayer": 31
+ },
+ "Holy wraps": {
+  "prayer": 31
+ },
+ "Hood of darkness": {
+  "magic": 40,
+  "def": 20
+ },
+ "Hueycoatl hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Hueycoatl hide chaps": {
+  "ranged": 70
+ },
+ "Hueycoatl hide coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Hueycoatl hide vambraces": {
+  "ranged": 70
+ },
+ "Hunter's spear": {
+  "ranged": 55,
+  "str": 30
+ },
+ "Hunters' crossbow": {
+  "ranged": 50
+ },
+ "Hunters' sunlight crossbow": {
+  "ranged": 66
+ },
+ "Iban's staff": {
+  "magic": 50,
+  "atk": 50
+ },
+ "Iban's staff (o)": {
+  "magic": 50,
+  "atk": 50
+ },
+ "Iban's staff (u)": {
+  "magic": 50,
+  "atk": 50
+ },
+ "Iban's staff (u) (o)": {
+  "magic": 50,
+  "atk": 50
+ },
+ "Ice ancient sceptre": {
+  "magic": 75,
+  "str": 60,
+  "atk": 50
+ },
+ "Infernal pickaxe": {
+  "atk": 60
+ },
+ "Infernal pickaxe (or)": {
+  "atk": 60
+ },
+ "Infernal pickaxe (or) (Trailblazer Reloaded)": {
+  "atk": 60
+ },
+ "Infinity boots": {
+  "magic": 50,
+  "def": 25
+ },
+ "Infinity bottoms": {
+  "magic": 50,
+  "def": 25
+ },
+ "Infinity gloves": {
+  "magic": 50,
+  "def": 25
+ },
+ "Infinity hat": {
+  "magic": 50,
+  "def": 25
+ },
+ "Infinity top": {
+  "magic": 50,
+  "def": 25
+ },
+ "Initiate cuisse": {
+  "def": 20,
+  "prayer": 10
+ },
+ "Initiate hauberk": {
+  "def": 20,
+  "prayer": 10
+ },
+ "Initiate sallet": {
+  "def": 20,
+  "prayer": 10
+ },
+ "Inquisitor's great helm": {
+  "str": 70,
+  "def": 30
+ },
+ "Inquisitor's hauberk": {
+  "str": 70,
+  "def": 30
+ },
+ "Inquisitor's mace": {
+  "atk": 80
+ },
+ "Inquisitor's plateskirt": {
+  "str": 70,
+  "def": 30
+ },
+ "Insulated boots": {
+  "slayer": 37
+ },
+ "Iron chainbody": {
+  "def": 1
+ },
+ "Iron crossbow": {
+  "ranged": 26
+ },
+ "Iron felling axe": {
+  "atk": 1
+ },
+ "Iron kiteshield": {
+  "def": 1
+ },
+ "Iron kiteshield (g)": {
+  "def": 1
+ },
+ "Iron kiteshield (t)": {
+  "def": 1
+ },
+ "Iron mace": {
+  "atk": 1
+ },
+ "Ironwood blowpipe": {
+  "ranged": 55
+ },
+ "Ivandis flail": {
+  "atk": 40
+ },
+ "Jade dragon bolts": {
+  "ranged": 64
+ },
+ "Jade dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Justiciar chestguard": {
+  "def": 75
+ },
+ "Justiciar faceguard": {
+  "def": 75
+ },
+ "Justiciar legguards": {
+  "def": 75
+ },
+ "Karil's coif": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Karil's crossbow": {
+  "ranged": 70
+ },
+ "Karil's leatherskirt": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Karil's leathertop": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Katana": {
+  "atk": 40
+ },
+ "Keris": {
+  "atk": 50
+ },
+ "Keris partisan": {
+  "atk": 80
+ },
+ "Keris partisan of amascut": {
+  "atk": 80
+ },
+ "Keris partisan of breaching": {
+  "atk": 80
+ },
+ "Keris partisan of corruption": {
+  "atk": 80
+ },
+ "Keris partisan of the sun": {
+  "atk": 80
+ },
+ "Kitchen knife": {
+  "atk": 40
+ },
+ "Kodai wand": {
+  "magic": 80
+ },
+ "Koriff's coif": {
+  "def": 70,
+  "ranged": 70
+ },
+ "Koriff's cowl": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Koriff's headband": {
+  "ranged": 70
+ },
+ "Lava battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Lava battlestaff (or)": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Leaf-bladed battleaxe": {
+  "atk": 65,
+  "slayer": 55
+ },
+ "Leaf-bladed spear": {
+  "slayer": 55,
+  "atk": 50
+ },
+ "Leaf-bladed sword": {
+  "atk": 65,
+  "slayer": 55
+ },
+ "Leather body": {
+  "ranged": 1
+ },
+ "Leather body (g)": {
+  "ranged": 1
+ },
+ "Light ballista": {
+  "ranged": 65
+ },
+ "Lucky cutlass": {
+  "atk": 30
+ },
+ "Lunar boots": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar cape": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar gloves": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar helm": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar legs": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar staff": {
+  "magic": 65,
+  "def": 40
+ },
+ "Lunar torso": {
+  "magic": 65,
+  "def": 40
+ },
+ "Mage's book": {
+  "magic": 60
+ },
+ "Magic comp bow": {
+  "ranged": 50
+ },
+ "Magic longbow": {
+  "ranged": 50
+ },
+ "Magic shield": {
+  "def": 40
+ },
+ "Magic shortbow": {
+  "ranged": 50
+ },
+ "Magic shortbow (i)": {
+  "ranged": 50
+ },
+ "Malediction ward": {
+  "def": 60
+ },
+ "Malediction ward (or)": {
+  "def": 60
+ },
+ "Maoma's full helm": {
+  "def": 40,
+  "str": 70
+ },
+ "Maoma's great helm": {
+  "def": 70,
+  "str": 70
+ },
+ "Maoma's med helm": {
+  "str": 70
+ },
+ "Maple blackjack(d)": {
+  "def": 30
+ },
+ "Maple blackjack(o)": {
+  "atk": 30
+ },
+ "Maple longbow": {
+  "ranged": 30
+ },
+ "Maple shield": {
+  "def": 40
+ },
+ "Maple shortbow": {
+  "ranged": 30
+ },
+ "Masori body": {
+  "ranged": 80,
+  "def": 30
+ },
+ "Masori body (f)": {
+  "ranged": 80,
+  "def": 80,
+  "prayer": 1
+ },
+ "Masori chaps": {
+  "ranged": 80,
+  "def": 30
+ },
+ "Masori chaps (f)": {
+  "ranged": 80,
+  "def": 80,
+  "prayer": 1
+ },
+ "Masori mask": {
+  "ranged": 80,
+  "def": 30
+ },
+ "Masori mask (f)": {
+  "ranged": 80,
+  "def": 80,
+  "prayer": 1
+ },
+ "Master wand": {
+  "magic": 60
+ },
+ "Meat tenderiser": {
+  "atk": 40
+ },
+ "Mirror shield": {
+  "slayer": 25,
+  "def": 20
+ },
+ "Mist battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Mithril 2h sword": {
+  "atk": 20
+ },
+ "Mithril axe": {
+  "atk": 20
+ },
+ "Mithril battleaxe": {
+  "atk": 20
+ },
+ "Mithril bolts": {
+  "ranged": 36
+ },
+ "Mithril boots": {
+  "def": 20
+ },
+ "Mithril chainbody": {
+  "def": 20
+ },
+ "Mithril claws": {
+  "atk": 20
+ },
+ "Mithril crossbow": {
+  "ranged": 36
+ },
+ "Mithril dagger": {
+  "atk": 20
+ },
+ "Mithril dart": {
+  "ranged": 20
+ },
+ "Mithril defender": {
+  "atk": 20,
+  "def": 20
+ },
+ "Mithril felling axe": {
+  "atk": 20
+ },
+ "Mithril full helm": {
+  "def": 20
+ },
+ "Mithril full helm (g)": {
+  "def": 20
+ },
+ "Mithril full helm (t)": {
+  "def": 20
+ },
+ "Mithril halberd": {
+  "atk": 20,
+  "str": 10
+ },
+ "Mithril hasta": {
+  "atk": 20
+ },
+ "Mithril kiteshield": {
+  "def": 20
+ },
+ "Mithril kiteshield (g)": {
+  "def": 20
+ },
+ "Mithril kiteshield (t)": {
+  "def": 20
+ },
+ "Mithril knife": {
+  "ranged": 20
+ },
+ "Mithril longsword": {
+  "atk": 20
+ },
+ "Mithril mace": {
+  "atk": 20
+ },
+ "Mithril med helm": {
+  "def": 20
+ },
+ "Mithril pickaxe": {
+  "atk": 20
+ },
+ "Mithril pickaxe (nz)": {
+  "atk": 20
+ },
+ "Mithril platebody": {
+  "def": 20
+ },
+ "Mithril platebody (g)": {
+  "def": 20
+ },
+ "Mithril platebody (t)": {
+  "def": 20
+ },
+ "Mithril platelegs": {
+  "def": 20
+ },
+ "Mithril platelegs (g)": {
+  "def": 20
+ },
+ "Mithril platelegs (t)": {
+  "def": 20
+ },
+ "Mithril plateskirt": {
+  "def": 20
+ },
+ "Mithril plateskirt (g)": {
+  "def": 20
+ },
+ "Mithril plateskirt (t)": {
+  "def": 20
+ },
+ "Mithril scimitar": {
+  "atk": 20
+ },
+ "Mithril spear": {
+  "atk": 20
+ },
+ "Mithril sq shield": {
+  "def": 20
+ },
+ "Mithril sword": {
+  "atk": 20
+ },
+ "Mithril thrownaxe": {
+  "ranged": 20
+ },
+ "Mithril warhammer": {
+  "str": 20
+ },
+ "Mixed hide boots": {
+  "ranged": 60,
+  "def": 50
+ },
+ "Mixed hide cape": {
+  "ranged": 60,
+  "def": 50
+ },
+ "Mixed hide legs": {
+  "ranged": 60
+ },
+ "Mixed hide top": {
+  "ranged": 60,
+  "def": 50
+ },
+ "Monk's robe": {
+  "prayer": 5
+ },
+ "Monk's robe (g)": {
+  "prayer": 5
+ },
+ "Monk's robe (t)": {
+  "prayer": 5
+ },
+ "Monk's robe top": {
+  "prayer": 6
+ },
+ "Monk's robe top (g)": {
+  "prayer": 6
+ },
+ "Monk's robe top (t)": {
+  "prayer": 6
+ },
+ "Moonlight antler bolts": {
+  "ranged": 66
+ },
+ "Morrigan's coif (bh)": {
+  "def": 78
+ },
+ "Morrigan's coif (Deadman Mode)": {
+  "def": 20,
+  "ranged": 75
+ },
+ "Morrigan's javelin (bh)": {
+  "ranged": 75
+ },
+ "Morrigan's javelin (Deadman Mode)": {
+  "ranged": 78
+ },
+ "Morrigan's leather body (bh)": {
+  "def": 78
+ },
+ "Morrigan's leather body (Deadman Mode)": {
+  "def": 20,
+  "ranged": 75
+ },
+ "Morrigan's leather chaps (bh)": {
+  "def": 78
+ },
+ "Morrigan's leather chaps (Deadman Mode)": {
+  "def": 20,
+  "ranged": 75
+ },
+ "Morrigan's throwing axe (bh)": {
+  "ranged": 75
+ },
+ "Morrigan's throwing axe (Deadman Mode)": {
+  "ranged": 78
+ },
+ "Mud battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Mystic air staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic boots": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic boots (dark)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic boots (dusk)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic boots (light)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic boots (or)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic dust staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic earth staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic fire staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic gloves": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic gloves (dark)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic gloves (dusk)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic gloves (light)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic gloves (or)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic hat": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic hat (dark)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic hat (dusk)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic hat (light)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic hat (or)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic lava staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic lava staff (or)": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic mist staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic mud staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic robe bottom": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe bottom (dark)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe bottom (dusk)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe bottom (light)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe bottom (or)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe top": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe top (dark)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe top (dusk)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe top (light)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic robe top (or)": {
+  "magic": 40,
+  "def": 20
+ },
+ "Mystic smoke staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic steam staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic steam staff (or)": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Mystic water staff": {
+  "atk": 40,
+  "magic": 40
+ },
+ "Necklace of anguish": {
+  "hp": 75
+ },
+ "Necklace of anguish (or)": {
+  "hp": 75
+ },
+ "Necklace of rupture": {
+  "hp": 90
+ },
+ "Neitiznot faceguard": {
+  "def": 70
+ },
+ "Neitiznot shield": {
+  "def": 25
+ },
+ "Nightmare staff": {
+  "magic": 72,
+  "hp": 50
+ },
+ "Nose peg": {
+  "slayer": 60
+ },
+ "Noxious halberd": {
+  "atk": 80
+ },
+ "Oak blackjack(d)": {
+  "def": 10
+ },
+ "Oak longbow": {
+  "ranged": 5
+ },
+ "Oak shield": {
+  "def": 10
+ },
+ "Oak shortbow": {
+  "ranged": 5
+ },
+ "Oathplate chest": {
+  "def": 78
+ },
+ "Oathplate helm": {
+  "def": 78
+ },
+ "Oathplate legs": {
+  "def": 78
+ },
+ "Obsidian helmet": {
+  "def": 60
+ },
+ "Obsidian platebody": {
+  "def": 60
+ },
+ "Obsidian platelegs": {
+  "def": 60
+ },
+ "Occult necklace": {
+  "magic": 70
+ },
+ "Occult necklace (or)": {
+  "magic": 70
+ },
+ "Odium ward": {
+  "def": 60
+ },
+ "Odium ward (or)": {
+  "def": 60
+ },
+ "Ogre bow": {
+  "ranged": 30
+ },
+ "Onyx bolts": {
+  "ranged": 61
+ },
+ "Onyx bolts (e)": {
+  "ranged": 61
+ },
+ "Onyx dragon bolts": {
+  "ranged": 64
+ },
+ "Onyx dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Opal dragon bolts": {
+  "ranged": 64
+ },
+ "Opal dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Orange salamander": {
+  "ranged": 50,
+  "atk": 50,
+  "magic": 50
+ },
+ "Osmumten's fang": {
+  "atk": 82
+ },
+ "Osmumten's fang (or)": {
+  "atk": 82
+ },
+ "Pearl dragon bolts": {
+  "ranged": 64
+ },
+ "Pearl dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Pegasian boots": {
+  "ranged": 75,
+  "def": 75
+ },
+ "Penance gloves": {
+  "def": 40
+ },
+ "Penance skirt": {
+  "ranged": 60,
+  "def": 40
+ },
+ "Pharaoh's sceptre": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Prayer cape": {
+  "prayer": 99
+ },
+ "Primordial boots": {
+  "str": 75,
+  "def": 75
+ },
+ "Proselyte cuisse": {
+  "def": 30,
+  "prayer": 20
+ },
+ "Proselyte hauberk": {
+  "def": 30,
+  "prayer": 20
+ },
+ "Proselyte sallet": {
+  "def": 30,
+  "prayer": 20
+ },
+ "Proselyte tasset": {
+  "def": 30,
+  "prayer": 20
+ },
+ "Purging staff": {
+  "magic": 77,
+  "atk": 50
+ },
+ "Ram skull helm": {
+  "def": 30
+ },
+ "Ranger boots": {
+  "ranged": 40
+ },
+ "Ranger gloves": {
+  "ranged": 40
+ },
+ "Ranger hat": {
+  "def": 45
+ },
+ "Rangers' tights": {
+  "ranged": 40
+ },
+ "Rangers' tunic": {
+  "ranged": 40
+ },
+ "Rapier": {
+  "atk": 40
+ },
+ "Red chinchompa": {
+  "ranged": 55
+ },
+ "Red d'hide body": {
+  "ranged": 60,
+  "def": 40
+ },
+ "Red d'hide body (g)": {
+  "ranged": 60,
+  "def": 40
+ },
+ "Red d'hide body (t)": {
+  "ranged": 60,
+  "def": 40
+ },
+ "Red d'hide chaps": {
+  "ranged": 60
+ },
+ "Red d'hide chaps (g)": {
+  "ranged": 60
+ },
+ "Red d'hide chaps (t)": {
+  "ranged": 60
+ },
+ "Red d'hide shield": {
+  "ranged": 60,
+  "def": 40
+ },
+ "Red d'hide vambraces": {
+  "ranged": 60
+ },
+ "Red salamander": {
+  "ranged": 60,
+  "atk": 60,
+  "magic": 60
+ },
+ "Red spiky vambraces": {
+  "ranged": 60
+ },
+ "Redwood shield": {
+  "def": 40
+ },
+ "Regen bracelet": {
+  "def": 1
+ },
+ "Ring of suffering": {
+  "hp": 75
+ },
+ "Ring of suffering (i)": {
+  "hp": 75
+ },
+ "Robe bottom of darkness": {
+  "magic": 40,
+  "def": 20
+ },
+ "Robe top of darkness": {
+  "magic": 40,
+  "def": 20
+ },
+ "Robin hood hat": {
+  "ranged": 40
+ },
+ "Rock-shell helm": {
+  "def": 40
+ },
+ "Rock-shell legs": {
+  "def": 40
+ },
+ "Rock-shell plate": {
+  "def": 40
+ },
+ "Rosewood blowpipe": {
+  "ranged": 65
+ },
+ "Ruby bolts": {
+  "ranged": 46
+ },
+ "Ruby bolts (e)": {
+  "magic": 49,
+  "ranged": 46
+ },
+ "Ruby dragon bolts": {
+  "ranged": 64
+ },
+ "Ruby dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Rune 2h sword": {
+  "atk": 40
+ },
+ "Rune axe": {
+  "atk": 40
+ },
+ "Rune battleaxe": {
+  "atk": 40
+ },
+ "Rune boots": {
+  "def": 40
+ },
+ "Rune cane": {
+  "atk": 40
+ },
+ "Rune chainbody": {
+  "def": 40
+ },
+ "Rune claws": {
+  "atk": 40
+ },
+ "Rune crossbow": {
+  "ranged": 61
+ },
+ "Rune crossbow (or)": {
+  "ranged": 61
+ },
+ "Rune dagger": {
+  "atk": 40
+ },
+ "Rune dart": {
+  "ranged": 40
+ },
+ "Rune defender": {
+  "atk": 40,
+  "def": 40
+ },
+ "Rune defender (t)": {
+  "atk": 40,
+  "def": 40
+ },
+ "Rune felling axe": {
+  "atk": 40
+ },
+ "Rune full helm": {
+  "def": 40
+ },
+ "Rune full helm (g)": {
+  "def": 40
+ },
+ "Rune full helm (t)": {
+  "def": 40
+ },
+ "Rune gloves": {
+  "def": 34
+ },
+ "Rune gloves (wrapped)": {
+  "def": 34
+ },
+ "Rune halberd": {
+  "atk": 40,
+  "str": 20
+ },
+ "Rune hasta": {
+  "atk": 40
+ },
+ "Rune helm (h1)": {
+  "def": 40
+ },
+ "Rune helm (h2)": {
+  "def": 40
+ },
+ "Rune helm (h3)": {
+  "def": 40
+ },
+ "Rune helm (h4)": {
+  "def": 40
+ },
+ "Rune helm (h5)": {
+  "def": 40
+ },
+ "Rune kiteshield": {
+  "def": 40
+ },
+ "Rune kiteshield (Arrav)": {
+  "def": 40
+ },
+ "Rune kiteshield (Asgarnia)": {
+  "def": 40
+ },
+ "Rune kiteshield (Dorgeshuun)": {
+  "def": 40
+ },
+ "Rune kiteshield (Dragon)": {
+  "def": 40
+ },
+ "Rune kiteshield (Fairy)": {
+  "def": 40
+ },
+ "Rune kiteshield (g)": {
+  "def": 40
+ },
+ "Rune kiteshield (Guthix)": {
+  "def": 40
+ },
+ "Rune kiteshield (HAM)": {
+  "def": 40
+ },
+ "Rune kiteshield (Horse)": {
+  "def": 40
+ },
+ "Rune kiteshield (Jogre)": {
+  "def": 40
+ },
+ "Rune kiteshield (Kandarin)": {
+  "def": 40
+ },
+ "Rune kiteshield (Misthalin)": {
+  "def": 40
+ },
+ "Rune kiteshield (Money)": {
+  "def": 40
+ },
+ "Rune kiteshield (Saradomin)": {
+  "def": 40
+ },
+ "Rune kiteshield (Skull)": {
+  "def": 40
+ },
+ "Rune kiteshield (t)": {
+  "def": 40
+ },
+ "Rune kiteshield (Varrock)": {
+  "def": 40
+ },
+ "Rune kiteshield (Zamorak)": {
+  "def": 40
+ },
+ "Rune knife": {
+  "ranged": 40
+ },
+ "Rune longsword": {
+  "atk": 40
+ },
+ "Rune med helm": {
+  "def": 40
+ },
+ "Rune pickaxe": {
+  "atk": 40
+ },
+ "Rune pickaxe (nz)": {
+  "atk": 40
+ },
+ "Rune platebody": {
+  "def": 40
+ },
+ "Rune platebody (g)": {
+  "def": 40
+ },
+ "Rune platebody (h1)": {
+  "def": 40
+ },
+ "Rune platebody (h2)": {
+  "def": 40
+ },
+ "Rune platebody (h3)": {
+  "def": 40
+ },
+ "Rune platebody (h4)": {
+  "def": 40
+ },
+ "Rune platebody (h5)": {
+  "def": 40
+ },
+ "Rune platebody (t)": {
+  "def": 40
+ },
+ "Rune platelegs": {
+  "def": 40
+ },
+ "Rune platelegs (g)": {
+  "def": 40
+ },
+ "Rune platelegs (t)": {
+  "def": 40
+ },
+ "Rune plateskirt": {
+  "def": 40
+ },
+ "Rune plateskirt (g)": {
+  "def": 40
+ },
+ "Rune plateskirt (t)": {
+  "def": 40
+ },
+ "Rune scimitar": {
+  "atk": 40
+ },
+ "Rune scimitar (guthix)": {
+  "atk": 40
+ },
+ "Rune scimitar (saradomin)": {
+  "atk": 40
+ },
+ "Rune scimitar (zamorak)": {
+  "atk": 40
+ },
+ "Rune shield (h1)": {
+  "def": 40
+ },
+ "Rune shield (h2)": {
+  "def": 40
+ },
+ "Rune shield (h3)": {
+  "def": 40
+ },
+ "Rune shield (h4)": {
+  "def": 40
+ },
+ "Rune shield (h5)": {
+  "def": 40
+ },
+ "Rune spear": {
+  "atk": 40
+ },
+ "Rune sq shield": {
+  "def": 40
+ },
+ "Rune sword": {
+  "atk": 40
+ },
+ "Rune thrownaxe": {
+  "ranged": 40
+ },
+ "Rune warhammer": {
+  "str": 40
+ },
+ "Runite bolts": {
+  "ranged": 61
+ },
+ "Runner boots": {
+  "def": 40
+ },
+ "Runner hat": {
+  "def": 40
+ },
+ "Saika's hood": {
+  "magic": 70
+ },
+ "Saika's shroud": {
+  "def": 70,
+  "magic": 70
+ },
+ "Saika's veil": {
+  "def": 40,
+  "magic": 70
+ },
+ "Samurai boots": {
+  "def": 35
+ },
+ "Samurai gloves": {
+  "def": 35
+ },
+ "Samurai greaves": {
+  "def": 35
+ },
+ "Samurai kasa": {
+  "def": 35
+ },
+ "Samurai shirt": {
+  "def": 35
+ },
+ "Sanguinesti staff": {
+  "magic": 82
+ },
+ "Sapphire dragon bolts": {
+  "ranged": 64
+ },
+ "Sapphire dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Sarachnis cudgel": {
+  "atk": 65
+ },
+ "Saradomin bracers": {
+  "ranged": 70
+ },
+ "Saradomin chaps": {
+  "ranged": 70
+ },
+ "Saradomin cloak": {
+  "prayer": 40
+ },
+ "Saradomin cloak (Castle Wars)": {
+  "prayer": 40
+ },
+ "Saradomin coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Saradomin crozier": {
+  "prayer": 60
+ },
+ "Saradomin d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Saradomin d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Saradomin d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Saradomin full helm": {
+  "def": 40
+ },
+ "Saradomin godsword": {
+  "atk": 75
+ },
+ "Saradomin godsword (or)": {
+  "atk": 75
+ },
+ "Saradomin kiteshield": {
+  "def": 40
+ },
+ "Saradomin mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Saradomin platebody": {
+  "def": 40
+ },
+ "Saradomin platelegs": {
+  "def": 40
+ },
+ "Saradomin plateskirt": {
+  "def": 40
+ },
+ "Saradomin robe legs": {
+  "prayer": 20
+ },
+ "Saradomin robe top": {
+  "prayer": 20
+ },
+ "Saradomin staff": {
+  "magic": 60
+ },
+ "Saradomin stole": {
+  "prayer": 60
+ },
+ "Saradomin sword": {
+  "atk": 70
+ },
+ "Saradomin's blessed sword": {
+  "atk": 75
+ },
+ "Scorching bow": {
+  "ranged": 77
+ },
+ "Scythe of vitur": {
+  "atk": 80,
+  "str": 90
+ },
+ "Seercull": {
+  "ranged": 50
+ },
+ "Serpentine helm": {
+  "def": 75
+ },
+ "Shadow ancient sceptre": {
+  "magic": 75,
+  "str": 60,
+  "atk": 50
+ },
+ "Shayzien body (5)": {
+  "def": 20
+ },
+ "Shayzien boots (1)": {
+  "def": 20
+ },
+ "Shayzien boots (2)": {
+  "def": 20
+ },
+ "Shayzien boots (3)": {
+  "def": 20
+ },
+ "Shayzien boots (4)": {
+  "def": 20
+ },
+ "Shayzien boots (5)": {
+  "def": 20
+ },
+ "Shayzien gloves (1)": {
+  "def": 20
+ },
+ "Shayzien gloves (2)": {
+  "def": 20
+ },
+ "Shayzien gloves (3)": {
+  "def": 20
+ },
+ "Shayzien gloves (4)": {
+  "def": 20
+ },
+ "Shayzien gloves (5)": {
+  "def": 20
+ },
+ "Shayzien greaves (1)": {
+  "def": 20
+ },
+ "Shayzien greaves (2)": {
+  "def": 20
+ },
+ "Shayzien greaves (3)": {
+  "def": 20
+ },
+ "Shayzien greaves (4)": {
+  "def": 20
+ },
+ "Shayzien greaves (5)": {
+  "def": 20
+ },
+ "Shayzien helm (1)": {
+  "def": 20
+ },
+ "Shayzien helm (2)": {
+  "def": 20
+ },
+ "Shayzien helm (3)": {
+  "def": 20
+ },
+ "Shayzien helm (4)": {
+  "def": 20
+ },
+ "Shayzien helm (5)": {
+  "def": 20
+ },
+ "Shayzien platebody (1)": {
+  "def": 20
+ },
+ "Shayzien platebody (2)": {
+  "def": 20
+ },
+ "Shayzien platebody (3)": {
+  "def": 20
+ },
+ "Shayzien platebody (4)": {
+  "def": 20
+ },
+ "Skeletal bottoms": {
+  "def": 40,
+  "magic": 40
+ },
+ "Skeletal helm": {
+  "def": 40,
+  "magic": 40
+ },
+ "Skeletal top": {
+  "def": 40,
+  "magic": 40
+ },
+ "Skewer": {
+  "atk": 30
+ },
+ "Slayer gloves": {
+  "slayer": 42
+ },
+ "Slayer helmet": {
+  "def": 10,
+  "slayer": 60
+ },
+ "Slayer helmet (i)": {
+  "def": 10
+ },
+ "Slayer's staff": {
+  "magic": 75,
+  "slayer": 55
+ },
+ "Slayer's staff (e)": {
+  "magic": 75,
+  "slayer": 55
+ },
+ "Smoke ancient sceptre": {
+  "magic": 75,
+  "str": 60,
+  "atk": 50
+ },
+ "Smoke battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Snakeskin bandana": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Snakeskin body": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Snakeskin boots": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Snakeskin chaps": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Snakeskin shield": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Snakeskin vambraces": {
+  "ranged": 30,
+  "def": 30
+ },
+ "Soul cape": {
+  "prayer": 70
+ },
+ "Soulflame horn": {
+  "magic": 80
+ },
+ "Soulreaper axe": {
+  "atk": 80,
+  "str": 80
+ },
+ "Soulreaper axe (o)": {
+  "atk": 80,
+  "str": 80
+ },
+ "Spatula": {
+  "atk": 10
+ },
+ "Spectral spirit shield": {
+  "def": 75,
+  "prayer": 70,
+  "magic": 65
+ },
+ "Spined body": {
+  "def": 40,
+  "ranged": 40
+ },
+ "Spined chaps": {
+  "def": 40,
+  "ranged": 40
+ },
+ "Spined helm": {
+  "def": 40,
+  "ranged": 40
+ },
+ "Spiny helmet": {
+  "def": 5
+ },
+ "Spirit shield": {
+  "def": 45,
+  "prayer": 55
+ },
+ "Splitbark body": {
+  "magic": 40,
+  "def": 40
+ },
+ "Splitbark boots": {
+  "magic": 40,
+  "def": 40
+ },
+ "Splitbark gauntlets": {
+  "magic": 40,
+  "def": 40
+ },
+ "Splitbark helm": {
+  "magic": 40,
+  "def": 40
+ },
+ "Splitbark legs": {
+  "magic": 40,
+  "def": 40
+ },
+ "Spork": {
+  "atk": 10
+ },
+ "Staff of balance": {
+  "atk": 75,
+  "magic": 75
+ },
+ "Staff of light": {
+  "atk": 75,
+  "magic": 75
+ },
+ "Staff of the dead": {
+  "magic": 75,
+  "atk": 75
+ },
+ "Statius's full helm (bh)": {
+  "def": 78
+ },
+ "Statius's full helm (Deadman Mode)": {
+  "def": 20
+ },
+ "Statius's platebody (bh)": {
+  "def": 78
+ },
+ "Statius's platebody (Deadman Mode)": {
+  "def": 20
+ },
+ "Statius's platelegs (bh)": {
+  "def": 78
+ },
+ "Statius's platelegs (Deadman Mode)": {
+  "def": 20
+ },
+ "Statius's warhammer (bh)": {
+  "str": 75
+ },
+ "Statius's warhammer (Deadman Mode)": {
+  "str": 78,
+  "atk": 20
+ },
+ "Steam battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Steam battlestaff (or)": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Steel 2h sword": {
+  "atk": 5
+ },
+ "Steel axe": {
+  "atk": 5
+ },
+ "Steel battleaxe": {
+  "atk": 5
+ },
+ "Steel boots": {
+  "def": 5
+ },
+ "Steel chainbody": {
+  "def": 5
+ },
+ "Steel claws": {
+  "atk": 5
+ },
+ "Steel crossbow": {
+  "ranged": 31
+ },
+ "Steel dagger": {
+  "atk": 5
+ },
+ "Steel dart": {
+  "ranged": 5
+ },
+ "Steel defender": {
+  "atk": 5,
+  "def": 5
+ },
+ "Steel felling axe": {
+  "atk": 5
+ },
+ "Steel full helm": {
+  "def": 5
+ },
+ "Steel full helm (g)": {
+  "def": 5
+ },
+ "Steel full helm (t)": {
+  "def": 5
+ },
+ "Steel halberd": {
+  "atk": 5
+ },
+ "Steel hasta": {
+  "atk": 5
+ },
+ "Steel kiteshield": {
+  "def": 5
+ },
+ "Steel kiteshield (Arrav)": {
+  "def": 5
+ },
+ "Steel kiteshield (Asgarnia)": {
+  "def": 5
+ },
+ "Steel kiteshield (Dorgeshuun)": {
+  "def": 5
+ },
+ "Steel kiteshield (Dragon)": {
+  "def": 5
+ },
+ "Steel kiteshield (Fairy)": {
+  "def": 5
+ },
+ "Steel kiteshield (g)": {
+  "def": 5
+ },
+ "Steel kiteshield (Guthix)": {
+  "def": 5
+ },
+ "Steel kiteshield (HAM)": {
+  "def": 5
+ },
+ "Steel kiteshield (Horse)": {
+  "def": 5
+ },
+ "Steel kiteshield (Jogre)": {
+  "def": 5
+ },
+ "Steel kiteshield (Kandarin)": {
+  "def": 5
+ },
+ "Steel kiteshield (Misthalin)": {
+  "def": 5
+ },
+ "Steel kiteshield (Money)": {
+  "def": 5
+ },
+ "Steel kiteshield (Saradomin)": {
+  "def": 5
+ },
+ "Steel kiteshield (Skull)": {
+  "def": 5
+ },
+ "Steel kiteshield (t)": {
+  "def": 5
+ },
+ "Steel kiteshield (Varrock)": {
+  "def": 5
+ },
+ "Steel kiteshield (Zamorak)": {
+  "def": 5
+ },
+ "Steel knife": {
+  "ranged": 5
+ },
+ "Steel longsword": {
+  "atk": 5
+ },
+ "Steel mace": {
+  "atk": 5
+ },
+ "Steel med helm": {
+  "def": 5
+ },
+ "Steel pickaxe": {
+  "atk": 5
+ },
+ "Steel platebody": {
+  "def": 5
+ },
+ "Steel platebody (g)": {
+  "def": 5
+ },
+ "Steel platebody (t)": {
+  "def": 5
+ },
+ "Steel platelegs": {
+  "def": 5
+ },
+ "Steel platelegs (g)": {
+  "def": 5
+ },
+ "Steel platelegs (t)": {
+  "def": 5
+ },
+ "Steel plateskirt": {
+  "def": 5
+ },
+ "Steel plateskirt (g)": {
+  "def": 5
+ },
+ "Steel plateskirt (t)": {
+  "def": 5
+ },
+ "Steel scimitar": {
+  "atk": 5
+ },
+ "Steel spear": {
+  "atk": 5
+ },
+ "Steel sq shield": {
+  "def": 5
+ },
+ "Steel sword": {
+  "atk": 5
+ },
+ "Steel thrownaxe": {
+  "ranged": 5
+ },
+ "Steel warhammer": {
+  "str": 5
+ },
+ "Studded body": {
+  "ranged": 20,
+  "def": 20
+ },
+ "Studded body (g)": {
+  "ranged": 20,
+  "def": 20
+ },
+ "Studded body (t)": {
+  "ranged": 20,
+  "def": 20
+ },
+ "Studded chaps": {
+  "ranged": 20
+ },
+ "Studded chaps (g)": {
+  "ranged": 20
+ },
+ "Studded chaps (t)": {
+  "ranged": 20
+ },
+ "Sulphur blades": {
+  "atk": 55
+ },
+ "Sunfire fanatic chausses": {
+  "prayer": 60,
+  "def": 40
+ },
+ "Sunfire fanatic cuirass": {
+  "prayer": 60,
+  "def": 40
+ },
+ "Sunfire fanatic helm": {
+  "prayer": 60,
+  "def": 40
+ },
+ "Sunlight antler bolts": {
+  "ranged": 66
+ },
+ "Superior calamity breeches": {
+  "def": 40,
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Superior calamity chest": {
+  "def": 40,
+  "str": 70,
+  "ranged": 70,
+  "magic": 70
+ },
+ "Swamp lizard": {
+  "atk": 30,
+  "ranged": 30,
+  "magic": 30
+ },
+ "Swampbark body": {
+  "magic": 50,
+  "def": 50
+ },
+ "Swampbark boots": {
+  "magic": 50,
+  "def": 50
+ },
+ "Swampbark gauntlets": {
+  "magic": 50,
+  "def": 50
+ },
+ "Swampbark helm": {
+  "magic": 50,
+  "def": 50
+ },
+ "Swampbark legs": {
+  "magic": 50,
+  "def": 50
+ },
+ "Teacher wand": {
+  "magic": 55
+ },
+ "Tecu salamander": {
+  "atk": 80,
+  "magic": 80,
+  "ranged": 80
+ },
+ "Thammaron's sceptre": {
+  "magic": 60
+ },
+ "Thammaron's sceptre (a)": {
+  "magic": 60
+ },
+ "Toktz-ket-xil": {
+  "def": 60
+ },
+ "Toktz-mej-tal": {
+  "magic": 60,
+  "atk": 60
+ },
+ "Toktz-xil-ak": {
+  "atk": 60
+ },
+ "Toktz-xil-ek": {
+  "atk": 60
+ },
+ "Tome of earth": {
+  "magic": 50
+ },
+ "Tome of fire": {
+  "magic": 50
+ },
+ "Tome of water": {
+  "magic": 50
+ },
+ "Tonalztics of ralos": {
+  "ranged": 75
+ },
+ "Topaz dragon bolts": {
+  "ranged": 64
+ },
+ "Topaz dragon bolts (e)": {
+  "ranged": 64
+ },
+ "Torag's hammers": {
+  "atk": 70,
+  "str": 70
+ },
+ "Torag's helm": {
+  "def": 70
+ },
+ "Torag's platebody": {
+  "def": 70
+ },
+ "Torag's platelegs": {
+  "def": 70
+ },
+ "Tormented bracelet": {
+  "hp": 75
+ },
+ "Tormented bracelet (or)": {
+  "hp": 75
+ },
+ "Torva full helm": {
+  "def": 80
+ },
+ "Torva full helm (unobtainable item)": {
+  "def": 80
+ },
+ "Torva platebody": {
+  "def": 80
+ },
+ "Torva platebody (unobtainable item)": {
+  "def": 80
+ },
+ "Torva platelegs": {
+  "def": 80
+ },
+ "Torva platelegs (unobtainable item)": {
+  "def": 80
+ },
+ "Toxic blowpipe": {
+  "ranged": 75
+ },
+ "Toxic staff of the dead": {
+  "atk": 75,
+  "magic": 75
+ },
+ "Training bow": {
+  "ranged": 1
+ },
+ "Trident of the seas": {
+  "magic": 75
+ },
+ "Trident of the seas (e)": {
+  "magic": 75
+ },
+ "Trident of the seas (e) (o)": {
+  "magic": 75
+ },
+ "Trident of the seas (o)": {
+  "magic": 75
+ },
+ "Trident of the swamp": {
+  "magic": 78
+ },
+ "Trident of the swamp (e)": {
+  "magic": 78
+ },
+ "Trident of the swamp (e) (o)": {
+  "magic": 78
+ },
+ "Trident of the swamp (o)": {
+  "magic": 78
+ },
+ "Tumeken's shadow": {
+  "magic": 85
+ },
+ "Twinflame staff": {
+  "magic": 60
+ },
+ "Twisted bow": {
+  "ranged": 85
+ },
+ "Twisted buckler": {
+  "ranged": 75,
+  "def": 75
+ },
+ "Tyras helm": {
+  "def": 5
+ },
+ "Tzhaar-ket-em": {
+  "atk": 60
+ },
+ "Tzhaar-ket-om": {
+  "str": 60
+ },
+ "Tzhaar-ket-om (t)": {
+  "str": 60
+ },
+ "Ursine chainmace": {
+  "atk": 70
+ },
+ "V's shield": {
+  "def": 40,
+  "slayer": 60
+ },
+ "Venator bow": {
+  "ranged": 80
+ },
+ "Verac's brassard": {
+  "def": 70
+ },
+ "Verac's flail": {
+  "atk": 70
+ },
+ "Verac's helm": {
+  "def": 70
+ },
+ "Verac's plateskirt": {
+  "def": 70
+ },
+ "Vesta's blighted longsword": {
+  "atk": 75
+ },
+ "Vesta's chainbody (bh)": {
+  "def": 78
+ },
+ "Vesta's chainbody (Deadman Mode)": {
+  "def": 20
+ },
+ "Vesta's longsword (bh)": {
+  "atk": 75
+ },
+ "Vesta's longsword (Deadman Mode)": {
+  "atk": 78
+ },
+ "Vesta's plateskirt (bh)": {
+  "def": 78
+ },
+ "Vesta's plateskirt (Deadman Mode)": {
+  "def": 20
+ },
+ "Vesta's spear (bh)": {
+  "atk": 75
+ },
+ "Vesta's spear (Deadman Mode)": {
+  "atk": 78
+ },
+ "Viggora's chainmace": {
+  "atk": 60
+ },
+ "Virtus mask": {
+  "magic": 78,
+  "def": 75
+ },
+ "Virtus robe bottom": {
+  "magic": 78,
+  "def": 75
+ },
+ "Virtus robe top": {
+  "magic": 78,
+  "def": 75
+ },
+ "Void knight gloves": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void knight gloves (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void knight robe": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void knight robe (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void knight top": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void knight top (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void mage helm": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void mage helm (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void melee helm": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void melee helm (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void ranger helm": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void ranger helm (or)": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "ranged": 42,
+  "magic": 42,
+  "prayer": 22
+ },
+ "Void seal": {
+  "atk": 42,
+  "str": 42,
+  "def": 42,
+  "hp": 42,
+  "prayer": 22
+ },
+ "Voidwaker": {
+  "atk": 75
+ },
+ "Voidwaker (deadman)": {
+  "atk": 75
+ },
+ "Volatile nightmare staff": {
+  "magic": 82,
+  "hp": 50
+ },
+ "Volatile nightmare staff (deadman)": {
+  "magic": 82,
+  "hp": 50
+ },
+ "Warped sceptre": {
+  "magic": 62,
+  "slayer": 56
+ },
+ "Warrior helm": {
+  "def": 45
+ },
+ "Water battlestaff": {
+  "atk": 30,
+  "magic": 30
+ },
+ "Webweaver bow": {
+  "ranged": 70
+ },
+ "White gloves": {
+  "def": 10
+ },
+ "Willow blackjack(d)": {
+  "def": 20
+ },
+ "Willow blackjack(o)": {
+  "atk": 20
+ },
+ "Willow comp bow": {
+  "ranged": 20
+ },
+ "Willow longbow": {
+  "ranged": 20
+ },
+ "Willow shield": {
+  "def": 30
+ },
+ "Willow shortbow": {
+  "ranged": 20
+ },
+ "Witchwood icon": {
+  "slayer": 58
+ },
+ "Wizard boots": {
+  "magic": 20
+ },
+ "Xerician hat": {
+  "def": 10,
+  "magic": 20
+ },
+ "Xerician robe": {
+  "def": 10,
+  "magic": 20
+ },
+ "Xerician top": {
+  "def": 10,
+  "magic": 20
+ },
+ "Yak-hide armour (legs)": {
+  "def": 20
+ },
+ "Yak-hide armour (top)": {
+  "def": 20
+ },
+ "Yew comp bow": {
+  "ranged": 40
+ },
+ "Yew longbow": {
+  "ranged": 40
+ },
+ "Yew shield": {
+  "def": 40
+ },
+ "Yew shortbow": {
+  "ranged": 40
+ },
+ "Zamorak bracers": {
+  "ranged": 70
+ },
+ "Zamorak chaps": {
+  "ranged": 70
+ },
+ "Zamorak cloak": {
+  "prayer": 40
+ },
+ "Zamorak cloak (Castle Wars)": {
+  "prayer": 40
+ },
+ "Zamorak coif": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Zamorak crozier": {
+  "prayer": 60
+ },
+ "Zamorak d'hide body": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Zamorak d'hide boots": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Zamorak d'hide shield": {
+  "def": 40,
+  "ranged": 70
+ },
+ "Zamorak full helm": {
+  "def": 40
+ },
+ "Zamorak godsword": {
+  "atk": 75
+ },
+ "Zamorak godsword (or)": {
+  "atk": 75
+ },
+ "Zamorak kiteshield": {
+  "def": 40
+ },
+ "Zamorak mitre": {
+  "prayer": 40,
+  "magic": 40
+ },
+ "Zamorak platebody": {
+  "def": 40
+ },
+ "Zamorak platelegs": {
+  "def": 40
+ },
+ "Zamorak plateskirt": {
+  "def": 40
+ },
+ "Zamorak robe legs": {
+  "prayer": 20
+ },
+ "Zamorak robe top": {
+  "prayer": 20
+ },
+ "Zamorak staff": {
+  "magic": 60
+ },
+ "Zamorak stole": {
+  "prayer": 60
+ },
+ "Zamorakian spear": {
+  "atk": 70
+ },
+ "Zaryte crossbow": {
+  "ranged": 80
+ },
+ "Zaryte vambraces": {
+  "ranged": 80,
+  "def": 45
+ },
+ "Zombie axe": {
+  "atk": 65
+ },
+ "Zombie helmet": {
+  "str": 50,
+  "def": 50
+ },
+ "Zuriel's hood (bh)": {
+  "def": 78
+ },
+ "Zuriel's hood (Deadman Mode)": {
+  "def": 20,
+  "magic": 75
+ },
+ "Zuriel's robe bottom (bh)": {
+  "def": 78
+ },
+ "Zuriel's robe bottom (Deadman Mode)": {
+  "def": 20,
+  "magic": 75
+ },
+ "Zuriel's robe top (bh)": {
+  "def": 78
+ },
+ "Zuriel's robe top (Deadman Mode)": {
+  "def": 20,
+  "magic": 75
+ },
+ "Zuriel's staff (bh)": {
+  "magic": 75,
+  "atk": 30
+ },
+ "Zuriel's staff (Deadman Mode)": {
+  "magic": 78,
+  "atk": 60
+ }
+}
