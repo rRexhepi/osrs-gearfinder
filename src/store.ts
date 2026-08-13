@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { PlayerSkills } from '@/types/Player';
 import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
+import { getCombatStylesForCategory } from '@/utils';
+import { itemById } from '@/solver/data';
 import {
   PotionPreset, RankTargetsResult, SolveMode, SolveRequest, SolveResult, StyleGroup,
 } from '@/solver/types';
@@ -13,6 +15,17 @@ export interface MonsterChoice {
   version: string;
   image: string;
 }
+
+/** one hand-picked loadout in the gear evaluator */
+export interface GearSet {
+  /** slot -> item id */
+  items: Partial<Record<string, number>>;
+  /** forced combat style as "name|stance"; '' = best eligible */
+  style: string;
+  dart: string;
+}
+
+export const EMPTY_GEAR_SET: GearSet = { items: {}, style: '', dart: '' };
 
 interface GearFinderState {
   monster: MonsterChoice | null;
@@ -36,11 +49,10 @@ interface GearFinderState {
   /** which style's results to open with; '' = whatever ranks best */
   preferredStyle: '' | StyleGroup;
 
-  /** hand-picked loadout for the gear evaluator: slot -> item id */
-  gear: Partial<Record<string, number>>;
-  /** forced combat style as "name|stance"; '' = best eligible */
-  gearStyle: string;
-  gearDart: string;
+  /** hand-picked loadouts for the gear evaluator, one per combat style */
+  gearSets: Partial<Record<StyleGroup, GearSet>>;
+  /** which set the gear panel shows (follows the Fight-with choice) */
+  gearTab: StyleGroup;
 
   // transient (not persisted)
   result: SolveResult | null;
@@ -114,9 +126,8 @@ export const useStore = create<GearFinderState>()(
       downtimeSeconds: 5,
       preferredStyle: '',
 
-      gear: {},
-      gearStyle: '',
-      gearDart: '',
+      gearSets: {},
+      gearTab: 'melee',
 
       result: null,
       solving: false,
@@ -137,6 +148,25 @@ export const useStore = create<GearFinderState>()(
     }),
     {
       name: 'gearfinder',
+      version: 1,
+      // v0 kept a single loadout (gear/gearStyle/gearDart); file it under the
+      // style its weapon fights with so nothing typed in gets lost
+      migrate: (persisted) => {
+        const s = persisted as Partial<GearFinderState> & {
+          gear?: Partial<Record<string, number>>; gearStyle?: string; gearDart?: string;
+        };
+        if (s.gear && Object.keys(s.gear).length > 0 && !s.gearSets) {
+          const weapon = s.gear.weapon !== undefined ? itemById.get(s.gear.weapon) : undefined;
+          const type = weapon ? getCombatStylesForCategory(weapon.category)[0]?.type : undefined;
+          const group: StyleGroup = type === 'magic' ? 'magic' : type === 'ranged' ? 'ranged' : 'melee';
+          s.gearSets = { [group]: { items: s.gear, style: s.gearStyle ?? '', dart: s.gearDart ?? '' } };
+          s.gearTab = group;
+        }
+        delete s.gear;
+        delete s.gearStyle;
+        delete s.gearDart;
+        return s as unknown as GearFinderState;
+      },
       partialize: (s) => ({
         monster: s.monster,
         toaInvocationLevel: s.toaInvocationLevel,
@@ -153,9 +183,8 @@ export const useStore = create<GearFinderState>()(
         trainedSkill: s.trainedSkill,
         downtimeSeconds: s.downtimeSeconds,
         preferredStyle: s.preferredStyle,
-        gear: s.gear,
-        gearStyle: s.gearStyle,
-        gearDart: s.gearDart,
+        gearSets: s.gearSets,
+        gearTab: s.gearTab,
       }),
     },
   ),

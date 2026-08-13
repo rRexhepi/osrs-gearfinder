@@ -83,10 +83,13 @@ still wear it). Anchored the same way: a category regression fails the sync.
 
 ## Your current gear
 
-The **Your current gear** card above the results evaluates a hand-picked
-loadout as-is: search items into each slot (bank-owned items sort first and get
-a dot), and it shows DPS, max hit, accuracy, TTK - or XP/hr in training mode -
-against the selected target with your stats, boosts and prayers. The combat
+The **Your current gear** card above the results holds a separate hand-picked
+loadout per combat style - your melee, ranged, and magic sets - and follows the
+Fight-with choice (chips in the card header switch sets manually). Search items
+into each slot (bank-owned items sort first and get a dot), and it shows DPS,
+max hit, accuracy, TTK - or XP/hr in training mode - against the selected
+target with your stats, boosts and prayers, compared against the best found
+setup of the same style. The combat
 style defaults to the best eligible stance (spell included for autocast staves)
 but can be forced, including defensive stances the solver would skip. Full sets
 you assemble by hand get their combo badge, and after a solve the header shows

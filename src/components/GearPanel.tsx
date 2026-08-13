@@ -5,10 +5,12 @@ import { getCombatStylesForCategory } from '@/utils';
 import { BLOWPIPE_IDS } from '@/lib/constants';
 import { searchEquipment } from '@/solver/ownership';
 import { canonicalIdOf, DART_NAMES, itemById } from '@/solver/data';
-import { GearLoadout, SolvedSetup } from '@/solver/types';
+import { GearLoadout, SolvedSetup, StyleGroup } from '@/solver/types';
 import { fmtGp, fmtMetric, fmtNum } from '@/format';
 import { runEvaluate } from '@/worker-client';
-import { buildBaseRequest, useStore } from '@/store';
+import {
+  buildBaseRequest, EMPTY_GEAR_SET, GearSet, useStore,
+} from '@/store';
 import {
   iconUrl, SLOT_LABELS, SLOT_ORDER, StatChip,
 } from './shared';
@@ -73,17 +75,30 @@ function SlotPicker({
   );
 }
 
+const GEAR_TABS: StyleGroup[] = ['melee', 'ranged', 'magic'];
+
 export default function GearPanel() {
   const store = useStore();
   const {
-    monster, gear, gearStyle, gearDart, ownedIds, hasImportedBank, result, mode, set,
+    monster, gearSets, gearTab, preferredStyle, ownedIds, hasImportedBank, result, mode, set,
   } = store;
   const [open, setOpen] = useState(false);
   const [setup, setSetup] = useState<SolvedSetup | null>(null);
   const evalSeq = useRef(0);
 
+  // the Fight-with choice decides which of your gear sets is in front
+  useEffect(() => {
+    if (preferredStyle) set({ gearTab: preferredStyle });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preferredStyle]);
+
+  const gearSet = gearSets[gearTab] ?? EMPTY_GEAR_SET;
+  const patchSet = (patch: Partial<GearSet>) => set({
+    gearSets: { ...gearSets, [gearTab]: { ...gearSet, ...patch } },
+  });
+
   const training = mode === 'training';
-  const weapon = gear.weapon !== undefined ? itemById.get(gear.weapon) : undefined;
+  const weapon = gearSet.items.weapon !== undefined ? itemById.get(gearSet.items.weapon) : undefined;
   const isBlowpipe = weapon !== undefined && BLOWPIPE_IDS.includes(weapon.id);
   const ownedSet = useMemo(
     () => new Set(hasImportedBank ? ownedIds.map(canonicalIdOf) : []),
@@ -102,22 +117,21 @@ export default function GearPanel() {
       });
   }, [weapon]);
 
-  // the solved best for the same target, for the comparison line
-  const bestMetric = useMemo(() => {
-    if (!result || !monster || result.monsterId !== monster.id) return null;
-    const best = result.styles.find((s) => s.styleGroup === result.bestStyle)?.best;
-    return best ? best.metric : null;
-  }, [result, monster]);
+  // compare against the best of the style this loadout actually fights with
+  const styleBest = useMemo(() => {
+    if (!result || !monster || result.monsterId !== monster.id || !setup) return null;
+    return result.styles.find((s) => s.styleGroup === setup.styleGroup)?.best ?? null;
+  }, [result, monster, setup]);
 
   useEffect(() => {
     const base = buildBaseRequest(store);
-    if (!base || gear.weapon === undefined) {
+    if (!base || gearSet.items.weapon === undefined) {
       setSetup(null);
       return;
     }
-    const [styleName, styleStance] = gearStyle ? gearStyle.split('|') : [undefined, undefined];
+    const [styleName, styleStance] = gearSet.style ? gearSet.style.split('|') : [undefined, undefined];
     const loadout: GearLoadout = {
-      items: gear, styleName, styleStance, dartName: gearDart || undefined,
+      items: gearSet.items, styleName, styleStance, dartName: gearSet.dart || undefined,
     };
     evalSeq.current += 1;
     const seq = evalSeq.current;
@@ -125,22 +139,26 @@ export default function GearPanel() {
       .then((r) => { if (seq === evalSeq.current) setSetup(r); })
       .catch(() => { if (seq === evalSeq.current) setSetup(null); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gear, gearStyle, gearDart, monster?.id, monster?.version, store.skills, store.slayerLevel,
+  }, [gearSet, monster?.id, monster?.version, store.skills, store.slayerLevel,
     store.potionPreset, store.usePrayers, store.onSlayerTask, store.toaInvocationLevel,
     store.partySize, mode, store.trainedSkill, store.downtimeSeconds, store.prices]);
 
+  // best found for the set's style, for the load button
+  const tabBest = result && monster && result.monsterId === monster.id
+    ? result.styles.find((s) => s.styleGroup === gearTab)?.best ?? null
+    : null;
+
   const loadBest = () => {
-    const best = result?.styles.find((s) => s.styleGroup === result.bestStyle)?.best;
-    if (!best) return;
+    if (!tabBest) return;
     const items: Partial<Record<string, number>> = {};
-    for (const [slot, item] of Object.entries(best.items)) {
+    for (const [slot, item] of Object.entries(tabBest.items)) {
       if (item) items[slot] = item.id;
     }
-    const dart = best.items.weapon?.detail;
-    set({ gear: items, gearStyle: '', gearDart: dart && DART_NAMES.includes(dart) ? dart : '' });
+    const dart = tabBest.items.weapon?.detail;
+    patchSet({ items, style: '', dart: dart && DART_NAMES.includes(dart) ? dart : '' });
   };
 
-  const deltaPct = setup && bestMetric ? ((setup.metric - bestMetric) / bestMetric) * 100 : null;
+  const deltaPct = setup && styleBest ? ((setup.metric - styleBest.metric) / styleBest.metric) * 100 : null;
 
   return (
     <div className="bg-panel border border-border rounded-lg overflow-hidden">
@@ -149,15 +167,33 @@ export default function GearPanel() {
         className="w-full px-3 py-2 flex items-center gap-2 text-left"
         onClick={() => setOpen(!open)}
       >
-        <span className="text-sm font-semibold text-gold flex-1">Your current gear</span>
+        <span className="text-sm font-semibold text-gold">Your current gear</span>
+        <span className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+          {GEAR_TABS.map((g) => (
+            <span
+              key={g}
+              role="button"
+              tabIndex={0}
+              className={clsx(
+                'px-2 py-0.5 rounded text-xs border capitalize cursor-pointer',
+                g === gearTab ? 'bg-gold/10 border-gold/40 text-gold' : 'border-border text-muted hover:text-parchment',
+              )}
+              onClick={() => set({ gearTab: g })}
+              onKeyDown={(e) => { if (e.key === 'Enter') set({ gearTab: g }); }}
+            >
+              {g}
+            </span>
+          ))}
+        </span>
+        <span className="flex-1" />
         {setup && (
           <span className="tabular-nums text-sm">
             {fmtMetric(setup.metric, training)} {training ? 'xp/hr' : 'dps'}
           </span>
         )}
-        {deltaPct !== null && (
+        {deltaPct !== null && setup && (
           <span className={clsx('tabular-nums text-xs', deltaPct >= -0.05 ? 'text-emerald-400' : deltaPct > -10 ? 'text-amber-400' : 'text-red-400')}>
-            {deltaPct >= -0.05 ? 'matches best' : `${deltaPct.toFixed(1)}% vs best`}
+            {deltaPct >= -0.05 ? `matches best ${setup.styleGroup}` : `${deltaPct.toFixed(1)}% vs best ${setup.styleGroup}`}
           </span>
         )}
         <span className="text-muted text-xs">{open ? '▾' : '▸'}</span>
@@ -170,16 +206,19 @@ export default function GearPanel() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">
             {SLOT_ORDER.map((slot) => (
               <SlotPicker
-                key={slot}
+                key={`${gearTab}-${slot}`}
                 slot={slot}
-                itemId={gear[slot]}
+                itemId={gearSet.items[slot]}
                 disabled={slot === 'shield' && weapon?.isTwoHanded}
                 ownedIds={ownedSet}
-                onPick={(i) => set({ gear: { ...gear, [slot]: i.id }, ...(slot === 'weapon' ? { gearStyle: '' } : {}) })}
+                onPick={(i) => patchSet({
+                  items: { ...gearSet.items, [slot]: i.id },
+                  ...(slot === 'weapon' ? { style: '' } : {}),
+                })}
                 onClear={() => {
-                  const next = { ...gear };
-                  delete next[slot];
-                  set({ gear: next, ...(slot === 'weapon' ? { gearStyle: '' } : {}) });
+                  const items = { ...gearSet.items };
+                  delete items[slot];
+                  patchSet({ items, ...(slot === 'weapon' ? { style: '' } : {}) });
                 }}
               />
             ))}
@@ -189,8 +228,8 @@ export default function GearPanel() {
             {styles.length > 0 && (
               <select
                 className="bg-panel-2 border border-border rounded px-2 py-1 outline-none focus:border-gold"
-                value={gearStyle}
-                onChange={(e) => set({ gearStyle: e.target.value })}
+                value={gearSet.style}
+                onChange={(e) => patchSet({ style: e.target.value })}
               >
                 <option value="">Style: auto (best)</option>
                 {styles.map((s) => (
@@ -203,20 +242,20 @@ export default function GearPanel() {
             {isBlowpipe && (
               <select
                 className="bg-panel-2 border border-border rounded px-2 py-1 outline-none focus:border-gold"
-                value={gearDart || DART_NAMES[0]}
-                onChange={(e) => set({ gearDart: e.target.value })}
+                value={gearSet.dart || DART_NAMES[0]}
+                onChange={(e) => patchSet({ dart: e.target.value })}
               >
                 {DART_NAMES.map((d) => <option key={d} value={d}>{d}</option>)}
               </select>
             )}
             <div className="flex-1" />
-            {result && bestMetric !== null && (
+            {tabBest && (
               <button type="button" className="text-xs text-muted hover:text-gold" onClick={loadBest}>
-                load best found
+                load best {gearTab}
               </button>
             )}
-            {Object.keys(gear).length > 0 && (
-              <button type="button" className="text-xs text-muted hover:text-red-400" onClick={() => set({ gear: {}, gearStyle: '', gearDart: '' })}>
+            {Object.keys(gearSet.items).length > 0 && (
+              <button type="button" className="text-xs text-muted hover:text-red-400" onClick={() => patchSet({ items: {}, style: '', dart: '' })}>
                 clear
               </button>
             )}
@@ -243,15 +282,15 @@ export default function GearPanel() {
               <div className="text-xs text-muted">
                 {setup.styleName} ({setup.styleStance})
                 {setup.spellName ? ` - ${setup.spellName}` : ''}
-                {gearStyle === '' ? ' - auto-picked' : ''}
+                {gearSet.style === '' ? ' - auto-picked' : ''}
               </div>
             </>
           )}
-          {!setup && monster && gear.weapon !== undefined && (
+          {!setup && monster && gearSet.items.weapon !== undefined && (
             <div className="text-sm text-muted">This loadout cannot attack the target with any usable style.</div>
           )}
-          {monster && gear.weapon === undefined && (
-            <div className="text-sm text-muted">Pick at least a weapon.</div>
+          {monster && gearSet.items.weapon === undefined && (
+            <div className="text-sm text-muted">Pick at least a weapon for your {gearTab} set.</div>
           )}
         </div>
       )}
