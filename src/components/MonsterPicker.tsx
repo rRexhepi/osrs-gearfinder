@@ -1,14 +1,25 @@
 import { useMemo, useState } from 'react';
+import clsx from 'clsx';
 import { getMonsters } from '@/lib/Monsters';
 import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
 import { getWikiImage } from '@/utils';
 import { SLAYER_TASKS, findTargetMonster } from '@/solver/targets';
+import { StyleGroup } from '@/solver/types';
 import { useStore } from '@/store';
 
 const allMonsters = getMonsters().filter((m) => m.skills.hp > 0);
 
+const FIGHT_WITH: { value: '' | StyleGroup; label: string }[] = [
+  { value: '', label: 'Suggested' },
+  { value: 'melee', label: 'Melee' },
+  { value: 'ranged', label: 'Ranged' },
+  { value: 'magic', label: 'Magic' },
+];
+
 export default function MonsterPicker() {
-  const { monster, toaInvocationLevel, partySize, set } = useStore();
+  const {
+    monster, toaInvocationLevel, partySize, mode, preferredStyle, set,
+  } = useStore();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
 
@@ -103,6 +114,29 @@ export default function MonsterPicker() {
           <div className="min-w-0">
             <div className="font-semibold truncate">{monster.name}</div>
             {monster.version ? <div className="text-muted text-xs">{monster.version}</div> : null}
+          </div>
+        </div>
+      )}
+
+      {mode === 'boss' && (
+        <div className="text-xs text-muted">
+          Fight with
+          <div className="mt-0.5 flex gap-1">
+            {FIGHT_WITH.map((f) => (
+              <button
+                key={f.label}
+                type="button"
+                className={clsx(
+                  'px-2 py-1 rounded text-xs border flex-1',
+                  preferredStyle === f.value
+                    ? 'bg-gold/10 border-gold/40 text-gold'
+                    : 'border-border text-muted hover:text-parchment',
+                )}
+                onClick={() => set({ preferredStyle: f.value })}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

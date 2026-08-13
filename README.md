@@ -22,7 +22,9 @@ portable Node in `C:\Users\Admin\Projects\tools\node24`.
 
 ## Using it
 
-1. **Target**: search a boss. TOA bosses get invocation/party inputs.
+1. **Target**: search a boss. TOA bosses get invocation/party inputs. **Fight
+   with** picks which style's results open first - Suggested (whatever ranks
+   best), Melee, Ranged, or Magic; the other styles stay one tab-click away.
 2. **Player**: type levels or fetch from hiscores by RSN. Pick a boost preset,
    prayers, slayer task.
 3. **Your items**: paste a bank export (RuneLite *Bank Memory* plugin "copy as

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { PlayerSkills } from '@/types/Player';
 import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
 import {
-  PotionPreset, RankTargetsResult, SolveMode, SolveRequest, SolveResult,
+  PotionPreset, RankTargetsResult, SolveMode, SolveRequest, SolveResult, StyleGroup,
 } from '@/solver/types';
 import { PriceMap, TrainedSkill } from '@/solver/xp';
 
@@ -33,6 +33,8 @@ interface GearFinderState {
   mode: SolveMode;
   trainedSkill: TrainedSkill;
   downtimeSeconds: number;
+  /** which style's results to open with; '' = whatever ranks best */
+  preferredStyle: '' | StyleGroup;
 
   /** hand-picked loadout for the gear evaluator: slot -> item id */
   gear: Partial<Record<string, number>>;
@@ -110,6 +112,7 @@ export const useStore = create<GearFinderState>()(
       mode: 'boss',
       trainedSkill: 'str',
       downtimeSeconds: 5,
+      preferredStyle: '',
 
       gear: {},
       gearStyle: '',
@@ -149,6 +152,7 @@ export const useStore = create<GearFinderState>()(
         mode: s.mode,
         trainedSkill: s.trainedSkill,
         downtimeSeconds: s.downtimeSeconds,
+        preferredStyle: s.preferredStyle,
         gear: s.gear,
         gearStyle: s.gearStyle,
         gearDart: s.gearDart,

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import {
   SlotAlternative, SolvedSetup, StyleGroup, StyleResult, UpgradeSuggestion,
@@ -179,14 +179,20 @@ function StyleSection({ style, training }: { style: StyleResult; training: boole
 }
 
 export default function Results() {
-  const { result } = useStore();
+  const { result, preferredStyle } = useStore();
   const [tab, setTab] = useState<StyleGroup | null>(null);
+
+  // picking a "Fight with" style discards any tab clicked within the old choice
+  useEffect(() => setTab(null), [preferredStyle]);
 
   const active: StyleGroup | null = useMemo(() => {
     if (!result) return null;
     if (tab && result.styles.some((s) => s.styleGroup === tab)) return tab;
+    if (preferredStyle && result.styles.some((s) => s.styleGroup === preferredStyle && s.best !== null)) {
+      return preferredStyle;
+    }
     return result.bestStyle ?? result.styles[0]?.styleGroup ?? null;
-  }, [result, tab]);
+  }, [result, tab, preferredStyle]);
 
   if (!result) {
     return (
