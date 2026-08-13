@@ -148,12 +148,29 @@ export interface RankTargetsResult {
   elapsedMs: number;
 }
 
+/** a hand-picked loadout to evaluate as-is (no optimisation) */
+export interface GearLoadout {
+  /** item id per slot */
+  items: Partial<Record<string, number>>;
+  /** force a specific combat style; omit both for the best eligible one */
+  styleName?: string;
+  styleStance?: string;
+  /** dart to load when the weapon is a blowpipe */
+  dartName?: string;
+}
+
+export interface EvaluateRequest extends SolveRequest {
+  loadout: GearLoadout;
+}
+
 export type WorkerRequest =
   | { type: 'solve'; id: number; request: SolveRequest }
-  | { type: 'rankTargets'; id: number; request: SolveRequest };
+  | { type: 'rankTargets'; id: number; request: SolveRequest }
+  | { type: 'evaluate'; id: number; request: EvaluateRequest };
 
 export type WorkerResponse =
   | { type: 'progress'; id: number; pct: number; label: string }
   | { type: 'result'; id: number; result: SolveResult }
   | { type: 'targetsResult'; id: number; result: RankTargetsResult }
+  | { type: 'evalResult'; id: number; result: SolvedSetup | null }
   | { type: 'error'; id: number; message: string };

@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { PlayerSkills } from '@/types/Player';
+import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
 import {
-  PotionPreset, RankTargetsResult, SolveMode, SolveResult,
+  PotionPreset, RankTargetsResult, SolveMode, SolveRequest, SolveResult,
 } from '@/solver/types';
-import { TrainedSkill } from '@/solver/xp';
+import { PriceMap, TrainedSkill } from '@/solver/xp';
 
 export interface MonsterChoice {
   id: number;
@@ -33,6 +34,12 @@ interface GearFinderState {
   trainedSkill: TrainedSkill;
   downtimeSeconds: number;
 
+  /** hand-picked loadout for the gear evaluator: slot -> item id */
+  gear: Partial<Record<string, number>>;
+  /** forced combat style as "name|stance"; '' = best eligible */
+  gearStyle: string;
+  gearDart: string;
+
   // transient (not persisted)
   result: SolveResult | null;
   solving: boolean;
@@ -41,6 +48,7 @@ interface GearFinderState {
   spots: RankTargetsResult | null;
   rankingSpots: boolean;
   havePrices: boolean;
+  prices: PriceMap | null;
 
   set: (partial: Partial<GearFinderState>) => void;
   addOwned: (ids: number[]) => void;
@@ -50,6 +58,37 @@ interface GearFinderState {
 
 export const DEFAULT_SKILLS: PlayerSkills = {
   atk: 99, str: 99, def: 99, hp: 99, magic: 99, ranged: 99, prayer: 99, mining: 99, herblore: 99,
+};
+
+/** the solve/evaluate request implied by the current UI state; null without a target */
+export const buildBaseRequest = (s: GearFinderState): SolveRequest | null => {
+  const { monster } = s;
+  if (!monster) return null;
+  const isToa = TOMBS_OF_AMASCUT_MONSTER_IDS.includes(monster.id);
+  return {
+    monsterId: monster.id,
+    monsterVersion: monster.version,
+    monsterInputs: isToa ? {
+      toaInvocationLevel: s.toaInvocationLevel,
+      partySize: s.partySize,
+    } : {},
+    skills: s.skills,
+    slayerLevel: s.slayerLevel,
+    potionPreset: s.potionPreset,
+    usePrayers: s.usePrayers,
+    onSlayerTask: s.onSlayerTask,
+    ownedIds: s.hasImportedBank ? s.ownedIds : null,
+    restrictToOwned: s.restrictToOwned,
+    excludedIds: [],
+    weaponsPerStyle: 8,
+    // fighting in NMZ implies the absorption method (1 hp), so Dharok's counts
+    ...(monster.name.includes('(Nightmare Zone)') ? { playerHpCurrent: 1 } : {}),
+    mode: s.mode,
+    trainedSkill: s.trainedSkill,
+    downtimeSeconds: s.mode === 'training' ? s.downtimeSeconds : 0,
+    prices: s.prices ?? undefined,
+    includeUpgrades: s.restrictToOwned && s.hasImportedBank && s.prices !== null,
+  };
 };
 
 export const useStore = create<GearFinderState>()(
@@ -73,6 +112,10 @@ export const useStore = create<GearFinderState>()(
       trainedSkill: 'str',
       downtimeSeconds: 5,
 
+      gear: {},
+      gearStyle: '',
+      gearDart: '',
+
       result: null,
       solving: false,
       progress: 0,
@@ -80,6 +123,7 @@ export const useStore = create<GearFinderState>()(
       spots: null,
       rankingSpots: false,
       havePrices: false,
+      prices: null,
 
       set: (partial) => set(partial),
       addOwned: (ids) => set((s) => ({
@@ -106,6 +150,9 @@ export const useStore = create<GearFinderState>()(
         mode: s.mode,
         trainedSkill: s.trainedSkill,
         downtimeSeconds: s.downtimeSeconds,
+        gear: s.gear,
+        gearStyle: s.gearStyle,
+        gearDart: s.gearDart,
       }),
     },
   ),

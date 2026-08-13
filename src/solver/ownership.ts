@@ -1,4 +1,5 @@
 import { availableEquipment } from '@/lib/Equipment';
+import { EquipmentPiece } from '@/types/Player';
 
 export interface BankParseResult {
   /** equipable item ids that matched */
@@ -79,14 +80,15 @@ export function parseBankText(text: string): BankParseResult {
   return { ids: [...ids], matchedNames, unmatched };
 }
 
-/** case-insensitive substring search over equipable items, for the manual-add box */
-export function searchEquipment(query: string, limit = 25) {
+/** case-insensitive substring search over equipable items, for the manual-add and gear boxes */
+export function searchEquipment(query: string, limit = 25, filter?: (item: EquipmentPiece) => boolean) {
   const q = query.trim().toLowerCase();
   if (q.length < 2) return [];
   const seen = new Set<string>();
   const out = [];
   for (const item of availableEquipment) {
     if (!item.name.toLowerCase().includes(q)) continue;
+    if (filter && !filter(item)) continue;
     const key = `${item.name}|${item.version}`;
     if (seen.has(key)) continue;
     seen.add(key);

@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react';
 import { parseBankText, searchEquipment } from '@/solver/ownership';
 import { itemById } from '@/solver/data';
 import { useStore } from '@/store';
-
-const iconUrl = (image: string) => `/cdn/equipment/${image}`;
+import { iconUrl } from './shared';
 
 export default function OwnershipPanel() {
   const {

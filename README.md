@@ -79,6 +79,18 @@ sync detects these from wiki categories into `cdn/json/unobtainable.json`, and
 the solver hides them unless they're in your imported bank (whoever has one can
 still wear it). Anchored the same way: a category regression fails the sync.
 
+## Your current gear
+
+The **Your current gear** card above the results evaluates a hand-picked
+loadout as-is: search items into each slot (bank-owned items sort first and get
+a dot), and it shows DPS, max hit, accuracy, TTK - or XP/hr in training mode -
+against the selected target with your stats, boosts and prayers. The combat
+style defaults to the best eligible stance (spell included for autocast staves)
+but can be forced, including defensive stances the solver would skip. Full sets
+you assemble by hand get their combo badge, and after a solve the header shows
+the gap to the best found setup, with a one-click "load best found" to start
+from it. The loadout persists between visits.
+
 ## Full-set combos
 
 Set effects only pay off once the whole set is worn, so a per-slot search can never

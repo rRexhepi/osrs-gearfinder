@@ -1,5 +1,5 @@
 import {
-  RankTargetsResult, SolveRequest, SolveResult, WorkerRequest, WorkerResponse,
+  EvaluateRequest, RankTargetsResult, SolveRequest, SolveResult, SolvedSetup, WorkerRequest, WorkerResponse,
 } from '@/solver/types';
 
 let worker: Worker | null = null;
@@ -14,7 +14,7 @@ const getWorker = () => {
 
 function run<T>(
   type: WorkerRequest['type'],
-  resultType: 'result' | 'targetsResult',
+  resultType: 'result' | 'targetsResult' | 'evalResult',
   request: SolveRequest,
   onProgress: (pct: number, label: string) => void,
 ): Promise<T> {
@@ -49,3 +49,7 @@ export const runRankTargets = (
   request: SolveRequest,
   onProgress: (pct: number, label: string) => void,
 ): Promise<RankTargetsResult> => run('rankTargets', 'targetsResult', request, onProgress);
+
+export const runEvaluate = (
+  request: EvaluateRequest,
+): Promise<SolvedSetup | null> => run('evaluate', 'evalResult', request, () => {});

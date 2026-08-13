@@ -5,13 +5,9 @@ import {
 } from '@/solver/types';
 import { fmtGp, fmtMetric, fmtNum } from '@/format';
 import { useStore } from '@/store';
-
-const iconUrl = (image: string) => `/cdn/equipment/${image}`;
-
-const SLOT_ORDER = ['weapon', 'shield', 'ammo', 'head', 'cape', 'neck', 'body', 'legs', 'hands', 'feet', 'ring'];
-const SLOT_LABELS: Record<string, string> = {
-  weapon: 'Weapon', shield: 'Shield', ammo: 'Ammo', head: 'Head', cape: 'Cape', neck: 'Neck', body: 'Body', legs: 'Legs', hands: 'Hands', feet: 'Feet', ring: 'Ring',
-};
+import {
+  iconUrl, SLOT_LABELS, SLOT_ORDER, StatChip,
+} from './shared';
 
 function OwnedDot({ owned }: { owned: boolean }) {
   const { hasImportedBank, restrictToOwned } = useStore();
@@ -21,15 +17,6 @@ function OwnedDot({ owned }: { owned: boolean }) {
       className={clsx('inline-block w-2 h-2 rounded-full shrink-0', owned ? 'bg-emerald-400' : 'bg-zinc-600')}
       title={owned ? 'You own this' : 'Not in your bank'}
     />
-  );
-}
-
-function StatChip({ label, value, title }: { label: string; value: string; title?: string }) {
-  return (
-    <div className="bg-panel-2 border border-border rounded px-2 py-1 text-center" title={title}>
-      <div className="text-[10px] uppercase text-muted">{label}</div>
-      <div className="text-sm font-semibold">{value}</div>
-    </div>
   );
 }
 

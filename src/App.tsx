@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import clsx from 'clsx';
-import { TOMBS_OF_AMASCUT_MONSTER_IDS } from '@/lib/constants';
-import { useStore } from '@/store';
+import { buildBaseRequest, useStore } from '@/store';
 import { runRankTargets, runSolve } from '@/worker-client';
 import { getPrices } from '@/prices';
-import { PriceMap } from '@/solver/xp';
 import { SolveRequest } from '@/solver/types';
 import MonsterPicker from '@/components/MonsterPicker';
 import PlayerPanel from '@/components/PlayerPanel';
 import OwnershipPanel from '@/components/OwnershipPanel';
+import GearPanel from '@/components/GearPanel';
 import Results from '@/components/Results';
 import TrainingSpots from '@/components/TrainingSpots';
 
@@ -17,47 +16,16 @@ export default function App() {
   const {
     monster, mode, solving, rankingSpots, progress, progressLabel, set,
   } = store;
-  const [prices, setPrices] = useState<PriceMap | null>(null);
 
   useEffect(() => {
     getPrices().then((p) => {
-      setPrices(p);
-      set({ havePrices: p !== null });
+      set({ prices: p, havePrices: p !== null });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const buildRequest = (): SolveRequest | null => {
-    if (!monster) return null;
-    const isToa = TOMBS_OF_AMASCUT_MONSTER_IDS.includes(monster.id);
-    return {
-      monsterId: monster.id,
-      monsterVersion: monster.version,
-      monsterInputs: isToa ? {
-        toaInvocationLevel: store.toaInvocationLevel,
-        partySize: store.partySize,
-      } : {},
-      skills: store.skills,
-      slayerLevel: store.slayerLevel,
-      potionPreset: store.potionPreset,
-      usePrayers: store.usePrayers,
-      onSlayerTask: store.onSlayerTask,
-      ownedIds: store.hasImportedBank ? store.ownedIds : null,
-      restrictToOwned: store.restrictToOwned,
-      excludedIds: [],
-      weaponsPerStyle: 8,
-      // fighting in NMZ implies the absorption method (1 hp), so Dharok's counts
-      ...(monster.name.includes('(Nightmare Zone)') ? { playerHpCurrent: 1 } : {}),
-      mode,
-      trainedSkill: store.trainedSkill,
-      downtimeSeconds: mode === 'training' ? store.downtimeSeconds : 0,
-      prices: prices ?? undefined,
-      includeUpgrades: store.restrictToOwned && store.hasImportedBank && prices !== null,
-    };
-  };
-
   const solve = async () => {
-    const request = buildRequest();
+    const request = buildBaseRequest(store);
     if (!request || solving) return;
     set({
       solving: true, progress: 0, progressLabel: 'starting...', result: null,
@@ -73,7 +41,7 @@ export default function App() {
   const rankSpots = async () => {
     if (rankingSpots || solving) return;
     const request: SolveRequest = {
-      ...buildRequest() ?? {
+      ...buildBaseRequest(store) ?? {
         monsterId: 415,
         monsterVersion: '',
         monsterInputs: {},
@@ -89,7 +57,7 @@ export default function App() {
       mode: 'training',
       trainedSkill: store.trainedSkill,
       downtimeSeconds: store.downtimeSeconds,
-      prices: prices ?? undefined,
+      prices: store.prices ?? undefined,
       includeUpgrades: false,
     };
     set({ rankingSpots: true, progress: 0, progressLabel: 'ranking spots...' });
@@ -156,6 +124,7 @@ export default function App() {
         </aside>
         <main className="flex-1 p-4 overflow-y-auto space-y-6">
           {mode === 'training' && <TrainingSpots />}
+          <GearPanel />
           <Results />
           <footer className="text-[11px] text-muted pt-4 border-t border-border/40">
             DPS engine and item/monster data from the{' '}

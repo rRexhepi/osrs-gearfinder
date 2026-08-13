@@ -23,6 +23,7 @@ import {
   isModeRestricted,
   isSpecialItem,
   isUnobtainable,
+  itemById,
 } from './data';
 import { CORRUPTED_GAUNTLET_MONSTER_IDS, GAUNTLET_MONSTER_IDS } from '@/lib/constants';
 import NPCVsPlayerCalc from '@/lib/NPCVsPlayerCalc';
@@ -42,6 +43,7 @@ import {
   styleGroupOf,
 } from './loadout';
 import {
+  GearLoadout,
   ResultItem,
   SlotAlternative,
   SolveRequest,
@@ -296,7 +298,7 @@ export class Solver {
   private variantsForWeapon(
     weapon: EquipmentPiece,
     group: StyleGroup,
-    opts: { unrestricted?: boolean; styleTypes?: CombatStyleType[] } = {},
+    opts: { unrestricted?: boolean; styleTypes?: CombatStyleType[]; anyStance?: boolean } = {},
   ): WeaponVariant[] {
     // novelty/unknown weapons carry speed -1 in the data, which the engine
     // clamps to 1 tick and turns into nonsense DPS
@@ -308,7 +310,8 @@ export class Solver {
     const seenStyles = new Set<string>();
 
     for (const style of styles) {
-      if (!this.stanceEligible(style, isSalamander)) continue;
+      if (!opts.anyStance && !this.stanceEligible(style, isSalamander)) continue;
+      if (opts.anyStance && (!style.type || !style.stance || style.stance === 'Manual Cast')) continue;
       if (styleGroupOf(style) !== group) continue;
       if (opts.styleTypes && (!style.type || !opts.styleTypes.includes(style.type))) continue;
       const styleKey = `${style.name}|${style.type}|${style.stance}`;
@@ -621,6 +624,42 @@ export class Solver {
       costHr,
       costParts,
     };
+  }
+
+  /**
+   * Evaluates a hand-picked loadout exactly as given (no slot optimisation).
+   * Without an explicit style choice, every eligible stance/spell of the weapon
+   * is tried and the best by the ranking metric wins; an explicit choice is
+   * honoured even for stances the solver would skip (e.g. defensive).
+   */
+  evaluateLoadout(loadout: GearLoadout): SolvedSetup | null {
+    const eq: Partial<PlayerEquipment> = {};
+    for (const [slot, id] of Object.entries(loadout.items)) {
+      if (!id) continue;
+      const item = itemById.get(id);
+      if (item) eq[slot as Slot] = item;
+    }
+    const rawWeapon = eq.weapon;
+    if (!rawWeapon) return null;
+    if (BLOWPIPE_IDS.includes(rawWeapon.id)) {
+      const dart = (loadout.dartName ? dartByName(loadout.dartName) : undefined) ?? dartByName(DART_NAMES[0]);
+      if (dart) eq.weapon = blowpipeWithDart(rawWeapon, dart);
+    }
+    if (rawWeapon.isTwoHanded) eq.shield = null;
+
+    const explicit = loadout.styleName !== undefined;
+    const groups: StyleGroup[] = ['melee', 'ranged', 'magic'];
+    const variants = groups
+      .flatMap((g) => this.variantsForWeapon(rawWeapon, g, { unrestricted: true, anyStance: explicit }))
+      .filter((v) => !explicit
+        || (v.style.name === loadout.styleName && (loadout.styleStance === undefined || v.style.stance === loadout.styleStance)));
+
+    let best: SolvedSetup | null = null;
+    for (const v of variants) {
+      const setup = this.finalise(eq, v.style, v.spell, v.group);
+      if (!best || setup.metric > best.metric) best = setup;
+    }
+    return best;
   }
 
   solveStyle(group: StyleGroup, progress?: ProgressFn, progressBase = 0, progressSpan = 1, light = false): StyleResult {

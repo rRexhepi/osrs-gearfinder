@@ -1,4 +1,4 @@
-import { solve } from './solve';
+import { Solver, solve } from './solve';
 import { rankTrainingTargets } from './targets';
 import { WorkerRequest, WorkerResponse } from './types';
 
@@ -19,6 +19,8 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
       post({ type: 'result', id: msg.id, result: solve(msg.request, progress) });
     } else if (msg.type === 'rankTargets') {
       post({ type: 'targetsResult', id: msg.id, result: rankTrainingTargets(msg.request, progress) });
+    } else if (msg.type === 'evaluate') {
+      post({ type: 'evalResult', id: msg.id, result: new Solver(msg.request).evaluateLoadout(msg.request.loadout) });
     }
   } catch (err) {
     post({ type: 'error', id: msg.id, message: err instanceof Error ? err.message : String(err) });
