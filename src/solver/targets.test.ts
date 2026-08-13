@@ -2,7 +2,9 @@ import { describe, expect, test } from 'vitest';
 import { getMonsters } from '@/lib/Monsters';
 import { PlayerSkills } from '@/types/Player';
 import { Solver } from './solve';
-import { rankTrainingTargets, TRAINING_SPOTS, findTargetMonster } from './targets';
+import {
+  rankTrainingTargets, SLAYER_TASKS, TRAINING_SPOTS, findTargetMonster,
+} from './targets';
 import { SolveRequest } from './types';
 import { findEquipment } from '@/tests/utils/TestUtils';
 
@@ -35,6 +37,17 @@ describe('training spot groups', () => {
     for (const spot of TRAINING_SPOTS) {
       expect(findTargetMonster(spot.name, spot.version), `${spot.name} ${spot.version ?? ''}`).toBeDefined();
     }
+  });
+
+  test('every slayer task resolves to its representative monster', () => {
+    for (const t of SLAYER_TASKS) {
+      const m = findTargetMonster(t.name, t.version);
+      expect(m, `${t.task}: ${t.name} ${t.version ?? ''}`).toBeDefined();
+      expect(m!.skills.hp, t.task).toBeGreaterThan(0);
+    }
+    // the dropdown is sorted for scanning
+    const tasks = SLAYER_TASKS.map((t) => t.task);
+    expect(tasks).toEqual([...tasks].sort((a, b) => a.localeCompare(b)));
   });
 
   test('ranker: gemstone crab has no kill cycle, NMZ rows use the 1 HP Dharok meta', () => {
