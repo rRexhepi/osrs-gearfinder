@@ -95,7 +95,7 @@ describe('upgrade advisor', () => {
     }));
     const melee = solver.solveStyle('melee');
     expect(melee.best!.items.weapon!.name).toBe('Abyssal whip');
-    const upgrades = (solver as unknown as { buildUpgrades: () => { name: string; gainPct: number; price: number }[] | null }).buildUpgrades();
+    const upgrades = (solver as unknown as { buildUpgrades: () => { name: string; gainPct: number; price: number | null }[] | null }).buildUpgrades();
     expect(upgrades).not.toBeNull();
     const names = upgrades!.map((u) => u.name);
     // fang is a huge upgrade for str training (whip has no aggressive stance)
@@ -105,7 +105,8 @@ describe('upgrade advisor', () => {
     expect(fang.gainPct).toBeGreaterThan(50);
     for (const u of upgrades!) {
       expect(u.gainPct).toBeGreaterThan(0);
-      expect(u.price).toBeGreaterThan(0);
+      // untradeables ride along without a price; priced rows must have a real one
+      if (u.price !== null) expect(u.price).toBeGreaterThan(0);
     }
   }, 240000);
 });

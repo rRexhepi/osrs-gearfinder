@@ -31,7 +31,7 @@ import {
   PriceMap, TrainedSkill, consumableCostPerHour, xpPerDamage, xpPerHour,
 } from './xp';
 import {
-  COMBO_TEMPLATES, ComboTemplate, comboOf, pieceOptions, resolveByName,
+  COMBO_TEMPLATES, ComboTemplate, comboOf, equipmentByName, pieceOptions, resolveByName,
 } from './combos';
 import { meetsRequirements } from './requirements';
 import {
@@ -82,6 +82,12 @@ const strengthDim = (item: EquipmentPiece, t: CombatStyleType): number => {
   if (t === 'magic') return item.bonuses.magic_str;
   return item.bonuses.str;
 };
+
+/** whether the item is any better than an empty slot (arrows on a mage are not) */
+const contributes = (item: EquipmentPiece, t: CombatStyleType): boolean => offensiveDim(item, t) > 0
+  || strengthDim(item, t) > 0
+  || item.bonuses.prayer > 0
+  || Object.values(item.defensive).some((v) => v > 0);
 
 export class Solver {
   private cfg: LoadoutConfig;
@@ -435,8 +441,9 @@ export class Solver {
         for (const cand of candidates) {
           if (cand.id === eq[slot]?.id) continue;
           const d = this.dps({ ...eq, [slot]: cand }, style, spell);
-          // on a dps tie, prefer wearing something over an empty slot
-          if (d > bestDps || (d === bestDps && bestItem === null)) { bestDps = d; bestItem = cand; }
+          // on a dps tie, fill the slot only with something that actually adds
+          // anything (defence/prayer count; arrows on a mage stay out)
+          if (d > bestDps || (d === bestDps && bestItem === null && contributes(cand, t))) { bestDps = d; bestItem = cand; }
         }
         if ((bestItem?.id ?? null) !== (eq[slot]?.id ?? null)) {
           changed = true;
@@ -787,16 +794,23 @@ export class Solver {
    * Ranks unowned items by how much they would improve the owned best setup,
    * with GE price and gain-per-gp. Only meaningful after an owned-restricted solve.
    */
+  /** GE price with same-name variant fallback (a charged scythe prices as the uncharged one) */
+  private upgradePrice(item: EquipmentPiece): number | null {
+    for (const variant of [item, ...equipmentByName(item.name)]) {
+      const p = this.prices?.[variant.id];
+      if (typeof p === 'number' && p > 0) return p;
+    }
+    return null;
+  }
+
   private buildUpgrades(): UpgradeSuggestion[] | null {
     if (!this.restrictToOwned || !this.owned || !this.prices) return null;
-    const prices = this.prices;
     const byName = new Map<string, UpgradeSuggestion>();
 
     const push = (item: EquipmentPiece, slot: string, metric: number, bestMetric: number, group: StyleGroup, detail?: string) => {
       const gainPct = ((metric - bestMetric) / bestMetric) * 100;
       if (gainPct < 0.3) return;
-      const price = prices[item.id];
-      if (typeof price !== 'number' || price <= 0) return;
+      const price = this.upgradePrice(item);
       const existing = byName.get(item.name);
       if (existing && existing.gainPct >= gainPct) return;
       byName.set(item.name, {
@@ -807,7 +821,7 @@ export class Solver {
         metric,
         gainPct,
         price,
-        gainPerM: gainPct / (price / 1_000_000),
+        gainPerM: price !== null ? gainPct / (price / 1_000_000) : null,
       });
     };
 
@@ -876,9 +890,10 @@ export class Solver {
           const lockedItems = [v.weapon, ...Object.values(pieces)] as EquipmentPiece[];
           const missing = lockedItems.filter((i) => !this.owned!.has(canonicalIdOf(i.id)));
           if (missing.length === 0) continue; // fully owned: already in the main results
-          const missingPrices = missing.map((m) => prices[m.id]);
-          if (missingPrices.some((p) => typeof p !== 'number' || p <= 0)) continue;
-          const price = (missingPrices as number[]).reduce((a, b) => a + b, 0);
+          const missingPrices = missing.map((m) => this.upgradePrice(m));
+          const price = missingPrices.every((p): p is number => p !== null)
+            ? missingPrices.reduce((a, b) => a + b, 0)
+            : null;
 
           const eq = this.optimiseArmour(v, pieces);
           const style = this.bestStyleFor(v.weapon, group, eq, v.spell, tpl.styleTypes);
@@ -901,13 +916,19 @@ export class Solver {
             metric,
             gainPct,
             price,
-            gainPerM: gainPct / (price / 1_000_000),
+            gainPerM: price !== null ? gainPct / (price / 1_000_000) : null,
           });
         }
       }
     }
 
-    return [...byName.values()].sort((a, b) => b.gainPct - a.gainPct).slice(0, 30);
+    // the advisor is first a shopping list: buyable rows lead, with a handful
+    // of untradeable standouts (fire capes, demonbane upgrades) mixed in so
+    // the biggest gains are never silently absent
+    const all = [...byName.values()].sort((a, b) => b.gainPct - a.gainPct);
+    const priced = all.filter((u) => u.price !== null).slice(0, 30);
+    const unpriced = all.filter((u) => u.price === null).slice(0, 8);
+    return [...priced, ...unpriced].sort((a, b) => b.gainPct - a.gainPct);
   }
 
   /** per-slot alternative rankings holding the rest of the best setup fixed */

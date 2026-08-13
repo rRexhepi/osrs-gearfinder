@@ -99,6 +99,51 @@ describe('solver, owned-only', () => {
   }, 240000);
 });
 
+describe('slot tie-breaks', () => {
+  test('items adding nothing over an empty slot stay out', () => {
+    const ownedIds = [
+      'Trident of the swamp', 'Adamant arrow', "Dagon'hai hat", "Dagon'hai robe top",
+      "Dagon'hai robe bottom", 'Occult necklace',
+    ].map((n) => findEquipment(n).id);
+    const req = { ...baseRequest('Hellhound'), ownedIds, restrictToOwned: true };
+    const res = new Solver(req).solveStyle('magic');
+    expect(res.best).not.toBeNull();
+    // arrows tie the dps of an empty ammo slot on a mage - leave it empty
+    expect(res.best!.items.ammo).toBeUndefined();
+  }, 240000);
+});
+
+describe('upgrade advisor pricing', () => {
+  test('charged gear prices via its tradeable variant; untradeables are listed without one', () => {
+    const ownedIds = [
+      'Abyssal whip', 'Fighter torso', 'Dragon defender', 'Neitiznot faceguard', 'Barrows gloves',
+      'Dragon boots', 'Amulet of fury', 'Fire cape', 'Berserker ring', 'Rune platelegs',
+    ].map((n) => findEquipment(n).id);
+    const scytheUncharged = findEquipment('Scythe of vitur', 'Uncharged');
+    const req = {
+      ...baseRequest('Hellhound'),
+      ownedIds,
+      restrictToOwned: true,
+      prices: { [scytheUncharged.id]: 1_400_000_000 },
+      includeUpgrades: true,
+      weaponsPerStyle: 3,
+    };
+    const res = new Solver(req).solve();
+
+    // the charged scythe has no GE price of its own; the uncharged one covers it
+    const scythe = res.upgrades!.find((u) => u.name === 'Scythe of vitur');
+    expect(scythe).toBeDefined();
+    expect(scythe!.price).toBe(1_400_000_000);
+
+    // emberlight is the biggest melee upgrade against a demon but untradeable -
+    // it must show up anyway instead of being silently skipped
+    const ember = res.upgrades!.find((u) => u.name === 'Emberlight');
+    expect(ember).toBeDefined();
+    expect(ember!.price).toBeNull();
+    expect(ember!.gainPct).toBeGreaterThan(5);
+  }, 240000);
+});
+
 describe('bank text parsing', () => {
   test('bank memory TSV, names, and tag id lists all parse', () => {
     const whip = findEquipment('Abyssal whip');

@@ -93,10 +93,18 @@ function CombosCard({ combos, best, training }: { combos: SolvedSetup[]; best: S
 }
 
 function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; training: boolean }) {
+  const { preferredStyle } = useStore();
   const [byValue, setByValue] = useState(false);
   const sorted = useMemo(
-    () => [...upgrades].sort((a, b) => (byValue ? b.gainPerM - a.gainPerM : b.gainPct - a.gainPct)),
-    [upgrades, byValue],
+    () => [...upgrades].sort((a, b) => {
+      // the style the user chose to fight with shops first
+      if (preferredStyle) {
+        const pref = (u: UpgradeSuggestion) => (u.styleGroup === preferredStyle ? 1 : 0);
+        if (pref(a) !== pref(b)) return pref(b) - pref(a);
+      }
+      return byValue ? (b.gainPerM ?? -1) - (a.gainPerM ?? -1) : b.gainPct - a.gainPct;
+    }),
+    [upgrades, byValue, preferredStyle],
   );
   if (upgrades.length === 0) return null;
   return (
@@ -122,8 +130,8 @@ function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; train
                 <span className="text-muted text-xs"> - {SLOT_LABELS[u.slot] ?? u.slot}, {u.styleGroup}</span>
               </td>
               <td className="py-1 pr-2 text-right tabular-nums text-emerald-400 w-20">+{u.gainPct.toFixed(1)}%</td>
-              <td className="py-1 pr-2 text-right tabular-nums w-24">{fmtGp(u.price)}</td>
-              <td className="py-1 pr-3 text-right tabular-nums text-muted text-xs w-28">{u.gainPerM.toFixed(2)}%/m gp</td>
+              <td className="py-1 pr-2 text-right tabular-nums w-24">{u.price !== null ? fmtGp(u.price) : <span className="text-muted text-xs">untradeable</span>}</td>
+              <td className="py-1 pr-3 text-right tabular-nums text-muted text-xs w-28">{u.gainPerM !== null ? `${u.gainPerM.toFixed(2)}%/m gp` : '-'}</td>
             </tr>
           ))}
         </tbody>

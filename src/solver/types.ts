@@ -93,9 +93,10 @@ export interface UpgradeSuggestion extends ResultItem {
   metric: number;
   /** % metric gained over the owned best setup */
   gainPct: number;
-  price: number;
-  /** gainPct per million gp */
-  gainPerM: number;
+  /** GE price (charged gear falls back to its tradeable variant); null = untradeable */
+  price: number | null;
+  /** gainPct per million gp; null for untradeables */
+  gainPerM: number | null;
 }
 
 export interface StyleResult {
