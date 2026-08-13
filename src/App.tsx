@@ -7,7 +7,6 @@ import { SolveRequest } from '@/solver/types';
 import MonsterPicker from '@/components/MonsterPicker';
 import PlayerPanel from '@/components/PlayerPanel';
 import OwnershipPanel from '@/components/OwnershipPanel';
-import GearPanel from '@/components/GearPanel';
 import Results from '@/components/Results';
 import TrainingSpots from '@/components/TrainingSpots';
 
@@ -124,7 +123,6 @@ export default function App() {
         </aside>
         <main className="flex-1 p-4 overflow-y-auto space-y-6">
           {mode === 'training' && <TrainingSpots />}
-          <GearPanel />
           <Results />
           <footer className="text-[11px] text-muted pt-4 border-t border-border/40">
             DPS engine and item/monster data from the{' '}

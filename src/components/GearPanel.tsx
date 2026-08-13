@@ -193,7 +193,8 @@ export default function GearPanel() {
         )}
         {deltaPct !== null && setup && (
           <span className={clsx('tabular-nums text-xs', deltaPct >= -0.05 ? 'text-emerald-400' : deltaPct > -10 ? 'text-amber-400' : 'text-red-400')}>
-            {deltaPct >= -0.05 ? `matches best ${setup.styleGroup}` : `${deltaPct.toFixed(1)}% vs best ${setup.styleGroup}`}
+            {Math.abs(deltaPct) <= 0.05 ? `matches best ${setup.styleGroup}`
+              : `${deltaPct > 0 ? '+' : ''}${deltaPct.toFixed(1)}% vs best ${setup.styleGroup}`}
           </span>
         )}
         <span className="text-muted text-xs">{open ? '▾' : '▸'}</span>

@@ -8,6 +8,7 @@ import { useStore } from '@/store';
 import {
   iconUrl, OwnedDot, SetupCard, SLOT_LABELS, SLOT_ORDER,
 } from './shared';
+import GearPanel from './GearPanel';
 
 function AltTable({ slot, alts, training }: { slot: string; alts: SlotAlternative[]; training: boolean }) {
   const [expanded, setExpanded] = useState(false);
@@ -143,18 +144,12 @@ function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; train
   );
 }
 
-function StyleSection({ style, training }: { style: StyleResult; training: boolean }) {
-  if (style.immune || !style.best) {
-    return (
-      <div className="text-muted text-sm bg-panel border border-border rounded-lg p-4">
-        No usable {style.styleGroup} setup {training ? 'trains this skill here' : 'can damage this monster'} (immunity, or no eligible weapon).
-      </div>
-    );
-  }
+/** everything below the answer: runner-ups, combos, per-slot alternatives */
+function StyleDetails({ style, training }: { style: StyleResult; training: boolean }) {
+  if (style.immune || !style.best) return null;
   const altSlots = SLOT_ORDER.filter((s) => (style.alternatives[s]?.length ?? 0) > 0);
   return (
     <div className="space-y-4">
-      <SetupCard setup={style.best} training={training} />
       {style.setups.length > 1 && (
         <div className="bg-panel border border-border rounded-lg p-3">
           <div className="text-sm font-semibold text-gold mb-1.5">Other optimised setups</div>
@@ -204,8 +199,11 @@ export default function Results() {
 
   if (!result) {
     return (
-      <div className="text-muted text-sm mt-12 text-center">
-        Pick a target, set up your stats and bank, then hit <span className="text-gold">Find gear</span>.
+      <div className="space-y-4">
+        <GearPanel />
+        <div className="text-muted text-sm mt-8 text-center">
+          Pick a target, set up your stats and bank, then hit <span className="text-gold">Find gear</span>.
+        </div>
       </div>
     );
   }
@@ -217,7 +215,6 @@ export default function Results() {
 
   return (
     <div className="space-y-4">
-      {result.upgrades && result.upgrades.length > 0 && <Upgrades upgrades={result.upgrades} training={training} />}
       <div className="flex gap-1">
         {orderedStyles.map((s) => (
           <button
@@ -235,7 +232,22 @@ export default function Results() {
           </button>
         ))}
       </div>
-      {activeStyle && <StyleSection style={activeStyle} training={training} />}
+
+      {/* the answer first: the best setup for the chosen style */}
+      {activeStyle && (activeStyle.immune || !activeStyle.best ? (
+        <div className="text-muted text-sm bg-panel border border-border rounded-lg p-4">
+          No usable {activeStyle.styleGroup} setup {training ? 'trains this skill here' : 'can damage this monster'} (immunity, or no eligible weapon).
+        </div>
+      ) : (
+        <div>
+          <div className="text-sm font-semibold text-gold mb-2 capitalize">Best {activeStyle.styleGroup} setup</div>
+          <SetupCard setup={activeStyle.best} training={training} />
+        </div>
+      ))}
+
+      <GearPanel />
+      {result.upgrades && result.upgrades.length > 0 && <Upgrades upgrades={result.upgrades} training={training} />}
+      {activeStyle && <StyleDetails style={activeStyle} training={training} />}
     </div>
   );
 }
