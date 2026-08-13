@@ -3,7 +3,7 @@ import { getMonsters } from '@/lib/Monsters';
 import { PlayerSkills } from '@/types/Player';
 import { Solver } from './solve';
 import {
-  rankTrainingTargets, SLAYER_TASKS, TRAINING_SPOTS, findTargetMonster,
+  rankSpotStyles, rankTrainingTargets, SLAYER_TASKS, TRAINING_SPOTS, findTargetMonster,
 } from './targets';
 import { SolveRequest } from './types';
 import { findEquipment } from '@/tests/utils/TestUtils';
@@ -76,6 +76,27 @@ describe('training spot groups', () => {
     const overworld = res.rows.filter((r) => r.group === 'spots');
     expect(overworld.length).toBeGreaterThan(10);
     expect(overworld.some((r) => r.weaponName !== "Dharok's greataxe")).toBe(true);
+  }, 240000);
+});
+
+describe('per-style spot breakdown', () => {
+  test('suggested style first, each style ranked by the skill it trains', () => {
+    const crab = findTargetMonster('Ammonite Crab')!;
+    const res = rankSpotStyles(baseRequest({
+      monsterId: crab.id, monsterVersion: crab.version ?? '', trainedSkill: 'str',
+    }));
+    expect(res.rows).toHaveLength(3);
+    // training strength: melee is the suggested way, and it leads
+    expect(res.rows[0].styleGroup).toBe('melee');
+    expect(res.rows[0].skill).toBe('str');
+    const ranged = res.rows.find((r) => r.styleGroup === 'ranged')!;
+    const magic = res.rows.find((r) => r.styleGroup === 'magic')!;
+    expect(ranged.skill).toBe('ranged');
+    expect(magic.skill).toBe('magic');
+    for (const row of res.rows) {
+      expect(row.best, row.styleGroup).not.toBeNull();
+      expect(row.best!.metric).toBeGreaterThan(0);
+    }
   }, 240000);
 });
 

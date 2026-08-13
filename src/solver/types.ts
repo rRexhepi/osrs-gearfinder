@@ -148,6 +148,17 @@ export interface RankTargetsResult {
   elapsedMs: number;
 }
 
+/** the best setup for one combat style against a target, ranked by its natural skill */
+export interface SpotStyleRow {
+  styleGroup: StyleGroup;
+  skill: TrainedSkill;
+  best: SolvedSetup | null;
+}
+
+export interface SpotStylesResult {
+  rows: SpotStyleRow[];
+}
+
 /** a hand-picked loadout to evaluate as-is (no optimisation) */
 export interface GearLoadout {
   /** item id per slot */
@@ -166,11 +177,13 @@ export interface EvaluateRequest extends SolveRequest {
 export type WorkerRequest =
   | { type: 'solve'; id: number; request: SolveRequest }
   | { type: 'rankTargets'; id: number; request: SolveRequest }
-  | { type: 'evaluate'; id: number; request: EvaluateRequest };
+  | { type: 'evaluate'; id: number; request: EvaluateRequest }
+  | { type: 'spotStyles'; id: number; request: SolveRequest; spotGroup: SpotGroup };
 
 export type WorkerResponse =
   | { type: 'progress'; id: number; pct: number; label: string }
   | { type: 'result'; id: number; result: SolveResult }
   | { type: 'targetsResult'; id: number; result: RankTargetsResult }
   | { type: 'evalResult'; id: number; result: SolvedSetup | null }
+  | { type: 'spotStylesResult'; id: number; result: SpotStylesResult }
   | { type: 'error'; id: number; message: string };

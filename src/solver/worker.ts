@@ -1,5 +1,5 @@
 import { Solver, solve } from './solve';
-import { rankTrainingTargets } from './targets';
+import { rankSpotStyles, rankTrainingTargets } from './targets';
 import { WorkerRequest, WorkerResponse } from './types';
 
 const post = (r: WorkerResponse) => (self as unknown as Worker).postMessage(r);
@@ -21,6 +21,8 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
       post({ type: 'targetsResult', id: msg.id, result: rankTrainingTargets(msg.request, progress) });
     } else if (msg.type === 'evaluate') {
       post({ type: 'evalResult', id: msg.id, result: new Solver(msg.request).evaluateLoadout(msg.request.loadout) });
+    } else if (msg.type === 'spotStyles') {
+      post({ type: 'spotStylesResult', id: msg.id, result: rankSpotStyles(msg.request, msg.spotGroup) });
     }
   } catch (err) {
     post({ type: 'error', id: msg.id, message: err instanceof Error ? err.message : String(err) });

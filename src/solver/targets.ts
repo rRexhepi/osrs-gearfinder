@@ -1,8 +1,9 @@
 import { getMonsters } from '@/lib/Monsters';
 import { INFINITE_HEALTH_MONSTERS } from '@/lib/constants';
 import { Solver } from './solve';
+import { TrainedSkill } from './xp';
 import {
-  RankTargetsResult, SolveRequest, SpotGroup, TargetRow,
+  RankTargetsResult, SolveRequest, SpotGroup, SpotStyleRow, SpotStylesResult, StyleGroup, TargetRow,
 } from './types';
 
 /** well-known combat training spots, matched by monster name in monsters.json */
@@ -175,6 +176,57 @@ export function findTargetMonster(name: string, version?: string) {
 }
 
 /**
+ * Solve tweaks implied by where a spot is fought. NMZ: constant spawns and the
+ * absorption method at 1 hp (Dharok's counts). Gemstone crab: never dies, so
+ * there is no between-kill downtime.
+ */
+export const spotRequestOverrides = (group: SpotGroup): Partial<SolveRequest> => {
+  if (group === 'nmz') return { downtimeSeconds: 0, playerHpCurrent: 1 };
+  if (group === 'crab') return { downtimeSeconds: 0 };
+  return {};
+};
+
+/** which skill a style group naturally trains, honouring the user's pick where it applies */
+const styleSkill = (group: StyleGroup, trained: TrainedSkill): TrainedSkill => {
+  if (trained === 'def') return 'def';
+  if (group === 'ranged') return 'ranged';
+  if (group === 'magic') return 'magic';
+  return trained === 'atk' || trained === 'str' ? trained : 'str';
+};
+
+/**
+ * The best setup for every combat style against one target: how you'd melee,
+ * range, or mage it, each ranked by the XP that style actually trains.
+ */
+export function rankSpotStyles(request: SolveRequest, spotGroup: SpotGroup = 'spots'): SpotStylesResult {
+  const trained = request.trainedSkill ?? 'str';
+  const rows: SpotStyleRow[] = [];
+  for (const group of ['melee', 'ranged', 'magic'] as StyleGroup[]) {
+    const skill = styleSkill(group, trained);
+    const req: SolveRequest = {
+      ...request,
+      mode: 'training',
+      trainedSkill: skill,
+      weaponsPerStyle: 2,
+      includeUpgrades: false,
+      ...spotRequestOverrides(spotGroup),
+    };
+    try {
+      const res = new Solver(req).solveStyle(group, undefined, 0, 1, true);
+      rows.push({ styleGroup: group, skill, best: res.best });
+    } catch {
+      rows.push({ styleGroup: group, skill, best: null });
+    }
+  }
+  // the style training the user's chosen skill leads; the rest follow by rate
+  rows.sort((a, b) => {
+    const suggested = (r: SpotStyleRow) => (r.skill === trained ? 1 : 0);
+    return suggested(b) - suggested(a) || (b.best?.metric ?? 0) - (a.best?.metric ?? 0);
+  });
+  return { rows };
+}
+
+/**
  * Ranks the curated training spots by XP/hr for the request's trained skill.
  * Each spot gets its own quick solve (top weapon only + armour ascent).
  */
@@ -201,10 +253,7 @@ export function rankTrainingTargets(
         monsterInputs: {},
         weaponsPerStyle: 2,
         includeUpgrades: false,
-        // NMZ: constant spawns, absorption method at 1 hp (Dharok's counts).
-        // Gemstone crab: never dies, so there is no between-kill downtime.
-        ...(group === 'nmz' ? { downtimeSeconds: 0, playerHpCurrent: 1 } : {}),
-        ...(group === 'crab' ? { downtimeSeconds: 0 } : {}),
+        ...spotRequestOverrides(group),
       };
       const solver = new Solver(req);
       const groups = skill === 'ranged' ? ['ranged' as const]

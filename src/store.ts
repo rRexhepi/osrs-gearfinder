@@ -61,8 +61,7 @@ export const DEFAULT_SKILLS: PlayerSkills = {
 };
 
 /** the solve/evaluate request implied by the current UI state; null without a target */
-export const buildBaseRequest = (s: GearFinderState): SolveRequest | null => {
-  const { monster } = s;
+export const buildBaseRequest = (s: GearFinderState, monster: MonsterChoice | null = s.monster): SolveRequest | null => {
   if (!monster) return null;
   const isToa = TOMBS_OF_AMASCUT_MONSTER_IDS.includes(monster.id);
   return {

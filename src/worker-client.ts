@@ -1,5 +1,6 @@
 import {
-  EvaluateRequest, RankTargetsResult, SolveRequest, SolveResult, SolvedSetup, WorkerRequest, WorkerResponse,
+  EvaluateRequest, RankTargetsResult, SolveRequest, SolveResult, SolvedSetup,
+  SpotGroup, SpotStylesResult, WorkerRequest, WorkerResponse,
 } from '@/solver/types';
 
 let worker: Worker | null = null;
@@ -14,9 +15,10 @@ const getWorker = () => {
 
 function run<T>(
   type: WorkerRequest['type'],
-  resultType: 'result' | 'targetsResult' | 'evalResult',
+  resultType: 'result' | 'targetsResult' | 'evalResult' | 'spotStylesResult',
   request: SolveRequest,
   onProgress: (pct: number, label: string) => void,
+  extra: Record<string, unknown> = {},
 ): Promise<T> {
   const w = getWorker();
   const id = nextId;
@@ -36,7 +38,9 @@ function run<T>(
       }
     };
     w.addEventListener('message', handler);
-    w.postMessage({ type, id, request });
+    w.postMessage({
+      type, id, request, ...extra,
+    });
   });
 }
 
@@ -53,3 +57,8 @@ export const runRankTargets = (
 export const runEvaluate = (
   request: EvaluateRequest,
 ): Promise<SolvedSetup | null> => run('evaluate', 'evalResult', request, () => {});
+
+export const runSpotStyles = (
+  request: SolveRequest,
+  spotGroup: SpotGroup,
+): Promise<SpotStylesResult> => run('spotStyles', 'spotStylesResult', request, () => {}, { spotGroup });

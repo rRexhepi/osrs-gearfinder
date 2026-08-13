@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import clsx from 'clsx';
 import { getWikiImage } from '@/utils';
 import { TRAINED_SKILL_LABELS } from '@/solver/xp';
-import { SpotGroup } from '@/solver/types';
+import { SpotGroup, SpotStylesResult, TargetRow } from '@/solver/types';
 import { fmtNum } from '@/format';
-import { useStore } from '@/store';
+import { runSpotStyles } from '@/worker-client';
+import { buildBaseRequest, useStore } from '@/store';
+import { SetupCard } from './shared';
 
 const GROUP_TABS: { group: SpotGroup; label: string }[] = [
   { group: 'spots', label: 'Spots' },
@@ -21,9 +23,46 @@ const GROUP_NOTES: Record<SpotGroup, string | null> = {
 /** the "(Nightmare Zone)" suffix is data plumbing, not display */
 const displayName = (name: string) => name.replace(' (Nightmare Zone)', '');
 
+/** every way to fight one spot: suggested style first, the others clickable */
+function StyleBreakdown({ styles }: { styles: SpotStylesResult }) {
+  const usable = styles.rows.filter((r) => r.best !== null);
+  const [pick, setPick] = useState(0);
+  if (usable.length === 0) {
+    return <div className="text-sm text-muted px-1 py-2">No usable setup for any style here with your items.</div>;
+  }
+  const active = usable[Math.min(pick, usable.length - 1)];
+  return (
+    <div className="space-y-2 py-2">
+      <div className="flex gap-1 flex-wrap">
+        {usable.map((r, ix) => (
+          <button
+            key={r.styleGroup}
+            type="button"
+            className={clsx(
+              'px-2 py-1 rounded text-xs border capitalize',
+              r === active ? 'bg-gold/10 border-gold/40 text-gold' : 'border-border text-muted hover:text-parchment',
+            )}
+            onClick={() => setPick(ix)}
+          >
+            {ix === 0 && <span className="mr-1">★</span>}
+            {r.styleGroup}
+            <span className="ml-1.5 tabular-nums">{fmtNum(r.best!.metric)}</span>
+            <span className="ml-1 lowercase">{TRAINED_SKILL_LABELS[r.skill]} xp/hr</span>
+          </button>
+        ))}
+      </div>
+      <SetupCard setup={active.best!} training />
+    </div>
+  );
+}
+
 export default function TrainingSpots() {
-  const { spots, trainedSkill, set } = useStore();
+  const store = useStore();
+  const { spots, trainedSkill, set } = store;
   const [tab, setTab] = useState<SpotGroup>('spots');
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [styleCache, setStyleCache] = useState<Record<string, SpotStylesResult | 'loading'>>({});
+
   if (!spots) {
     return (
       <div className="text-muted text-sm bg-panel border border-border rounded-lg p-4">
@@ -36,6 +75,30 @@ export default function TrainingSpots() {
   }
   const rows = spots.rows.filter((r) => r.group === tab);
   const note = GROUP_NOTES[tab];
+
+  const rowKey = (r: TargetRow) => `${r.monsterId}|${r.monsterVersion}`;
+  const toggleStyles = (r: TargetRow) => {
+    const key = rowKey(r);
+    if (expanded === key) {
+      setExpanded(null);
+      return;
+    }
+    setExpanded(key);
+    if (styleCache[key]) return;
+    const request = buildBaseRequest(store, {
+      id: r.monsterId, name: r.monsterName, version: r.monsterVersion, image: r.monsterImage,
+    });
+    if (!request) return;
+    setStyleCache((c) => ({ ...c, [key]: 'loading' }));
+    runSpotStyles(request, r.group)
+      .then((res) => setStyleCache((c) => ({ ...c, [key]: res })))
+      .catch(() => setStyleCache((c) => {
+        const next = { ...c };
+        delete next[key];
+        return next;
+      }));
+  };
+
   return (
     <div className="bg-panel border border-border rounded-lg overflow-hidden">
       <div className="px-3 py-2 flex items-center justify-between gap-2 border-b border-border">
@@ -74,36 +137,62 @@ export default function TrainingSpots() {
                 <th className="text-right pr-2 font-normal">Dmg taken/hr</th>
                 <th className="text-right pr-2 font-normal">Food/hr</th>
                 <th className="text-left pr-2 font-normal">With</th>
-                <th className="text-left pr-3 font-normal">Notes</th>
+                <th className="text-left pr-2 font-normal">Notes</th>
+                <th className="pr-3 font-normal text-right">Styles</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr key={`${r.monsterId}-${r.monsterVersion}`} className="border-b border-border/40 last:border-0 hover:bg-panel-2/60">
-                  <td className="pl-3 py-1">
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 hover:text-gold"
-                      title="Use this monster as the target"
-                      onClick={() => set({
-                        monster: {
-                          id: r.monsterId, name: r.monsterName, version: r.monsterVersion, image: r.monsterImage,
-                        },
-                      })}
-                    >
-                      {r.monsterImage ? <img src={getWikiImage(r.monsterImage)} alt="" className="w-6 h-6 object-contain" loading="lazy" /> : null}
-                      <span>{displayName(r.monsterName)}</span>
-                    </button>
-                  </td>
-                  <td className="text-right pr-2 tabular-nums font-semibold text-gold">{fmtNum(r.xpHr)}</td>
-                  <td className="text-right pr-2 tabular-nums">{r.dps.toFixed(2)}</td>
-                  <td className="text-right pr-2 tabular-nums">{Number.isFinite(r.ttk) ? `${r.ttk.toFixed(0)}s` : '-'}</td>
-                  <td className="text-right pr-2 tabular-nums">{r.dmgTakenHr !== null ? fmtNum(r.dmgTakenHr) : '-'}</td>
-                  <td className="text-right pr-2 tabular-nums">{r.foodHr !== null ? r.foodHr.toFixed(0) : '-'}</td>
-                  <td className="pr-2 truncate max-w-44">{r.weaponName} <span className="text-muted text-xs">({r.styleStance})</span></td>
-                  <td className="pr-3 text-muted text-xs">{r.note}</td>
-                </tr>
-              ))}
+              {rows.map((r) => {
+                const key = rowKey(r);
+                const cached = styleCache[key];
+                return (
+                  <Fragment key={key}>
+                    <tr className="border-b border-border/40 last:border-0 hover:bg-panel-2/60">
+                      <td className="pl-3 py-1">
+                        <button
+                          type="button"
+                          className="flex items-center gap-2 hover:text-gold"
+                          title="Use this monster as the target"
+                          onClick={() => set({
+                            monster: {
+                              id: r.monsterId, name: r.monsterName, version: r.monsterVersion, image: r.monsterImage,
+                            },
+                          })}
+                        >
+                          {r.monsterImage ? <img src={getWikiImage(r.monsterImage)} alt="" className="w-6 h-6 object-contain" loading="lazy" /> : null}
+                          <span>{displayName(r.monsterName)}</span>
+                        </button>
+                      </td>
+                      <td className="text-right pr-2 tabular-nums font-semibold text-gold">{fmtNum(r.xpHr)}</td>
+                      <td className="text-right pr-2 tabular-nums">{r.dps.toFixed(2)}</td>
+                      <td className="text-right pr-2 tabular-nums">{Number.isFinite(r.ttk) ? `${r.ttk.toFixed(0)}s` : '-'}</td>
+                      <td className="text-right pr-2 tabular-nums">{r.dmgTakenHr !== null ? fmtNum(r.dmgTakenHr) : '-'}</td>
+                      <td className="text-right pr-2 tabular-nums">{r.foodHr !== null ? r.foodHr.toFixed(0) : '-'}</td>
+                      <td className="pr-2 truncate max-w-44">{r.weaponName} <span className="text-muted text-xs">({r.styleStance})</span></td>
+                      <td className="pr-2 text-muted text-xs">{r.note}</td>
+                      <td className="pr-3 text-right">
+                        <button
+                          type="button"
+                          className="text-xs text-muted hover:text-gold whitespace-nowrap"
+                          title="Best setup per combat style"
+                          onClick={() => toggleStyles(r)}
+                        >
+                          {expanded === key ? '▾' : '▸'}
+                        </button>
+                      </td>
+                    </tr>
+                    {expanded === key && (
+                      <tr className="border-b border-border/40 last:border-0">
+                        <td colSpan={9} className="px-3 bg-panel-2/30">
+                          {cached === 'loading' || !cached
+                            ? <div className="text-sm text-muted py-2">working out every style...</div>
+                            : <StyleBreakdown styles={cached} />}
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
