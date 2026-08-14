@@ -86,38 +86,75 @@ const unobtainableNames = new Set(unobtainableJson as string[]);
 
 export const isUnobtainable = (item: EquipmentPiece): boolean => unobtainableNames.has(item.name);
 
-export interface ShieldProtectionRule {
-  /** why the shield is mandatory, e.g. "icy breath" */
+export interface GearProtectionRule {
+  slot: Slot;
+  /** the mechanic the gear blocks, e.g. "icy breath" */
   reason: string;
-  /** the only shields that block it */
-  shields: string[];
+  /** the only items that block it */
+  items: string[];
+  /** advisory rules warn but don't restrict the search (diary-skippable etc.) */
+  advisory?: boolean;
 }
 
+const SLAYER_HELMETS = ['Slayer helmet', 'Slayer helmet (i)'];
+
 /**
- * Monsters you do not fight without a specific shield: no prayer or potion
- * substitutes exist, so the solver locks the shield slot to these and drops
- * two-handed weapons entirely. Dragons are deliberately absent - antifire
- * potions cover dragonfire, so setups there stay unconstrained.
+ * Monsters you do not fight without specific protective gear: no prayer or
+ * potion substitutes exist, so the solver locks those slots (and, for shields,
+ * drops two-handed weapons) and warns when nothing owned qualifies. Dragons
+ * are deliberately absent - antifire potions cover dragonfire, so their setups
+ * stay unconstrained.
  */
-const SHIELD_PROTECTION_RULES: { monster: RegExp; rule: ShieldProtectionRule }[] = [
+const MONSTER_PROTECTIONS: { monster: RegExp; rules: GearProtectionRule[] }[] = [
   {
     monster: /wyvern/i,
-    rule: {
+    rules: [{
+      slot: 'shield',
       reason: 'icy breath',
-      shields: ['Elemental shield', 'Mind shield', 'Dragonfire shield', 'Dragonfire ward', 'Ancient wyvern shield'],
-    },
+      items: ['Elemental shield', 'Mind shield', 'Dragonfire shield', 'Dragonfire ward', 'Ancient wyvern shield'],
+    }],
   },
   {
     monster: /basilisk|cockatrice/i,
-    rule: {
-      reason: 'petrifying gaze',
-      shields: ['Mirror shield', "V's shield"],
-    },
+    rules: [{ slot: 'shield', reason: 'petrifying gaze', items: ['Mirror shield', "V's shield"] }],
+  },
+  {
+    monster: /aberrant spectre|deviant spectre/i,
+    rules: [{ slot: 'head', reason: 'noxious fumes', items: ['Nose peg', ...SLAYER_HELMETS] }],
+  },
+  {
+    monster: /dust devil|smoke devil/i,
+    rules: [{ slot: 'head', reason: 'choking clouds', items: ['Facemask', ...SLAYER_HELMETS] }],
+  },
+  {
+    monster: /banshee/i,
+    rules: [{ slot: 'head', reason: 'piercing scream', items: ['Earmuffs', ...SLAYER_HELMETS] }],
+  },
+  {
+    monster: /cave horror/i,
+    rules: [{ slot: 'neck', reason: 'gaze', items: ['Witchwood icon'] }],
+  },
+  {
+    monster: /sourhog/i,
+    rules: [{ slot: 'head', reason: 'foul stench', items: ['Reinforced goggles', ...SLAYER_HELMETS] }],
+  },
+  {
+    monster: /^(drake|alchemical hydra|hydra|wyrm|wyrmling)/i,
+    rules: [{
+      slot: 'feet',
+      reason: 'searing Karuulm floor (skippable with the Kourend elite diary)',
+      items: ['Boots of stone', 'Boots of brimstone', 'Granite boots'],
+      advisory: true,
+    }],
   },
 ];
 
-export const shieldProtectionFor = (monsterName: string): ShieldProtectionRule | null => SHIELD_PROTECTION_RULES
-  .find((r) => r.monster.test(monsterName))?.rule ?? null;
+export const protectionRulesFor = (monsterName: string): GearProtectionRule[] => MONSTER_PROTECTIONS
+  .filter((p) => p.monster.test(monsterName))
+  .flatMap((p) => p.rules);
+
+/** the slayer krakens surface only for magic - melee and ranged cannot touch them */
+export const isMagicOnlyTarget = (monsterName: string): boolean => /^(Cave kraken|Kraken)$/.test(monsterName);
 /** Barbarian Assault attacker arrows (125 ranged str, unusable outside BA) */
 const BLOCKED_IDS = new Set([22227, 22228, 22229, 22230]);
 

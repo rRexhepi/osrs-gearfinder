@@ -14,18 +14,19 @@ import {
   IBAN_BLAST_WEAPONS,
   MAGIC_DART_WEAPONS,
   POWERED_CATEGORIES,
-  ShieldProtectionRule,
+  GearProtectionRule,
   Slot,
   SLOTS,
   canonicalIdOf,
   dartByName,
   equipmentBySlot,
   isGauntletItem,
+  isMagicOnlyTarget,
   isModeRestricted,
   isSpecialItem,
   isUnobtainable,
   itemById,
-  shieldProtectionFor,
+  protectionRulesFor,
 } from './data';
 import { CORRUPTED_GAUNTLET_MONSTER_IDS, GAUNTLET_MONSTER_IDS } from '@/lib/constants';
 import NPCVsPlayerCalc from '@/lib/NPCVsPlayerCalc';
@@ -116,8 +117,11 @@ export class Solver {
   /** base slayer level for slayer-gated gear (not part of PlayerSkills) */
   private slayerLevel: number;
 
-  /** shield the target makes mandatory (wyvern breath, basilisk gaze), if any */
-  private protection: ShieldProtectionRule | null;
+  /** protective gear the target makes mandatory (wyvern breath, spectre fumes...) */
+  private protections: GearProtectionRule[];
+
+  /** hard slot locks derived from the non-advisory protection rules */
+  private lockedSlots: Map<Slot, Set<string>>;
 
   private loggedEvalError = false;
 
@@ -154,7 +158,10 @@ export class Solver {
     this.restrictToOwned = request.restrictToOwned && this.owned !== null;
     this.excluded = new Set(request.excludedIds.map(canonicalIdOf));
     this.slayerLevel = request.slayerLevel ?? 99;
-    this.protection = shieldProtectionFor(this.monster.name);
+    this.protections = protectionRulesFor(this.monster.name);
+    this.lockedSlots = new Map(this.protections
+      .filter((r) => !r.advisory)
+      .map((r) => [r.slot, new Set(r.items)]));
   }
 
   /** allowed ignoring ownership (mode/gauntlet/exclusion/level filters only) */
@@ -175,10 +182,10 @@ export class Solver {
     return this.owned!.has(item.id);
   }
 
-  /** when the target mandates a shield, nothing else may fill the slot */
+  /** when the target mandates protective gear, nothing else may fill the slot */
   private protectionFilter(slot: Slot, list: EquipmentPiece[]): EquipmentPiece[] {
-    if (slot !== 'shield' || !this.protection) return list;
-    const allowed = new Set(this.protection.shields);
+    const allowed = this.lockedSlots.get(slot);
+    if (!allowed) return list;
     return list.filter((i) => allowed.has(i.name));
   }
 
@@ -215,8 +222,8 @@ export class Solver {
     if (cached) return cached;
 
     const all = this.allowedForSlot(slot);
-    // mandatory shields are a handful of mostly statless items - prune nothing
-    if (slot === 'shield' && this.protection) {
+    // mandatory protective gear is a handful of mostly statless items - prune nothing
+    if (this.lockedSlots.has(slot)) {
       this.candidateCache.set(key, all);
       return all;
     }
@@ -316,7 +323,7 @@ export class Solver {
   private weaponVariants(group: StyleGroup, unrestricted = false): WeaponVariant[] {
     const pool = (unrestricted ? this.baseAllowedForSlot('weapon') : this.allowedForSlot('weapon'))
       // a mandatory shield rules out every two-handed weapon
-      .filter((w) => !(this.protection && w.isTwoHanded));
+      .filter((w) => !(this.lockedSlots.has('shield') && w.isTwoHanded));
     return pool.flatMap((w) => this.variantsForWeapon(w, group, { unrestricted }));
   }
 
@@ -454,13 +461,13 @@ export class Solver {
         let bestItem: EquipmentPiece | null = eq[slot] ?? null;
         let bestDps = this.dps(eq, style, spell);
         // try empty slot too, in case current item has net-negative bonuses -
-        // except a mandatory protective shield, which never comes off
-        if (eq[slot] && slot !== 'ammo' && !(slot === 'shield' && this.protection)) {
+        // except mandatory protective gear, which never comes off
+        if (eq[slot] && slot !== 'ammo' && !this.lockedSlots.has(slot)) {
           const d = this.dps({ ...eq, [slot]: null }, style, spell);
           if (d > bestDps) { bestDps = d; bestItem = null; }
         }
-        // a mandatory shield goes on even when it costs dps (a DFS on a mage)
-        if (slot === 'shield' && this.protection && bestItem === null) bestDps = -Infinity;
+        // mandatory protective gear goes on even when it costs dps (a DFS on a mage)
+        if (this.lockedSlots.has(slot) && bestItem === null) bestDps = -Infinity;
         for (const cand of candidates) {
           if (cand.id === eq[slot]?.id) continue;
           const d = this.dps({ ...eq, [slot]: cand }, style, spell);
@@ -534,7 +541,7 @@ export class Solver {
 
     const perWeapon: { v: WeaponVariant; score: number }[] = [];
     for (const w of weapons.values()) {
-      if (this.protection && w.isTwoHanded) continue;
+      if (this.lockedSlots.has('shield') && w.isTwoHanded) continue;
       let best: { v: WeaponVariant; score: number } | null = null;
       for (const v of this.variantsForWeapon(w, tpl.group, { styleTypes: tpl.styleTypes, unrestricted: base })) {
         const eq: Partial<PlayerEquipment> = { ...pieces, weapon: v.weapon };
@@ -596,9 +603,10 @@ export class Solver {
 
   private finalise(eq: Partial<PlayerEquipment>, style: PlayerCombatStyle, spell: Spell | null, group: StyleGroup): SolvedSetup {
     const combo = comboOf(group, eq.weapon?.name, style.type, (slot) => eq[slot]?.name);
-    const warning = this.protection && !this.protection.shields.includes(eq.shield?.name ?? '')
-      ? `${this.monster.name}'s ${this.protection.reason} is only blocked by a shield: ${this.protection.shields.join(', ')}`
-      : null;
+    const unmet = this.protections
+      .filter((r) => !r.items.includes(eq[r.slot]?.name ?? ''))
+      .map((r) => `${r.reason} needs ${r.items.join(' / ')}`);
+    const warning = unmet.length > 0 ? `${this.monster.name}: ${unmet.join('; ')}` : null;
     const player = buildPlayer(this.cfg, this.monster, eq, style, spell);
     const calc = new PlayerVsNPCCalc(player, this.monster, { loadoutName: 'solver' });
     const items: SolvedSetup['items'] = {};
@@ -697,9 +705,22 @@ export class Solver {
     return best;
   }
 
+  /** styles that physically cannot reach the target, regardless of gear */
+  private styleUnreachable(group: StyleGroup): boolean {
+    if (group === 'melee' && this.monster.attributes.includes(MonsterAttribute.FLYING)) return true;
+    if (group !== 'magic' && isMagicOnlyTarget(this.monster.name)) return true;
+    return false;
+  }
+
   solveStyle(group: StyleGroup, progress?: ProgressFn, progressBase = 0, progressSpan = 1, light = false): StyleResult {
     const report = (frac: number, label: string) => progress?.(progressBase + frac * progressSpan, label);
     const K = this.request.weaponsPerStyle ?? 8;
+
+    if (this.styleUnreachable(group)) {
+      return {
+        styleGroup: group, immune: true, best: null, setups: [], combos: [], alternatives: {},
+      };
+    }
 
     // Phase A: rank every weapon variant with just weapon (+ammo) equipped
     report(0.05, `${group}: ranking weapons`);

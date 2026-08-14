@@ -178,6 +178,43 @@ describe('mandatory shield protection', () => {
     expect(res.best!.items.shield).toBeUndefined(); // the defender must not sneak in
     expect(res.best!.warning).toMatch(/icy breath/);
   }, 240000);
+
+  test('aberrant spectres: never the black mask, always fume protection', () => {
+    // black mask has the same dps as the slayer helmet but zero fume protection
+    const req = { ...baseRequest('Aberrant spectre'), onSlayerTask: true };
+    const res = new Solver(req).solveStyle('melee');
+    expect(res.best).not.toBeNull();
+    expect(['Nose peg', 'Slayer helmet', 'Slayer helmet (i)']).toContain(res.best!.items.head?.name);
+    expect(res.best!.warning).toBeNull();
+    for (const alt of res.alternatives.head ?? []) {
+      expect(['Nose peg', 'Slayer helmet', 'Slayer helmet (i)']).toContain(alt.name);
+    }
+  }, 240000);
+
+  test('cave horrors require the witchwood icon on the neck', () => {
+    const res = new Solver({ ...baseRequest('Cave horror'), onSlayerTask: true }).solveStyle('melee');
+    expect(res.best).not.toBeNull();
+    expect(res.best!.items.neck?.name).toBe('Witchwood icon');
+  }, 240000);
+
+  test('Karuulm floor is advisory: best gear stands, but the warning names stone boots', () => {
+    const res = new Solver(baseRequest('Hydra')).solveStyle('melee');
+    expect(res.best).not.toBeNull();
+    // primordials still win the slot - the diary can make the boots unnecessary
+    expect(res.best!.items.feet?.name).not.toBe('Boots of stone');
+    expect(res.best!.warning).toMatch(/Karuulm/);
+  }, 240000);
+
+  test('flying monsters cannot be meleed, slayer krakens are magic-only', () => {
+    const avi = new Solver(baseRequest('Aviansie', 'Level 131'));
+    expect(avi.solveStyle('melee').immune).toBe(true);
+    expect(avi.solveStyle('ranged').immune).toBe(false);
+
+    const kraken = new Solver(baseRequest('Cave kraken', 'Cave kraken'));
+    expect(kraken.solveStyle('melee').immune).toBe(true);
+    expect(kraken.solveStyle('ranged').immune).toBe(true);
+    expect(kraken.solveStyle('magic').immune).toBe(false);
+  }, 240000);
 });
 
 describe('bank text parsing', () => {
