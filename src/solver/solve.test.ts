@@ -144,6 +144,42 @@ describe('upgrade advisor pricing', () => {
   }, 240000);
 });
 
+describe('mandatory shield protection', () => {
+  const WYVERN_SHIELDS = ['Elemental shield', 'Mind shield', 'Dragonfire shield', 'Dragonfire ward', 'Ancient wyvern shield'];
+
+  test('fossil wyverns: every setup carries icy-breath protection, no two-handers', () => {
+    const solver = new Solver(baseRequest('Spitting Wyvern'));
+    for (const group of ['melee', 'ranged', 'magic'] as const) {
+      const res = solver.solveStyle(group);
+      if (res.immune || !res.best) continue;
+      expect(WYVERN_SHIELDS, `${group} shield`).toContain(res.best.items.shield?.name);
+      expect(res.best.warning).toBeNull();
+      for (const s of res.setups) {
+        expect(WYVERN_SHIELDS, `${group}: ${s.items.weapon?.name}`).toContain(s.items.shield?.name);
+      }
+      // the shield alternatives table offers nothing that fails to block the breath
+      for (const alt of res.alternatives.shield ?? []) {
+        expect(WYVERN_SHIELDS).toContain(alt.name);
+      }
+    }
+  }, 240000);
+
+  test('basilisks require a mirror-class shield', () => {
+    const res = new Solver(baseRequest('Basilisk Knight')).solveStyle('melee');
+    expect(res.best).not.toBeNull();
+    expect(['Mirror shield', "V's shield"]).toContain(res.best!.items.shield?.name);
+  }, 240000);
+
+  test('owning no protective shield yields a loud warning, not a silent death trap', () => {
+    const ownedIds = ['Abyssal whip', 'Dragon defender', 'Fighter torso', 'Rune platelegs', 'Neitiznot faceguard']
+      .map((n) => findEquipment(n).id);
+    const res = new Solver({ ...baseRequest('Spitting Wyvern'), ownedIds, restrictToOwned: true }).solveStyle('melee');
+    expect(res.best).not.toBeNull();
+    expect(res.best!.items.shield).toBeUndefined(); // the defender must not sneak in
+    expect(res.best!.warning).toMatch(/icy breath/);
+  }, 240000);
+});
+
 describe('bank text parsing', () => {
   test('bank memory TSV, names, and tag id lists all parse', () => {
     const whip = findEquipment('Abyssal whip');

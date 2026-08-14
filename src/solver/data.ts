@@ -85,6 +85,39 @@ const BLOCKED_NAMES_RE = /(Fine mesh net|Wilderness champion amulet|^Crystal .* 
 const unobtainableNames = new Set(unobtainableJson as string[]);
 
 export const isUnobtainable = (item: EquipmentPiece): boolean => unobtainableNames.has(item.name);
+
+export interface ShieldProtectionRule {
+  /** why the shield is mandatory, e.g. "icy breath" */
+  reason: string;
+  /** the only shields that block it */
+  shields: string[];
+}
+
+/**
+ * Monsters you do not fight without a specific shield: no prayer or potion
+ * substitutes exist, so the solver locks the shield slot to these and drops
+ * two-handed weapons entirely. Dragons are deliberately absent - antifire
+ * potions cover dragonfire, so setups there stay unconstrained.
+ */
+const SHIELD_PROTECTION_RULES: { monster: RegExp; rule: ShieldProtectionRule }[] = [
+  {
+    monster: /wyvern/i,
+    rule: {
+      reason: 'icy breath',
+      shields: ['Elemental shield', 'Mind shield', 'Dragonfire shield', 'Dragonfire ward', 'Ancient wyvern shield'],
+    },
+  },
+  {
+    monster: /basilisk|cockatrice/i,
+    rule: {
+      reason: 'petrifying gaze',
+      shields: ['Mirror shield', "V's shield"],
+    },
+  },
+];
+
+export const shieldProtectionFor = (monsterName: string): ShieldProtectionRule | null => SHIELD_PROTECTION_RULES
+  .find((r) => r.monster.test(monsterName))?.rule ?? null;
 /** Barbarian Assault attacker arrows (125 ranged str, unusable outside BA) */
 const BLOCKED_IDS = new Set([22227, 22228, 22229, 22230]);
 

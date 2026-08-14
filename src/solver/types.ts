@@ -73,6 +73,8 @@ export interface SolvedSetup {
   spellName: string | null;
   /** set when this setup is a locked full-set combo (e.g. Blood moon set) */
   combo: { name: string; note: string } | null;
+  /** safety problem with this setup (e.g. no shield against a wyvern's icy breath) */
+  warning: string | null;
   items: Partial<Record<string, ResultItem>>;
   /** ranking metric: dps in boss mode, xp/hr in training mode */
   metric: number;

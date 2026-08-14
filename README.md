@@ -96,6 +96,18 @@ you assemble by hand get their combo badge, and after a solve the header shows
 the gap to the best found setup, with a one-click "load best found" to start
 from it. The loadout persists between visits.
 
+## Targets that demand protection
+
+Some monsters are not fought without a specific shield and nothing else - no
+prayer or potion - substitutes: wyverns' icy breath (elemental / mind /
+dragonfire shield / dragonfire ward / ancient wyvern shield) and basilisk or
+cockatrice gazes (mirror shield / V's shield). Against these targets the solver
+locks the shield slot to the protective options, drops two-handed weapons, and
+the upgrade advisor shops within them. If you own none, the setup carries a
+loud warning instead of quietly recommending something that gets you killed.
+Dragons are deliberately unconstrained: antifire potions cover dragonfire, so
+their setups stay free.
+
 ## Full-set combos
 
 Set effects only pay off once the whole set is worn, so a per-slot search can never

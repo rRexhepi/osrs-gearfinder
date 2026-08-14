@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  Fragment, useEffect, useMemo, useState,
+} from 'react';
 import clsx from 'clsx';
 import {
   SlotAlternative, SolvedSetup, StyleGroup, StyleResult, UpgradeSuggestion,
@@ -96,18 +98,20 @@ function CombosCard({ combos, best, training }: { combos: SolvedSetup[]; best: S
 function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; training: boolean }) {
   const { preferredStyle } = useStore();
   const [byValue, setByValue] = useState(false);
-  const sorted = useMemo(
-    () => [...upgrades].sort((a, b) => {
-      // the style the user chose to fight with shops first
-      if (preferredStyle) {
-        const pref = (u: UpgradeSuggestion) => (u.styleGroup === preferredStyle ? 1 : 0);
-        if (pref(a) !== pref(b)) return pref(b) - pref(a);
-      }
-      return byValue ? (b.gainPerM ?? -1) - (a.gainPerM ?? -1) : b.gainPct - a.gainPct;
-    }),
-    [upgrades, byValue, preferredStyle],
-  );
-  if (upgrades.length === 0) return null;
+  const sections = useMemo(() => {
+    const order: StyleGroup[] = ['melee', 'ranged', 'magic'];
+    const first = preferredStyle || null;
+    const grouped = (first ? [first, ...order.filter((g) => g !== first)] : order)
+      .map((group) => ({
+        group,
+        rows: upgrades
+          .filter((u) => u.styleGroup === group)
+          .sort((a, b) => (byValue ? (b.gainPerM ?? -1) - (a.gainPerM ?? -1) : b.gainPct - a.gainPct))
+          .slice(0, 6),
+      }));
+    return grouped.filter((s) => s.rows.length > 0);
+  }, [upgrades, byValue, preferredStyle]);
+  if (sections.length === 0) return null;
   return (
     <div className="bg-panel border border-gold/40 rounded-lg overflow-hidden">
       <div className="px-3 py-2 flex items-center justify-between border-b border-border">
@@ -122,23 +126,32 @@ function Upgrades({ upgrades, training }: { upgrades: UpgradeSuggestion[]; train
       </div>
       <table className="w-full text-sm">
         <tbody>
-          {sorted.slice(0, 12).map((u) => (
-            <tr key={`${u.name}-${u.styleGroup}`} className="border-b border-border/40 last:border-0">
-              <td className="pl-3 py-1 w-8"><img src={iconUrl(u.image)} alt="" className="w-5 h-5 object-contain" loading="lazy" /></td>
-              <td className="py-1 pr-2">
-                {u.name}
-                {u.detail ? <span className="text-muted text-xs"> ({u.detail})</span> : null}
-                <span className="text-muted text-xs"> - {SLOT_LABELS[u.slot] ?? u.slot}, {u.styleGroup}</span>
-              </td>
-              <td className="py-1 pr-2 text-right tabular-nums text-emerald-400 w-20">+{u.gainPct.toFixed(1)}%</td>
-              <td className="py-1 pr-2 text-right tabular-nums w-24">{u.price !== null ? fmtGp(u.price) : <span className="text-muted text-xs">untradeable</span>}</td>
-              <td className="py-1 pr-3 text-right tabular-nums text-muted text-xs w-28">{u.gainPerM !== null ? `${u.gainPerM.toFixed(2)}%/m gp` : '-'}</td>
-            </tr>
+          {sections.map((section) => (
+            <Fragment key={section.group}>
+              <tr className="bg-panel-2/60 border-b border-border/40">
+                <td colSpan={5} className="pl-3 py-1 text-xs uppercase tracking-wider text-muted capitalize">
+                  {section.group}
+                </td>
+              </tr>
+              {section.rows.map((u) => (
+                <tr key={`${u.name}-${u.styleGroup}`} className="border-b border-border/40 last:border-0">
+                  <td className="pl-3 py-1 w-8"><img src={iconUrl(u.image)} alt="" className="w-5 h-5 object-contain" loading="lazy" /></td>
+                  <td className="py-1 pr-2">
+                    {u.name}
+                    {u.detail ? <span className="text-muted text-xs"> ({u.detail})</span> : null}
+                    <span className="text-muted text-xs"> - {SLOT_LABELS[u.slot] ?? u.slot}</span>
+                  </td>
+                  <td className="py-1 pr-2 text-right tabular-nums text-emerald-400 w-20">+{u.gainPct.toFixed(1)}%</td>
+                  <td className="py-1 pr-2 text-right tabular-nums w-24">{u.price !== null ? fmtGp(u.price) : <span className="text-muted text-xs">untradeable</span>}</td>
+                  <td className="py-1 pr-3 text-right tabular-nums text-muted text-xs w-28">{u.gainPerM !== null ? `${u.gainPerM.toFixed(2)}%/m gp` : '-'}</td>
+                </tr>
+              ))}
+            </Fragment>
           ))}
         </tbody>
       </table>
       <div className="px-3 py-1 text-[10px] text-muted border-t border-border/40">
-        {training ? 'Gain in XP/hr' : 'Gain in DPS'} if swapped into your best owned setup. GE mid prices.
+        {training ? 'Gain in XP/hr' : 'Gain in DPS'} if swapped into your best owned setup of that style. GE mid prices.
       </div>
     </div>
   );

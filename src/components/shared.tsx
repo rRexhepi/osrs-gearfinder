@@ -34,6 +34,11 @@ export function OwnedDot({ owned }: { owned: boolean }) {
 export function SetupCard({ setup, training }: { setup: SolvedSetup; training: boolean }) {
   return (
     <div className="bg-panel border border-border rounded-lg p-3 space-y-3">
+      {setup.warning && (
+        <div className="text-sm text-amber-400 bg-amber-400/10 border border-amber-400/40 rounded px-2 py-1">
+          ⚠ {setup.warning}
+        </div>
+      )}
       {setup.combo && (
         <div className="flex items-center gap-2 text-sm text-gold" title={setup.combo.note}>
           <span className="bg-gold/10 border border-gold/40 rounded px-2 py-0.5 font-semibold">Full set</span>
